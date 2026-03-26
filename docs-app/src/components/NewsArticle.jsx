@@ -18,6 +18,7 @@ import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useArticleTocHeadings } from '../hooks/useArticleTocHeadings'
 import MarkdownTr from './MarkdownTr'
+import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 
@@ -35,6 +36,7 @@ function mdFileSlugFromPath(newsPath) {
 
 const markdownComponents = {
   tr: MarkdownTr,
+  table: MarkdownTable,
   img: MarkdownImg,
   a: ({ href, className, children, ...props }) => {
     const isBackref =
@@ -198,7 +200,7 @@ export default function NewsArticle() {
       .finally(() => setMdLoading(false))
   }, [fullSlug, treeReady, node])
 
-  useArticleHashScroll(articleBodyRef, {
+  const activeHeadingId = useArticleHashScroll(articleBodyRef, {
     loading: mdLoading,
     slug: fullSlug,
     md,
@@ -429,7 +431,7 @@ export default function NewsArticle() {
             </footer>
           </div>
         </div>
-        {!isMcPdf && <Toc headings={tocHeadings} />}
+        {!isMcPdf && <Toc headings={tocHeadings} activeId={activeHeadingId} />}
         {lightbox && lightbox.images && (
           <div
             ref={(n) => n?.focus()}

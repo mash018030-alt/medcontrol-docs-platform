@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { useDocsLayout } from '../context/DocsLayoutContext'
 import {
   fetchNewsTree,
   getExpandedNewsKeys,
@@ -123,6 +124,7 @@ function NewsNavBranch({
 }
 
 export default function NewsSidebar() {
+  const { isMobileLayout, mobileNavOpen } = useDocsLayout()
   const location = useLocation()
   const navigate = useNavigate()
   const pathnameSlug = location.pathname.replace(/^\//, '').replace(/\/$/, '') || NEWS_ROOT_SLUG
@@ -209,7 +211,12 @@ export default function NewsSidebar() {
   )
 
   return (
-    <aside className="docs-sidebar">
+    <aside
+      id="docs-nav-drawer"
+      className={`docs-sidebar${isMobileLayout && mobileNavOpen ? ' docs-sidebar--open' : ''}`}
+      aria-hidden={isMobileLayout ? !mobileNavOpen : undefined}
+      inert={isMobileLayout && !mobileNavOpen ? true : undefined}
+    >
       <nav className="docs-nav" aria-label="Новости и релизы">
         <div className={`docs-sidebar-top${showNewsBack ? ' docs-sidebar-top--with-back' : ''}`}>
           {showNewsBack ? <NewsBackLink /> : null}

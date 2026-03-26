@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { useDocsLayout } from '../context/DocsLayoutContext'
 import { getExpandedNavKeys, navSubtreeContains, navTree } from '../data/nav'
 import DocsBackLink from './DocsBackLink'
 
@@ -97,6 +98,7 @@ function NavBranch({ item, depth, expanded, slug, toggle, ensureExpanded, onSame
 }
 
 export default function Sidebar() {
+  const { isMobileLayout, mobileNavOpen } = useDocsLayout()
   const location = useLocation()
   const navigate = useNavigate()
   const slug = slugFromPathname(location.pathname)
@@ -148,7 +150,12 @@ export default function Sidebar() {
   )
 
   return (
-    <aside className="docs-sidebar">
+    <aside
+      id="docs-nav-drawer"
+      className={`docs-sidebar${isMobileLayout && mobileNavOpen ? ' docs-sidebar--open' : ''}`}
+      aria-hidden={isMobileLayout ? !mobileNavOpen : undefined}
+      inert={isMobileLayout && !mobileNavOpen ? true : undefined}
+    >
       <nav className="docs-nav" aria-label="Разделы документации">
         <div className={`docs-sidebar-top${showDocsBack ? ' docs-sidebar-top--with-back' : ''}`}>
           {showDocsBack ? <DocsBackLink slug={slug} /> : null}

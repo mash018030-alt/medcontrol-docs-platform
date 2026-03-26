@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { useDocsLayout } from '../context/DocsLayoutContext'
 import { NEWS_ROOT_SLUG } from '../data/fetchNewsTree'
 import { docsTopSectionLandingPaths } from '../data/nav'
 import { suggestArticlesByTitle } from '../search/docSearch'
@@ -8,8 +9,22 @@ import HighlightedText from './search/HighlightedText'
 export default function Header() {
   const location = useLocation()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const isMcPdf = searchParams.get('mc_pdf') === '1'
   const isNews =
     location.pathname === '/news' || location.pathname.startsWith('/news/')
+  const newsPathNorm = location.pathname.replace(/\/+$/, '') || '/'
+  const isNewsHub = newsPathNorm === '/news'
+  const hasTreeSidebar =
+    !isMcPdf &&
+    (isNews ? !isNewsHub
+      : location.pathname !== '/' &&
+        location.pathname !== '/search' &&
+        location.pathname !== '/section-pdf-bundle')
+
+  const { isMobileLayout, mobileNavOpen, toggleMobileNav } = useDocsLayout()
+  const showMobileMenuBtn = isMobileLayout && hasTreeSidebar
+
   const docSlug = location.pathname.replace(/^\//, '').replace(/\/$/, '')
   const hideDocsSearch =
     location.pathname === '/' ||
@@ -42,6 +57,23 @@ export default function Header() {
   return (
     <header className="docs-header">
       <div className="docs-header-inner">
+        {showMobileMenuBtn ? (
+          <button
+            type="button"
+            className="docs-header-menu-btn"
+            onClick={toggleMobileNav}
+            aria-expanded={mobileNavOpen}
+            aria-controls="docs-nav-drawer"
+            aria-label={mobileNavOpen ? 'Закрыть меню разделов' : 'Открыть меню разделов'}
+          >
+            <svg className="docs-header-menu-svg" width="22" height="22" viewBox="0 0 24 24" aria-hidden>
+              <path
+                fill="currentColor"
+                d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"
+              />
+            </svg>
+          </button>
+        ) : null}
         <Link to="/" className="docs-logo" aria-label="MedControl документация — на главную">
           <img src={`${import.meta.env.BASE_URL}logo-3.png`} alt="" decoding="async" />
         </Link>

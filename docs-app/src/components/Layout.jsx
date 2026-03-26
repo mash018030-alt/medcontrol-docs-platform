@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom'
+import { DocsLayoutProvider, useDocsLayout } from '../context/DocsLayoutContext'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import NewsSidebar from './NewsSidebar'
 
-export default function Layout() {
+function LayoutShell() {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const isMcPdf = searchParams.get('mc_pdf') === '1'
@@ -19,6 +20,9 @@ export default function Layout() {
     pathname !== '/' &&
     pathname !== '/search' &&
     pathname !== '/section-pdf-bundle'
+  const showTreeSidebar = showNewsSidebar || showDocsSidebar
+
+  const { isMobileLayout, mobileNavOpen, closeMobileNav } = useDocsLayout()
 
   /* React Router не сбрасывает scroll; без этого переход «след./пред. статья» открывает низ страницы. */
   useEffect(() => {
@@ -29,13 +33,28 @@ export default function Layout() {
   return (
     <div className={isMcPdf ? 'docs-layout docs-layout--mc-pdf' : 'docs-layout'}>
       {!isMcPdf && <Header />}
-      <div className="docs-main">
-        {!isMcPdf &&
-          (showNewsSidebar ? <NewsSidebar /> : showDocsSidebar ? <Sidebar /> : null)}
+      {!isMcPdf && isMobileLayout && showTreeSidebar && mobileNavOpen && (
+        <button
+          type="button"
+          className="docs-mobile-nav-backdrop"
+          aria-label="Закрыть меню разделов"
+          onClick={closeMobileNav}
+        />
+      )}
+      <div className={`docs-main${isMobileLayout && showTreeSidebar ? ' docs-main--mobile-nav' : ''}`}>
+        {!isMcPdf && (showNewsSidebar ? <NewsSidebar /> : showDocsSidebar ? <Sidebar /> : null)}
         <main className="docs-content">
           <Outlet />
         </main>
       </div>
     </div>
+  )
+}
+
+export default function Layout() {
+  return (
+    <DocsLayoutProvider>
+      <LayoutShell />
+    </DocsLayoutProvider>
   )
 }
