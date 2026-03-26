@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { quietHashSpy } from '../hooks/useArticleHashScroll'
+import { scrollToIdAfterReveal } from '../utils/revealCitationTarget'
 
 export default function Toc({ headings, activeId }) {
   const navigate = useNavigate()
@@ -20,6 +21,30 @@ export default function Toc({ headings, activeId }) {
       }
     }
     if (!link) return
+
+    let narrow = false
+    try {
+      narrow = window.matchMedia('(max-width: 1023px)').matches
+    } catch {
+      /* ignore */
+    }
+
+    if (narrow) {
+      /* Только полоса прокрутки самого TOC — без scrollIntoView, чтобы не дёргать окно документа. */
+      const aside = wrap.closest('.docs-toc')
+      if (aside && aside.scrollHeight > aside.clientHeight + 2) {
+        const ar = aside.getBoundingClientRect()
+        const lr = link.getBoundingClientRect()
+        const pad = 6
+        if (lr.top < ar.top + pad) {
+          aside.scrollTop -= ar.top + pad - lr.top
+        } else if (lr.bottom > ar.bottom - pad) {
+          aside.scrollTop += lr.bottom - (ar.bottom - pad)
+        }
+      }
+      return
+    }
+
     link.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [activeId])
 
@@ -32,6 +57,9 @@ export default function Toc({ headings, activeId }) {
       { pathname: location.pathname, search: location.search, hash: `#${id}` },
       { replace: false, preventScrollReset: true },
     )
+    /* Как у сносок (useFootnoteBackrefClick): при preventScrollReset браузер не прыгает к #,
+       а эффект в useArticleHashScroll иногда пропускает scroll из‑за skipScrollForSpyHash. */
+    scrollToIdAfterReveal(id, { behavior: 'smooth' })
   }
 
   return (
