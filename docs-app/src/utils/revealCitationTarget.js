@@ -1,5 +1,29 @@
+/** Фрагмент из `location.hash` / `href` без '#', в одной форме для сравнения и getElementById. */
+export function decodeHashFragment(raw) {
+  if (!raw) return ''
+  try {
+    return decodeURIComponent(raw)
+  } catch {
+    return raw
+  }
+}
+
 /**
- * Раскрывает все родительские <details>, чтобы якорь внутри аккордеона стал видимым и доступным для scrollIntoView.
+ * Элемент с id=value: getElementById в редких случаях расходится с querySelector для нестандартных id.
+ */
+export function resolveAnchorElement(rawId) {
+  if (!rawId) return null
+  const byId = document.getElementById(rawId)
+  if (byId) return byId
+  try {
+    return document.querySelector(`[id="${CSS.escape(rawId)}"]`)
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Раскрывает все родительские <details>, чтобы якорь внутри аккордеона стал виден для scrollIntoView.
  */
 export function openAncestorDetails(el) {
   let n = el
@@ -9,14 +33,27 @@ export function openAncestorDetails(el) {
   }
 }
 
-/** Как useArticleHashScroll HEADER_SCROLL_OFFSET_PX — место под липкий заголовок */
-const ARTICLE_ANCHOR_SCROLL_OFFSET_PX = 96
+const FALLBACK_ANCHOR_OFFSET_PX = 80
 
-function getAnchorScrollOffsetPx() {
-  if (typeof document === 'undefined') return ARTICLE_ANCHOR_SCROLL_OFFSET_PX
-  return document.documentElement.classList.contains('docs-layout--mc-pdf')
-    ? 0
-    : ARTICLE_ANCHOR_SCROLL_OFFSET_PX
+/**
+ * Совпадает с scroll-margin-top у целевого якоря (desktop ~80px, mobile calc(шапка + 12px)).
+ * Брать из computed style, чтобы не расходиться с CSS при смене брейкпоинтов.
+ */
+export function resolveAnchorScrollOffsetPx(el) {
+  if (typeof document === 'undefined') return FALLBACK_ANCHOR_OFFSET_PX
+  if (document.documentElement.classList.contains('docs-layout--mc-pdf')) return 0
+  if (!(el instanceof Element)) return FALLBACK_ANCHOR_OFFSET_PX
+  const v = parseFloat(getComputedStyle(el).scrollMarginTop)
+  if (Number.isFinite(v) && v > 0) return Math.round(v)
+  return FALLBACK_ANCHOR_OFFSET_PX
+}
+
+/** Линия scroll-spy: по первому заголовку статьи (тот же offset, что и для якорей). */
+export function resolveArticleSpyOffsetPx(articleRoot) {
+  if (typeof document === 'undefined') return FALLBACK_ANCHOR_OFFSET_PX
+  if (document.documentElement.classList.contains('docs-layout--mc-pdf')) return 0
+  const probe = articleRoot?.querySelector?.('h1[id], h2[id], h3[id], h4[id]') ?? null
+  return resolveAnchorScrollOffsetPx(probe)
 }
 
 /** Пустой inline span (напр. id="ftnt_back*") даёт нулевой rect — берём следующий узел ([3]). */
@@ -32,20 +69,46 @@ function anchorViewportTopForScroll(el) {
 }
 
 /**
- * Открывает цепочку details и прокручивает к элементу с id после reflow (два rAF).
- * @param {string} rawId — без '#', уже decodeURIComponent при необходимости
- * @param {{ behavior?: ScrollBehavior }} options
- * @returns {boolean}
+ * Открывает details, затем прокручивает к якорю.
+ * Сначала scrollIntoView (цепочка scroll-container), затем разовая коррекция по scroll-margin,
+ * при сильном рассогласовании — запасной window.scrollTo (WebKit/вложенные скроллы).
  */
 export function scrollToIdAfterReveal(rawId, { behavior = 'smooth' } = {}) {
-  const el = document.getElementById(rawId)
+  const el = resolveAnchorElement(rawId)
   if (!el) return false
   openAncestorDetails(el)
-  const offsetPx = getAnchorScrollOffsetPx()
+  const offsetPx = resolveAnchorScrollOffsetPx(el)
+  const finalizePosition = () => {
+    const topNow = anchorViewportTopForScroll(el)
+    /* Целевая линия — такая же, как у scroll-spy: верх якоря у offset от viewport */
+    if (Math.abs(topNow - offsetPx) > 12) {
+      window.scrollBy({
+        top: topNow - offsetPx,
+        behavior: behavior === 'smooth' ? 'auto' : behavior,
+      })
+    }
+    requestAnimationFrame(() => {
+      const t = anchorViewportTopForScroll(el)
+      if (Math.abs(t - offsetPx) > 12) {
+        const se = document.scrollingElement ?? document.documentElement
+        const y = se.scrollTop + t - offsetPx
+        window.scrollTo({ left: window.scrollX, top: Math.max(0, y), behavior: 'auto' })
+      }
+    })
+  }
+
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      const top = anchorViewportTopForScroll(el) + window.scrollY - offsetPx
-      window.scrollTo({ top: Math.max(0, top), behavior })
+      try {
+        el.scrollIntoView({ behavior, block: 'start', inline: 'nearest' })
+      } catch {
+        const se = document.scrollingElement ?? document.documentElement
+        const y0 = se.scrollTop
+        const top = anchorViewportTopForScroll(el) + y0 - offsetPx
+        window.scrollTo({ left: window.scrollX, top: Math.max(0, top), behavior: 'auto' })
+        return
+      }
+      finalizePosition()
     })
   })
   return true

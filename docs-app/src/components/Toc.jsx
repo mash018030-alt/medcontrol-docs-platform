@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { quietHashSpy } from '../hooks/useArticleHashScroll'
-import { scrollToIdAfterReveal } from '../utils/revealCitationTarget'
+import { scrollToIdAfterReveal, decodeHashFragment } from '../utils/revealCitationTarget'
+import { armTocHashNavigation } from '../utils/hashNavigationLock'
 
 export default function Toc({ headings, activeId }) {
   const navigate = useNavigate()
@@ -22,30 +23,19 @@ export default function Toc({ headings, activeId }) {
     }
     if (!link) return
 
-    let narrow = false
-    try {
-      narrow = window.matchMedia('(max-width: 1023px)').matches
-    } catch {
-      /* ignore */
-    }
-
-    if (narrow) {
-      /* Только полоса прокрутки самого TOC — без scrollIntoView, чтобы не дёргать окно документа. */
-      const aside = wrap.closest('.docs-toc')
-      if (aside && aside.scrollHeight > aside.clientHeight + 2) {
-        const ar = aside.getBoundingClientRect()
-        const lr = link.getBoundingClientRect()
-        const pad = 6
-        if (lr.top < ar.top + pad) {
-          aside.scrollTop -= ar.top + pad - lr.top
-        } else if (lr.bottom > ar.bottom - pad) {
-          aside.scrollTop += lr.bottom - (ar.bottom - pad)
-        }
+    /* Никогда не вызывать scrollIntoView по ссылке TOC на деске: иначе цепочка предков
+     * может прокрутить window и сломать переход по якорю (scrollToIdAfterReveal). */
+    const aside = wrap.closest('.docs-toc')
+    if (aside && aside.scrollHeight > aside.clientHeight + 2) {
+      const ar = aside.getBoundingClientRect()
+      const lr = link.getBoundingClientRect()
+      const pad = 6
+      if (lr.top < ar.top + pad) {
+        aside.scrollTop -= ar.top + pad - lr.top
+      } else if (lr.bottom > ar.bottom - pad) {
+        aside.scrollTop += lr.bottom - (ar.bottom - pad)
       }
-      return
     }
-
-    link.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [activeId])
 
   if (!headings?.length) return null
@@ -53,15 +43,20 @@ export default function Toc({ headings, activeId }) {
   const handleClick = (e, id) => {
     e.preventDefault()
     quietHashSpy()
-    navigate(
-      { pathname: location.pathname, search: location.search, hash: `#${id}` },
-      { replace: true, preventScrollReset: true },
-    )
-    /* Двойной вызов + rAF: после commit Router и открытия details цель гарантированно в DOM (mobile). */
-    const run = () => scrollToIdAfterReveal(id, { behavior: 'smooth' })
-    run()
-    requestAnimationFrame(() => {
-      requestAnimationFrame(run)
+    const nextHash = `#${id}`
+    const locFrag = location.hash.startsWith('#') ? decodeHashFragment(location.hash.slice(1)) : ''
+    const nextFrag = decodeHashFragment(id)
+    /* Сравниваем декодированные фрагменты: RR/браузер могут отличаться от `#${id}` по кодированию. */
+    if (locFrag === nextFrag && locFrag !== '') {
+      scrollToIdAfterReveal(id, { behavior: 'smooth' })
+      return
+    }
+    /* Строковый to надёжнее объекта в RR7; прокрутка из TOC — одна (arm + microtask), эффект по hash пропускаем. */
+    armTocHashNavigation()
+    const to = `${location.pathname}${location.search}${nextHash}`
+    navigate(to, { replace: true, preventScrollReset: true })
+    queueMicrotask(() => {
+      scrollToIdAfterReveal(id, { behavior: 'smooth' })
     })
   }
 

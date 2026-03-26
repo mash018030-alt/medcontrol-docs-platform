@@ -148,6 +148,7 @@ async function runArticlePdfExportHtml2Pdf(rootEl, { filename }) {
             '.docs-carousel',
             '.docs-carousel-slide',
             '.docs-important',
+            '.docs-note',
             'sup.docs-fnref',
           ],
         },

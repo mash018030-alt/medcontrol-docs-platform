@@ -3,12 +3,15 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 // На проде всегда выкладывайте весь каталог dist/ (index.html + assets/* с новыми хэшами в именах).
-// Сборка для GitHub Pages (project site): /repo-name/
-const GITHUB_PAGES_BASE = '/medcontrol-docs-platform/'
+//
+// По умолчанию base: '/' — стили и скрипты грузятся, если dist отдаётся с корня домена
+// или через `npm run preview`. Иначе (типичный случай) сборка с /repo-name/ даёт ссылки
+// /repo-name/assets/… и при открытии сайта не с того пути CSS/JS 404 → «голый» HTML.
+// GitHub Pages (project site): npm run build:gh-pages
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   plugins: [react()],
-  base: command === 'build' ? GITHUB_PAGES_BASE : '/',
+  base: '/',
   server: {
     port: 5174,
     strictPort: true,
@@ -23,4 +26,4 @@ export default defineConfig(({ command }) => ({
   build: {
     emptyOutDir: true,
   },
-}))
+})

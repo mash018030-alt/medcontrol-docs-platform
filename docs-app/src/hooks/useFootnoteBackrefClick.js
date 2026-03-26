@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { scrollToIdAfterReveal } from '../utils/revealCitationTarget'
+import { scrollToIdAfterReveal, decodeHashFragment } from '../utils/revealCitationTarget'
 import { quietHashSpy } from './useArticleHashScroll'
 
 /**
@@ -29,16 +29,19 @@ export function useFootnoteBackrefClick(articleBodyRef, enabled, contentKey = ''
       e.preventDefault()
       e.stopPropagation()
 
-      const id = decodeURIComponent(href.slice(1))
       quietHashSpy()
-      navigate(
-        { pathname: location.pathname, search: location.search, hash: href },
-        { replace: true, preventScrollReset: true },
-      )
-      scrollToIdAfterReveal(id, { behavior: 'smooth' })
+      const rawId = decodeHashFragment(href.slice(1))
+      const locFrag = location.hash.startsWith('#') ? decodeHashFragment(location.hash.slice(1)) : ''
+      if (locFrag && locFrag === rawId) {
+        scrollToIdAfterReveal(rawId, { behavior: 'smooth' })
+        return
+      }
+      const to = `${location.pathname}${location.search}${href.startsWith('#') ? href : `#${href}`}`
+      navigate(to, { replace: true, preventScrollReset: true })
+      /* Прокрутку делает useLayoutEffect(useArticleHashScroll), без второго smooth из TOC-lock */
     }
 
     root.addEventListener('click', onClick)
     return () => root.removeEventListener('click', onClick)
-  }, [articleBodyRef, enabled, contentKey, navigate, location.pathname, location.search])
+  }, [articleBodyRef, enabled, contentKey, navigate, location.pathname, location.search, location.hash])
 }

@@ -36,6 +36,15 @@ function slugify(text) {
     .replace(/[^\w\u0400-\u04FF-]/g, '')
 }
 
+/** Плоский текст заголовка для id: String(children) даёт «[object Object]» при выделениях/ссылках внутри ## */
+function headingPlainText(children) {
+  if (children == null || children === false) return ''
+  if (typeof children === 'string' || typeof children === 'number') return String(children)
+  if (Array.isArray(children)) return children.map(headingPlainText).join('')
+  if (React.isValidElement(children)) return headingPlainText(children.props?.children)
+  return ''
+}
+
 const SECTION_LANDING_PDF_LABEL = 'Скачать в PDF'
 
 function safeSectionBundleFilename(title) {
@@ -330,19 +339,19 @@ export default function Article() {
                 )
               },
               h1: ({ children, ...props }) => {
-                const text = String(children ?? '')
+                const text = headingPlainText(children)
                 return <h1 id={slugify(text)} {...props}>{children}</h1>
               },
               h2: ({ children, ...props }) => {
-                const text = String(children ?? '')
+                const text = headingPlainText(children)
                 return <h2 id={slugify(text)} {...props}>{children}</h2>
               },
               h3: ({ children, ...props }) => {
-                const text = String(children ?? '')
+                const text = headingPlainText(children)
                 return <h3 id={slugify(text)} {...props}>{children}</h3>
               },
               h4: ({ children, ...props }) => {
-                const text = String(children ?? '')
+                const text = headingPlainText(children)
                 return <h4 id={slugify(text)} {...props}>{children}</h4>
               },
             }}

@@ -78,7 +78,8 @@ button.docs-news-release-row__pdf:disabled{opacity:.55;cursor:not-allowed}
   justify-content:space-between;
   align-items:stretch;
   gap:.75rem;
-  padding:0;
+  /* Без отступа справа кнопка PDF визуально «липнет» к рамке плитки (особенно в 3-кол. сетке на деске) */
+  padding:0 1.15rem 0 0;
   text-align:left
 }
 .docs-landing-tile__surface{
@@ -95,7 +96,7 @@ button.docs-news-release-row__pdf:disabled{opacity:.55;cursor:not-allowed}
   border-radius:8px;
   outline-offset:2px
 }
-.docs-markdown-root .docs-landing-tile__surface{padding:1rem .65rem 1rem 1.15rem}
+.docs-markdown-root .docs-landing-tile__surface{padding:1rem 1rem 1rem 1.15rem}
 .docs-landing-tile__surface:focus-visible{outline:2px solid var(--docs-ui-accent);outline-offset:2px}
 .docs-landing-tile__pdf{position:relative;z-index:1;flex-shrink:0;align-self:center}
 /* У разводящей раздела: текстовая капсула у H1 (макет); иконки в карточках — базовый .docs-news-release-row__pdf */
@@ -351,6 +352,157 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   background:var(--docs-ui-accent);
 }
 
+/* Макрос «Информация» (neutral / не путать с предупреждением .docs-important) */
+.docs-article .docs-info{
+  margin:1rem 0;
+  padding:1rem 1rem 1rem 3rem;
+  background-color:#eff6ff;
+  border:1px solid #93c5fd;
+  border-radius:8px;
+  position:relative;
+}
+.docs-article .docs-info:before{
+  content:'i';
+  position:absolute;
+  left:1rem;
+  top:1rem;
+  width:1.25rem;
+  height:1.25rem;
+  border-radius:50%;
+  background-color:var(--docs-ui-accent);
+  color:#fff;
+  font-size:.875rem;
+  font-weight:700;
+  font-style:italic;
+  font-family:serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.docs-article .docs-info-title{
+  font-weight:700;
+  color:var(--docs-temno-sinii);
+  margin:0 0 .35rem;
+  font-size:1rem;
+}
+.docs-article .docs-info p{
+  margin:0;
+  font-size:.9375rem;
+  line-height:1.5;
+}
+.docs-article .docs-info p+p{
+  margin-top:.35rem;
+}
+.docs-article .docs-info img{
+  display:block;
+  max-width:100%;
+  height:auto;
+  margin:1rem 0 0;
+}
+
+/* Макрос «Примечание» — та же корпоративная жёлто-золотая линия, что и «Важно» (.docs-important) */
+.docs-article .docs-note{
+  --docs-note-bg:#fdf8e4;
+  --docs-note-border:#cc8400;
+  --docs-note-accent:#bf7a00;
+  --docs-note-icon-bg:#cc8400;
+  margin:1rem 0;
+  padding:1rem 1rem 1rem 3rem;
+  background-color:var(--docs-note-bg);
+  border:1px solid var(--docs-note-border);
+  border-radius:8px;
+  position:relative;
+}
+.docs-article .docs-note:before{
+  content:'i';
+  position:absolute;
+  left:1rem;
+  top:1rem;
+  width:1.25rem;
+  height:1.25rem;
+  border-radius:50%;
+  background-color:var(--docs-note-icon-bg);
+  color:#fff;
+  font-size:.875rem;
+  font-weight:700;
+  font-style:italic;
+  font-family:serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.docs-article .docs-note-title{
+  font-weight:700;
+  color:var(--docs-note-accent);
+  margin:0 0 .35rem;
+  font-size:1rem;
+}
+.docs-article .docs-note p{
+  margin:0;
+  font-size:.9375rem;
+  line-height:1.5;
+  color:#1c1917;
+}
+.docs-article .docs-note p+p{
+  margin-top:.35rem;
+}
+.docs-article .docs-note img{
+  display:block;
+  max-width:100%;
+  height:auto;
+  margin:1rem 0 0;
+}
+
+/* Макрос «Внимание» — корпоративная розовая палитра (фон #FCE4EC, акцент #D81B60) */
+.docs-article .docs-attention{
+  --docs-attention-bg:#fce4ec;
+  --docs-attention-accent:#d81b60;
+  --docs-attention-border:#f8bbd0;
+  margin:1rem 0;
+  padding:1.125rem 1.25rem 1.125rem 3.25rem;
+  background-color:var(--docs-attention-bg);
+  border:1px solid var(--docs-attention-border);
+  border-radius:10px;
+  position:relative;
+}
+.docs-article .docs-attention:before{
+  content:'!';
+  position:absolute;
+  left:1.25rem;
+  top:1.125rem;
+  width:1.35rem;
+  height:1.35rem;
+  border-radius:50%;
+  background-color:var(--docs-attention-accent);
+  color:#fff;
+  font-size:.875rem;
+  font-weight:800;
+  font-style:normal;
+  font-family:system-ui,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+.docs-article .docs-attention-title{
+  font-weight:700;
+  color:var(--docs-attention-accent);
+  margin:0 0 .45rem;
+  font-size:1rem;
+  letter-spacing:-.01em;
+}
+.docs-article .docs-attention p{
+  margin:0;
+  font-size:.9375rem;
+  line-height:1.55;
+  color:#000;
+}
+.docs-article .docs-attention p+p{
+  margin-top:.35rem;
+}
+
 /* Ручные сноски в тексте: компактная надстрочная цифра у слова (как у remark-gfm) */
 .docs-article sup.docs-fnref{
   line-height:0;
@@ -394,6 +546,16 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
 .docs-table-scroll table{
   margin:0;
   width:100%;
+}
+/*
+ * Липкий thead: при overflow-x:auto на обёртке браузер считает её scrollport — шапка наезжает на строки.
+ * На широком экране таблица чаще вмещается → оставляем overflow-x:visible, работает общий .docs-article thead th{position:sticky}.
+ * Узкая вёрстка: см. @media (max-width:1023px) — там overflow-x:auto и thead без sticky.
+ */
+@media (min-width:1024px){
+  .docs-article .docs-table-scroll{
+    overflow-x:visible;
+  }
 }
 
 /* ——— Адаптив ≤1023px: выдвижное меню, шапка (сетка), TOC, таблицы, карточки ——— */

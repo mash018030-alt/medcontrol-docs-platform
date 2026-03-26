@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:gh-pages": "vite build --base /medcontrol-docs-platform/",
     "lint": "eslint .",
     "preview": "vite preview",
     "convert:html": "node scripts/html-to-md.cjs",
