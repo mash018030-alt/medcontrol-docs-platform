@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
+import { rehypePublicAssets } from '../rehype-public-assets'
 import { flatArticles, navTree } from '../data/nav'
 import { recordArticleOpened } from '../services/dashboardRecentArticles'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
@@ -13,6 +14,8 @@ import SearchBar from './dashboard/SearchBar'
 import LandingSectionTile from './LandingSectionTile'
 import { MarkdownOl, MarkdownUl } from './markdownListComponents'
 import MarkdownTr from './MarkdownTr'
+import MarkdownImg from './MarkdownImg'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useSearchTextScroll } from '../hooks/useSearchTextScroll'
@@ -321,10 +324,20 @@ export default function Article() {
             </button>
             {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && (
               <p className="docs-pdf-service-hint">
-                Сейчас PDF строится как снимок страницы (текст не выделяется). Чтобы в файле был
-                настоящий текст, запустите сервис в <code>docs-app/pdf-server</code> и задайте{' '}
-                <code>VITE_PDF_SERVICE_URL</code> в <code>.env.local</code> — см.{' '}
-                <code>pdf-server/README.md</code>.
+                {import.meta.env.PROD ? (
+                  <>
+                    PDF сохраняется как снимок страницы: в файле текст нельзя выделить или искать. На
+                    локальной сборке с сервисом печати можно получить PDF с настоящим текстом — см.{' '}
+                    <code>pdf-server/README.md</code>.
+                  </>
+                ) : (
+                  <>
+                    Сейчас PDF строится как снимок страницы (текст не выделяется). Чтобы в файле был
+                    настоящий текст, запустите сервис в <code>docs-app/pdf-server</code> и задайте{' '}
+                    <code>VITE_PDF_SERVICE_URL</code> в <code>.env.local</code> — см.{' '}
+                    <code>pdf-server/README.md</code>.
+                  </>
+                )}
               </p>
             )}
           </div>
@@ -372,19 +385,24 @@ export default function Article() {
         ) : (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeFootnotesSection()]}
+            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,
               ul: MarkdownUl,
               tr: MarkdownTr,
+              img: MarkdownImg,
               a: ({ href, className, children, ...props }) => {
                 const isBackref =
                   (typeof className === 'string' && className.includes('data-footnote-backref')) ||
                   (href && String(href).startsWith('#user-content-fnref-'))
+                const resolvedHref =
+                  href && typeof href === 'string' && href.startsWith('/') && !href.startsWith('//')
+                    ? publicAssetUrl(href)
+                    : href
                 return (
                   <a
-                    href={href}
+                    href={resolvedHref}
                     className={className}
                     {...props}
                     {...(isBackref ? { title: 'Вернуться к месту в тексте', 'aria-label': 'Вернуться к месту в тексте' } : {})}

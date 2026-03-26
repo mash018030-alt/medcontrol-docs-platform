@@ -4,10 +4,13 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
+import { rehypePublicAssets } from '../rehype-public-assets'
 import { orderedPathsInSection } from '../data/nav'
 import { docsDashboardSections } from '../data/docsDashboardSections'
 import { MarkdownOl, MarkdownUl } from './markdownListComponents'
 import MarkdownTr from './MarkdownTr'
+import MarkdownImg from './MarkdownImg'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 const ALLOWED_SECTION_PDF_ROOTS = new Set(
   docsDashboardSections.filter((s) => s.sectionPdfBundle).map((s) => s.sectionPath),
@@ -128,19 +131,24 @@ export default function SectionPdfBundlePage() {
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeFootnotesSection()]}
+            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,
               ul: MarkdownUl,
               tr: MarkdownTr,
+              img: MarkdownImg,
               a: ({ href, className, children, ...props }) => {
                 const isBackref =
                   (typeof className === 'string' && className.includes('data-footnote-backref')) ||
                   (href && String(href).startsWith('#user-content-fnref-'))
+                const resolvedHref =
+                  href && typeof href === 'string' && href.startsWith('/') && !href.startsWith('//')
+                    ? publicAssetUrl(href)
+                    : href
                 return (
                   <a
-                    href={href}
+                    href={resolvedHref}
                     className={className}
                     {...props}
                     {...(isBackref

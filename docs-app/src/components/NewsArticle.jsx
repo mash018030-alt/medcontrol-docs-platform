@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { runArticlePdfExport } from '../utils/runArticlePdfExport'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
+import { rehypePublicAssets } from '../rehype-public-assets'
 import {
   fetchNewsTree,
   findNewsNode,
@@ -17,6 +18,8 @@ import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useArticleTocHeadings } from '../hooks/useArticleTocHeadings'
 import MarkdownTr from './MarkdownTr'
+import MarkdownImg from './MarkdownImg'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 
 function slugify(text) {
   return text
@@ -32,13 +35,18 @@ function mdFileSlugFromPath(newsPath) {
 
 const markdownComponents = {
   tr: MarkdownTr,
+  img: MarkdownImg,
   a: ({ href, className, children, ...props }) => {
     const isBackref =
       (typeof className === 'string' && className.includes('data-footnote-backref')) ||
       (href && String(href).startsWith('#user-content-fnref-'))
+    const resolvedHref =
+      href && typeof href === 'string' && href.startsWith('/') && !href.startsWith('//')
+        ? publicAssetUrl(href)
+        : href
     return (
       <a
-        href={href}
+        href={resolvedHref}
         className={className}
         {...props}
         {...(isBackref ? { title: 'Вернуться к месту в тексте', 'aria-label': 'Вернуться к месту в тексте' } : {})}
@@ -387,8 +395,17 @@ export default function NewsArticle() {
               </button>
               {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && (
                 <p className="docs-pdf-service-hint">
-                  Сейчас PDF строится как снимок страницы (текст не выделяется). Для PDF с
-                  выделяемым текстом см. <code>pdf-server/README.md</code> и <code>.env.local</code>.
+                  {import.meta.env.PROD ? (
+                    <>
+                      PDF сохраняется как снимок страницы: текст в файле нельзя выделить или искать. С
+                      локальным сервисом печати — PDF с настоящим текстом, см. <code>pdf-server/README.md</code>.
+                    </>
+                  ) : (
+                    <>
+                      Сейчас PDF строится как снимок страницы (текст не выделяется). Для PDF с
+                      выделяемым текстом см. <code>pdf-server/README.md</code> и <code>.env.local</code>.
+                    </>
+                  )}
                 </p>
               )}
             </div>
@@ -401,7 +418,7 @@ export default function NewsArticle() {
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw, rehypeFootnotesSection()]}
+              rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
               remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
               components={markdownComponents}
             >
