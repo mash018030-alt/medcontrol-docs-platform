@@ -1,0 +1,40 @@
+{
+  "name": "docs-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "convert:html": "node scripts/html-to-md.cjs",
+    "convert:news": "node scripts/news-html-to-md.cjs"
+  },
+  "dependencies": {
+    "hast-util-find-and-replace": "^5.0.1",
+    "hastscript": "^9.0.1",
+    "html-to-pdfmake": "^2.5.33",
+    "html2pdf.js": "^0.14.0",
+    "pdfmake": "^0.3.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.13.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "node-html-parser": "^7.1.0",
+    "turndown": "^7.2.2",
+    "vite": "^7.3.1"
+  }
+}

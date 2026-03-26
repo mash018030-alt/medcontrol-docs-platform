@@ -1,0 +1,22 @@
+# Dependencies & build
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Secrets
+.env
+.env.*
+.env.local
+
+# IDE / local
+.cursor/
+.idea/
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Windows reserved name (accidental empty file)
+nul

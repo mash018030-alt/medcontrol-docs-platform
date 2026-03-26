@@ -1,0 +1,18 @@
+{
+  // Агент: те же ключи продублированы в User settings.json (%APPDATA%\\Cursor\\User\\settings.json).
+  // Только workspace часто недостаточно — без User Cursor может всё равно требовать «Run» на каждую команду.
+  // После смены настроек: Ctrl+Shift+P → «Developer: Reload Window».
+  // В UI: Ctrl+Shift+J → Agent → Auto-run = включён (должен совпадать с runEverything).
+  // Варианты autoRunMode: "off" | "sandbox" | "runEverything"
+  "cursor.agent.autoRunMode": "runEverything",
+
+  // Дополнительно: разрешить без подтверждения
+  "cursor.agent.browserProtection": false,
+  "cursor.agent.fileDeletionProtection": false,
+  "cursor.agent.dotfileProtection": false,
+  "cursor.agent.externalFileProtection": true,
+
+  // Автозапуск dev-сервера при открытии папки (см. .vscode/tasks.json).
+  // Один раз: «Tasks: Manage Automatic Tasks in Folder» → Allow.
+  "task.allowAutomaticTasks": "on"
+}
