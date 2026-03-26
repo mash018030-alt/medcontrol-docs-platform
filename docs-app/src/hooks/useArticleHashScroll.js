@@ -8,6 +8,19 @@ export const ARTICLE_SPY_HEADER_OFFSET_PX = 96
 /** Не давать spy менять hash во время плавной прокрутки к якорю (иначе выигрывает предыдущий заголовок). */
 const SPY_SUPPRESS_AFTER_HASH_SCROLL_MS = 2000
 
+/** Не ставить hash из пальцевого скролла, пока страница почти у верха — иначе сразу срабатывает URL.replace и браузер дёргает к якорю. */
+const HASH_SYNC_MIN_SCROLL_PX = 48
+
+/** Синхронно с мобильной вёрсткой: на узком экране не пишем hash из scroll-spy — смена фрагмента заставляет WebKit/Mobile Chrome прокручивать к элементу и «откатывает» лёгкий скролл. */
+function shouldWriteSpyHashToLocation() {
+  if (typeof window === 'undefined') return true
+  try {
+    return !window.matchMedia('(max-width: 1023px)').matches
+  } catch {
+    return true
+  }
+}
+
 let hashSpyQuietUntil = 0
 
 /** Подавить scroll-spy после перехода по якорю / сноске (можно вызывать из других хуков). */
@@ -159,8 +172,11 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     /* Как раньше при scroll-listener: не подменять пустой hash, пока пользователь не прокрутил страницу */
     const hasHash = Boolean(currentRaw)
     const scrollEl = typeof document !== 'undefined' ? document.scrollingElement ?? document.documentElement : null
-    const scrolled = scrollEl ? scrollEl.scrollTop > 1 : false
-    if (!hasHash && !scrolled) return
+    const scrollTop = scrollEl ? scrollEl.scrollTop : 0
+    const scrolledEnough = scrollTop >= HASH_SYNC_MIN_SCROLL_PX
+    if (!hasHash && !scrolledEnough) return
+
+    if (!shouldWriteSpyHashToLocation()) return
 
     skipScrollForSpyHash.current = true
     navigate(

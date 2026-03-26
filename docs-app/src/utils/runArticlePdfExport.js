@@ -2,6 +2,22 @@ import html2pdf from 'html2pdf.js'
 
 const PDF_WIDTH_PX = 672
 
+/** Синхронно с брейкпоинтом мобильной вёрстки (см. DocsLayoutContext, App.css). */
+const MOBILE_PDF_MQ = '(max-width: 1023px)'
+
+/**
+ * Узкий экран (телефон/планшет в портрете): сервис печати Playwright с телефона недоступен или не может
+ * открыть «внутренний» URL — используем клиентский PDF или отдельную вкладку со сборкой раздела.
+ */
+export function preferClientSideArticlePdf() {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.matchMedia(MOBILE_PDF_MQ).matches
+  } catch {
+    return false
+  }
+}
+
 /**
  * URL POST для /api/pdf: в dev — прокси Vite → pdf-server; в prod — только VITE_PDF_SERVICE_URL.
  */
@@ -107,10 +123,9 @@ async function runArticlePdfExportHtml2Pdf(rootEl, { filename }) {
       requestAnimationFrame(() => requestAnimationFrame(resolve))
     })
 
-    await html2pdf()
+    const blob = await html2pdf()
       .set({
         margin:16,
-        filename,
         image: { type: 'jpeg', quality: 0.92 },
         html2canvas: {
           scale: 2,
@@ -138,7 +153,8 @@ async function runArticlePdfExportHtml2Pdf(rootEl, { filename }) {
         },
       })
       .from(rootEl)
-      .save()
+      .outputPdf('blob')
+    triggerBlobDownload(blob, filename)
   } catch {
     /* пользователь уже видит кнопку; тихий сбой */
   } finally {
@@ -151,6 +167,19 @@ async function runArticlePdfExportHtml2Pdf(rootEl, { filename }) {
  * Без сервиса — показать сообщение, html2pdf не используем (другой DOM).
  */
 export async function runPdfFromPrintUrl(printUrl, { filename }) {
+  if (preferClientSideArticlePdf()) {
+    const opened = window.open(printUrl, '_blank', 'noopener,noreferrer')
+    if (!opened || opened.closed) {
+      window.alert(
+        [
+          'На телефоне PDF раздела открывается отдельной вкладкой с версией для печати.',
+          'Разрешите всплывающие окна для сайта или откройте документацию с компьютера, чтобы скачать файл одной кнопкой.',
+        ].join('\n'),
+      )
+    }
+    return
+  }
+
   const apiUrl = getPdfServiceApiUrl()
   if (!apiUrl) {
     window.alert(
@@ -177,8 +206,14 @@ export async function runPdfFromPrintUrl(printUrl, { filename }) {
  * @param {{ filename: string, printUrl?: string | null }} opts при printUrl печатается эта страница, rootEl для запаса не нужен
  */
 export async function runArticlePdfExport(rootEl, { filename, printUrl = null }) {
-  const apiUrl = getPdfServiceApiUrl()
   const targetPrintUrl = printUrl || null
+
+  if (preferClientSideArticlePdf() && !targetPrintUrl && rootEl) {
+    await runArticlePdfExportHtml2Pdf(rootEl, { filename })
+    return
+  }
+
+  const apiUrl = getPdfServiceApiUrl()
   if (apiUrl) {
     try {
       const url = targetPrintUrl ?? buildMcPdfUrlFromCurrentWindow()

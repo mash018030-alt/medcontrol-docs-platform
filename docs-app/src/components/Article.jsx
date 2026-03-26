@@ -17,6 +17,7 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { attachDocsCarousels } from '../utils/attachDocsCarousels'
 import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useSearchTextScroll } from '../hooks/useSearchTextScroll'
@@ -63,88 +64,18 @@ export default function Article() {
   useEffect(() => {
     recordArticleOpened(slug)
   }, [slug])
-  // Инициализация каруселей: точки, стрелки без зацикливания; крайние стрелки скрываются на первом/последнем слайде
+  /* Карусели: точки, стрелки, свайп по области слайдов (см. attachDocsCarousels). */
   useEffect(() => {
     if (loading) return
-    const attached = []
+    let detach = () => {}
     const frame = requestAnimationFrame(() => {
       const el = articleBodyRef.current
       if (!el) return
-
-      const updateEdgeArrows = (carousel) => {
-        const radios = carousel.querySelectorAll('input[type="radio"]')
-        const arrowPrev = carousel.querySelector('.docs-carousel-arrow-prev')
-        const arrowNext = carousel.querySelector('.docs-carousel-arrow-next')
-        const n = radios.length
-        if (n === 0) return
-        let i = Array.from(radios).findIndex((r) => r.checked)
-        if (i < 0) i = 0
-        const atFirst = i <= 0
-        const atLast = i >= n - 1
-        if (arrowPrev) {
-          arrowPrev.classList.toggle('docs-carousel-arrow--hidden', atFirst)
-          arrowPrev.setAttribute('tabindex', atFirst ? '-1' : '0')
-        }
-        if (arrowNext) {
-          arrowNext.classList.toggle('docs-carousel-arrow--hidden', atLast)
-          arrowNext.setAttribute('tabindex', atLast ? '-1' : '0')
-        }
-      }
-
-      el.querySelectorAll('.docs-carousel').forEach((carousel) => {
-        const radios = carousel.querySelectorAll('input[type="radio"]')
-        const labels = carousel.querySelectorAll('.docs-carousel-dots label')
-        const arrowPrev = carousel.querySelector('.docs-carousel-arrow-prev')
-        const arrowNext = carousel.querySelector('.docs-carousel-arrow-next')
-        const n = radios.length
-
-        const goTo = (idx) => (e) => {
-          e.preventDefault()
-          if (radios[idx]) radios[idx].checked = true
-          // change при программной установке checked срабатывает не во всех браузерах — обновляем стрелки явно
-          updateEdgeArrows(carousel)
-        }
-        labels.forEach((lbl, idx) => {
-          const handler = goTo(idx)
-          lbl.addEventListener('click', handler)
-          attached.push({ el: lbl, type: 'click', handler })
-        })
-
-        const onSlideChange = () => updateEdgeArrows(carousel)
-        radios.forEach((radio) => {
-          radio.addEventListener('change', onSlideChange)
-          attached.push({ el: radio, type: 'change', handler: onSlideChange })
-        })
-
-        if (arrowPrev && n > 0) {
-          const goPrev = (e) => {
-            e.preventDefault()
-            const i = Array.from(radios).findIndex((r) => r.checked)
-            if (i <= 0) return
-            if (radios[i - 1]) radios[i - 1].checked = true
-            updateEdgeArrows(carousel)
-          }
-          arrowPrev.addEventListener('click', goPrev)
-          attached.push({ el: arrowPrev, type: 'click', handler: goPrev })
-        }
-        if (arrowNext && n > 0) {
-          const goNext = (e) => {
-            e.preventDefault()
-            const i = Array.from(radios).findIndex((r) => r.checked)
-            if (i < 0 || i >= n - 1) return
-            if (radios[i + 1]) radios[i + 1].checked = true
-            updateEdgeArrows(carousel)
-          }
-          arrowNext.addEventListener('click', goNext)
-          attached.push({ el: arrowNext, type: 'click', handler: goNext })
-        }
-
-        updateEdgeArrows(carousel)
-      })
+      detach = attachDocsCarousels(el)
     })
     return () => {
       cancelAnimationFrame(frame)
-      attached.forEach(({ el, type, handler }) => el.removeEventListener(type, handler))
+      detach()
     }
   }, [md, loading])
 
@@ -228,14 +159,17 @@ export default function Article() {
 
   const handleContentClick = (e) => {
     if (e.target.tagName !== 'IMG') return
+    const inCarousel = e.target.closest('.docs-carousel')
+    if (inCarousel?.dataset.docsCarouselSwipeJustNow === '1') return
     e.preventDefault()
     const el = articleBodyRef.current
     if (!el) return
     const clicked = e.target
     const carousel = clicked.closest('.docs-carousel')
+    /* Только карусель — несколько слайдов со стрелками; иначе одна картинка (не вся статья). */
     const imgs = carousel
       ? Array.from(carousel.querySelectorAll('.docs-carousel-slide img'))
-      : Array.from(el.querySelectorAll('img'))
+      : [clicked]
     const images = imgs.map((img) => ({
       src: img.currentSrc || img.getAttribute('src') || '',
       alt: img.alt || '',

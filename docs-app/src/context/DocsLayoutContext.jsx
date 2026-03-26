@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useLocation } from 'react-router-dom'
 import { useMediaQuery } from '../hooks/useMediaQuery'
 
-const DOCS_MOBILE_NAV_MQ = '(max-width: 899px)'
+const DOCS_MOBILE_NAV_MQ = '(max-width: 1023px)'
 
 const DocsLayoutContext = createContext(null)
 
