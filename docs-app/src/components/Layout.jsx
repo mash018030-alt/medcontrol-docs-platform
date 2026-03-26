@@ -24,11 +24,14 @@ function LayoutShell() {
 
   const { isMobileLayout, mobileNavOpen, closeMobileNav } = useDocsLayout()
 
-  /* React Router не сбрасывает scroll; без этого переход «след./пред. статья» открывает низ страницы. */
+  /* React Router не сбрасывает scroll под футеры; без этого переход «след./пред. статья» открывает низ страницы.
+   * Зависимости только pathname + search: смена одного лишь # не должна вызывать этот эффект (иначе сброс hash
+   * без смены пути давал scrollTo(0,0) во время чтения). Если после перехода в URL уже есть hash — не трогаем
+   * окно (позицию задаёт useArticleHashScroll по deep link). */
   useEffect(() => {
     if (location.hash) return
     window.scrollTo(0, 0)
-  }, [location.pathname, location.search, location.hash])
+  }, [location.pathname, location.search])
 
   return (
     <div className={isMcPdf ? 'docs-layout docs-layout--mc-pdf' : 'docs-layout'}>

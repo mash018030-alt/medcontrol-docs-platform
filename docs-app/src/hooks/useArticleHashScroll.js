@@ -1,23 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { scrollToIdAfterReveal } from '../utils/revealCitationTarget'
 
 /** Отступ от верха viewport: ниже липкого заголовка (согласовано с scrollToIdAfterReveal / scroll-margin). */
 export const ARTICLE_SPY_HEADER_OFFSET_PX = 96
 
-/** Не давать spy менять hash во время плавной прокрутки к якорю (иначе выигрывает предыдущий заголовок). */
+/** Не давать spy «перетягивать» подсветку TOC во время плавной прокрутки к якорю (TOC / сноска). */
 const SPY_SUPPRESS_AFTER_HASH_SCROLL_MS = 2000
 
-/** Не ставить hash из пальцевого скролла, пока страница почти у верха — иначе сразу срабатывает URL.replace и браузер дёргает к якорю. */
-const HASH_SYNC_MIN_SCROLL_PX = 48
-
-/** Синхронно с мобильной вёрсткой: на узком экране не пишем hash из scroll-spy — смена фрагмента заставляет WebKit/Mobile Chrome прокручивать к элементу и «откатывает» лёгкий скролл. */
-function shouldWriteSpyHashToLocation() {
-  if (typeof window === 'undefined') return true
+function decodeHashFragment(raw) {
+  if (!raw) return ''
   try {
-    return !window.matchMedia('(max-width: 1023px)').matches
+    return decodeURIComponent(raw)
   } catch {
-    return true
+    return raw
   }
 }
 
@@ -55,16 +51,14 @@ export function computeActiveHeadingIdFromArticleRoot(root) {
 
 /**
  * 1) После загрузки контента — прокрутка к элементу из hash (повтор до появления в DOM).
- * 2) При прокрутке статьи — обновление hash через replace, чтобы обновление страницы
- *    открывало тот же раздел (в т.ч. если до этого листали только колёсиком, без клика по оглавлению).
- * 3) Активный пункт правого TOC: тот же источник истины, что и для URL (с учётом deep link / quiet).
+ * 2) При прокрутке — только activeHeadingId для подсветки TOC. Hash в URL НЕ пишем из spy:
+ *    navigate({ hash }) заставляет движок снова прокручивать к якорю и дергает страницу (mobile/desktop).
+ *    Актуальный фрагмент в адресе — после клика по TOC/сноске или внешнего deep link.
  *
  * @returns {string|null} activeHeadingId — id заголовка для подсветки в TOC
  */
 export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enabled }) {
   const location = useLocation()
-  const navigate = useNavigate()
-  const skipScrollForSpyHash = useRef(false)
   const locationRef = useRef(location)
   locationRef.current = location
 
@@ -76,14 +70,10 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
 
   useEffect(() => {
     if (!enabled || loading || !location.hash) return
-    if (skipScrollForSpyHash.current) {
-      skipScrollForSpyHash.current = false
-      return
-    }
     const raw = location.hash.slice(1)
     if (!raw) return
     if (isTextFragmentHash(raw)) return
-    const targetId = decodeURIComponent(raw)
+    const targetId = decodeHashFragment(raw)
 
     let cancelled = false
     let attempts = 0
@@ -122,7 +112,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
       const rootQ = articleBodyRef.current
       const fromScroll = rootQ ? computeActiveHeadingIdFromArticleRoot(rootQ) : null
       if (!isTextFragmentHash(hRaw) && hRaw) {
-        const id = decodeURIComponent(hRaw)
+        const id = decodeHashFragment(hRaw)
         const hashEl = document.getElementById(id)
         const stillApproachingTarget =
           hashEl && hashEl.getBoundingClientRect().top > ARTICLE_SPY_HEADER_OFFSET_PX + 6
@@ -145,7 +135,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     }
 
     /* Пока цель deep link (#якорь) ещё ниже «линии» scroll-spy, не подменяем hash */
-    const hashTargetId = hRaw ? decodeURIComponent(hRaw) : ''
+    const hashTargetId = hRaw ? decodeHashFragment(hRaw) : ''
     if (hashTargetId) {
       const hashTargetEl = document.getElementById(hashTargetId)
       if (hashTargetEl) {
@@ -164,29 +154,6 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     if (!spyId) return
 
     setActiveHeadingId((prev) => (prev === spyId ? prev : spyId))
-
-    const currentRaw = loc.hash.slice(1)
-    const currentId = currentRaw ? decodeURIComponent(currentRaw) : ''
-    if (spyId === currentId) return
-
-    /* Как раньше при scroll-listener: не подменять пустой hash, пока пользователь не прокрутил страницу */
-    const hasHash = Boolean(currentRaw)
-    const scrollEl = typeof document !== 'undefined' ? document.scrollingElement ?? document.documentElement : null
-    const scrollTop = scrollEl ? scrollEl.scrollTop : 0
-    const scrolledEnough = scrollTop >= HASH_SYNC_MIN_SCROLL_PX
-    if (!hasHash && !scrolledEnough) return
-
-    if (!shouldWriteSpyHashToLocation()) return
-
-    skipScrollForSpyHash.current = true
-    navigate(
-      {
-        pathname: loc.pathname,
-        search: loc.search,
-        hash: `#${spyId}`,
-      },
-      { replace: true, preventScrollReset: true },
-    )
   }
 
   useEffect(() => {
@@ -226,7 +193,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
       window.removeEventListener('scroll', schedule)
       if (rafId) cancelAnimationFrame(rafId)
     }
-  }, [enabled, loading, md, slug, articleBodyRef, navigate])
+  }, [enabled, loading, md, slug, articleBodyRef])
 
   useEffect(() => {
     if (!enabled || loading) return

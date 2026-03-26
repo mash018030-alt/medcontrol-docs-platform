@@ -55,11 +55,14 @@ export default function Toc({ headings, activeId }) {
     quietHashSpy()
     navigate(
       { pathname: location.pathname, search: location.search, hash: `#${id}` },
-      { replace: false, preventScrollReset: true },
+      { replace: true, preventScrollReset: true },
     )
-    /* Как у сносок (useFootnoteBackrefClick): при preventScrollReset браузер не прыгает к #,
-       а эффект в useArticleHashScroll иногда пропускает scroll из‑за skipScrollForSpyHash. */
-    scrollToIdAfterReveal(id, { behavior: 'smooth' })
+    /* Двойной вызов + rAF: после commit Router и открытия details цель гарантированно в DOM (mobile). */
+    const run = () => scrollToIdAfterReveal(id, { behavior: 'smooth' })
+    run()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(run)
+    })
   }
 
   return (

@@ -72,8 +72,30 @@ button.docs-dashboard-card__pdf:disabled{opacity:.55;cursor:not-allowed}
 button.docs-news-release-row__pdf{cursor:pointer;font-family:inherit}
 button.docs-news-release-row__pdf:disabled{opacity:.55;cursor:not-allowed}
 /* Разводящая сетка раздела: иконка+название и кнопка PDF справа (класс кнопки — как у новостей) */
-.docs-markdown-root .docs-landing-tile{flex-direction:row;justify-content:space-between;align-items:center;gap:.75rem;padding:1rem .65rem 1rem 1.15rem;text-align:left}
-.docs-landing-tile__surface{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.65rem;color:inherit;align-self:stretch;text-decoration:none;border-radius:8px;outline-offset:2px}
+/* padding на обёртке оставлял «мёртвые» зоны: клик не попадал в Link. Отступы — на .docs-landing-tile__surface */
+.docs-markdown-root .docs-landing-tile{
+  flex-direction:row;
+  justify-content:space-between;
+  align-items:stretch;
+  gap:.75rem;
+  padding:0;
+  text-align:left
+}
+.docs-landing-tile__surface{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:.65rem;
+  color:inherit;
+  align-self:stretch;
+  text-decoration:none;
+  border-radius:8px;
+  outline-offset:2px
+}
+.docs-markdown-root .docs-landing-tile__surface{padding:1rem .65rem 1rem 1.15rem}
 .docs-landing-tile__surface:focus-visible{outline:2px solid var(--docs-ui-accent);outline-offset:2px}
 .docs-landing-tile__pdf{position:relative;z-index:1;flex-shrink:0;align-self:center}
 /* У разводящей раздела: текстовая капсула у H1 (макет); иконки в карточках — базовый .docs-news-release-row__pdf */
@@ -600,7 +622,7 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
     flex-direction:column;
     align-items:stretch;
     gap:.85rem;
-    padding:1rem .9rem;
+    padding:0;
   }
   .docs-landing-tile__surface{
     flex-direction:row;
@@ -611,6 +633,7 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
     min-width:0;
     text-align:left;
   }
+  .docs-markdown-root .docs-landing-tile__surface{padding:1rem .9rem}
   .docs-landing-tile__surface .docs-landing-tile-text{
     text-align:left;
     flex:1;
@@ -618,6 +641,7 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   }
   .docs-landing-tile__pdf{
     align-self:flex-end;
+    margin:0 .9rem 1rem 0;
   }
   /* Главная: карточки разделов — колонка, текст не сжимается в полоску */
   .docs-dashboard-card--nav-row{
