@@ -1,4 +1,5 @@
 import { articleUnderSectionRoot, flatArticles, navTree, navSubtreeContains } from '../data/nav'
+import { searchMetadataByPath } from '../data/searchMetadata'
 
 /** @param {string} w */
 export function normalizeToken(w) {
@@ -10,11 +11,71 @@ export function normalizeText(text) {
   return (text || '').toLowerCase().replace(/ё/g, 'е')
 }
 
+/** Простейшая нормализация русских словоформ к основе (без тяжелой NLP-зависимости). */
+export function normalizeRussianStem(token) {
+  const t = normalizeToken(token)
+  if (!t) return ''
+  if (t.length <= 3) return t
+  const endings = [
+    'иями',
+    'ями',
+    'ами',
+    'иями',
+    'иями',
+    'ого',
+    'ему',
+    'ому',
+    'ыми',
+    'ими',
+    'иях',
+    'ах',
+    'ях',
+    'ов',
+    'ев',
+    'ия',
+    'ья',
+    'иям',
+    'ием',
+    'ью',
+    'ой',
+    'ей',
+    'ий',
+    'ый',
+    'ое',
+    'ее',
+    'ая',
+    'яя',
+    'ам',
+    'ям',
+    'ом',
+    'ем',
+    'ам',
+    'ям',
+    'у',
+    'ю',
+    'а',
+    'я',
+    'ы',
+    'и',
+    'е',
+    'о',
+  ]
+  for (const e of endings) {
+    if (t.length - e.length >= 3 && t.endsWith(e)) return t.slice(0, -e.length)
+  }
+  return t
+}
+
 /** @param {string} text */
 export function tokenize(text) {
   const t = normalizeText(text)
   const m = t.match(/[\p{L}\p{N}]+/gu)
   return m ? m.map(normalizeToken) : []
+}
+
+/** Токены текста, нормализованные до основы слова для поиска. */
+export function tokenizeForSearch(text) {
+  return tokenize(text).map((t) => normalizeRussianStem(t))
 }
 
 /** Служебные слова: не участвуют в условии «все слова запроса». */
@@ -53,8 +114,9 @@ const QUERY_STOPWORDS = new Set([
  */
 export function searchTokensFromQuery(query) {
   const raw = tokenize(query)
-  const filtered = raw.filter((t) => t.length >= 2 && !QUERY_STOPWORDS.has(t))
-  return filtered.length > 0 ? filtered : raw.filter((t) => t.length >= 1)
+  const normalized = raw.map((t) => normalizeRussianStem(t))
+  const filtered = normalized.filter((t) => t.length >= 2 && !QUERY_STOPWORDS.has(t))
+  return filtered.length > 0 ? filtered : normalized.filter((t) => t.length >= 1)
 }
 
 /** @param {string} a @param {string} b */
@@ -146,12 +208,13 @@ export function tokenMatchesSomeWord(qt, words) {
  */
 export function shouldHighlightWord(wordNorm, queryTokens) {
   if (!wordNorm || !queryTokens.length) return false
+  const wordStem = normalizeRussianStem(wordNorm)
   /* Однобуквенные слова (в, к, о, с…) не подсвечиваем по fuzzy — только точное совпадение с токеном запроса. */
-  if (wordNorm.length === 1) {
-    return queryTokens.some((qt) => qt === wordNorm)
+  if (wordStem.length === 1) {
+    return queryTokens.some((qt) => qt === wordStem)
   }
   for (const qt of queryTokens) {
-    if (strongTokenMatch(qt, wordNorm)) return true
+    if (strongTokenMatch(qt, wordStem)) return true
   }
   return false
 }
@@ -206,6 +269,64 @@ export function extractLeadingHeading(md) {
   const line = (md || '').trim().split('\n')[0] || ''
   const m = line.match(/^#\s+(.+)$/)
   return m ? m[1].trim() : ''
+}
+
+/**
+ * Простой YAML-frontmatter для полей поиска.
+ * Поддерживает:
+ * aliases: [a, b]
+ * aliases:
+ *   - a
+ *   - b
+ */
+export function parseSearchFrontmatter(md) {
+  const source = md || ''
+  const fm = source.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/)
+  if (!fm) return { body: source, meta: {} }
+  const raw = fm[1]
+  const body = source.slice(fm[0].length)
+  /** @type {{ aliases?: string[], keywords?: string[], searchTerms?: string[] }} */
+  const meta = {}
+  const lines = raw.split('\n')
+  let currentKey = null
+  for (const line of lines) {
+    const kv = line.match(/^\s*([A-Za-z][A-Za-z0-9_]*)\s*:\s*(.*)\s*$/)
+    if (kv) {
+      currentKey = kv[1]
+      const val = kv[2].trim()
+      if (!['aliases', 'keywords', 'searchTerms'].includes(currentKey)) continue
+      if (val.startsWith('[') && val.endsWith(']')) {
+        const arr = val
+          .slice(1, -1)
+          .split(',')
+          .map((v) => v.trim().replace(/^['"]|['"]$/g, ''))
+          .filter(Boolean)
+        if (arr.length) meta[currentKey] = arr
+      } else if (val) {
+        meta[currentKey] = [val.replace(/^['"]|['"]$/g, '')]
+      } else if (!meta[currentKey]) {
+        meta[currentKey] = []
+      }
+      continue
+    }
+    const item = line.match(/^\s*-\s+(.+)\s*$/)
+    if (item && currentKey && ['aliases', 'keywords', 'searchTerms'].includes(currentKey)) {
+      meta[currentKey] ||= []
+      meta[currentKey].push(item[1].trim().replace(/^['"]|['"]$/g, ''))
+    }
+  }
+  return { body, meta }
+}
+
+/** @param {string} md */
+export function extractHeadings(md) {
+  const lines = (md || '').split('\n')
+  const headings = []
+  for (const line of lines) {
+    const m = line.match(/^\s*#{2,6}\s+(.+?)\s*$/)
+    if (m) headings.push(m[1].trim())
+  }
+  return headings
 }
 
 /** Заголовок для скоринга: пункт меню + H1 из md без повтора, если текст совпадает. */
@@ -305,54 +426,68 @@ function proximityBonus(bodyWords, queryTokens) {
  * @param {string} bodyText
  * @param {string[]} queryTokens
  */
-function scoreDocument(titleText, bodyText, queryTokens) {
-  const titleWords = tokenize(titleText)
-  const bodyWords = tokenize(bodyText)
-  const combinedNorm = normalizeText(`${titleText}\n${bodyText}`).replace(/\s+/g, ' ')
+function scoreDocument(doc, queryTokens) {
+  const titleWords = tokenizeForSearch(doc.titleText)
+  const aliasWords = tokenizeForSearch(doc.aliasText)
+  const headingWords = tokenizeForSearch(doc.headingsText)
+  const bodyWords = tokenizeForSearch(doc.bodyText)
+  const pathWords = tokenizeForSearch(doc.pathText)
 
-  for (const qt of queryTokens) {
-    const inTitle = tokenMatchesSomeWord(qt, titleWords)
-    const inBody = tokenMatchesSomeWord(qt, bodyWords)
-    if (!inTitle && !inBody) return 0
-  }
-
+  const titleNorm = normalizeText(doc.titleText).replace(/\s+/g, ' ')
+  const aliasNorm = normalizeText(doc.aliasText).replace(/\s+/g, ' ')
+  const headingNorm = normalizeText(doc.headingsText).replace(/\s+/g, ' ')
+  const bodyNorm = normalizeText(doc.bodyText).replace(/\s+/g, ' ')
   const phrase = normalizeText(queryTokens.join(' ')).replace(/\s+/g, ' ').trim()
-  const phraseHit = phrase.length >= 4 && combinedNorm.includes(phrase)
-  const allTokensInTitle = queryTokens.every((qt) => tokenMatchesSomeWord(qt, titleWords))
+
+  /** @type {Record<string, {title:boolean,alias:boolean,heading:boolean,body:boolean,path:boolean}>} */
+  const hitMap = {}
+  let covered = 0
+  for (const qt of queryTokens) {
+    const titleHit = tokenMatchesSomeWord(qt, titleWords)
+    const aliasHit = tokenMatchesSomeWord(qt, aliasWords)
+    const headingHit = tokenMatchesSomeWord(qt, headingWords)
+    const bodyHit = tokenMatchesSomeWord(qt, bodyWords)
+    const pathHit = tokenMatchesSomeWord(qt, pathWords)
+    hitMap[qt] = { title: titleHit, alias: aliasHit, heading: headingHit, body: bodyHit, path: pathHit }
+    if (titleHit || aliasHit || headingHit || bodyHit || pathHit) covered++
+  }
+  if (covered === 0) return 0
+
+  const coverage = covered / queryTokens.length
+  if (queryTokens.length > 1 && coverage < 0.5) return 0
+
+  const exactTitlePhraseHit = phrase.length >= 4 && titleNorm.includes(phrase)
+  const nearTitlePhraseHit =
+    phrase.length >= 4 &&
+    !exactTitlePhraseHit &&
+    (headingNorm.includes(phrase) || aliasNorm.includes(phrase) || bodyNorm.includes(phrase))
+  const allInTitle = queryTokens.every((qt) => hitMap[qt]?.title)
+  const allInAlias = queryTokens.every((qt) => hitMap[qt]?.alias)
+  const allInHeading = queryTokens.every((qt) => hitMap[qt]?.heading)
   const win = minWindowAllQueryTokens(bodyWords, queryTokens)
 
-  /* Многословный запрос: не ранжируем статью, если слова только «размазаны» по тексту */
-  if (queryTokens.length >= 2 && !phraseHit && !allTokensInTitle) {
-    if (win === null || win > 48) return 0
-  }
+  let score = 8
+  if (exactTitlePhraseHit) score += 240
+  else if (nearTitlePhraseHit) score += 90
 
-  let score = 14
-  if (phraseHit) {
-    score += 58
-  }
-
-  let tokensInTitle = 0
   for (const qt of queryTokens) {
-    if (tokenMatchesSomeWord(qt, titleWords)) {
-      score += 26
-      tokensInTitle++
-    }
-    let bodyHits = 0
-    for (const w of bodyWords) {
-      if (strongTokenMatch(qt, w)) bodyHits++
-    }
-    score += Math.min(bodyHits, 7) * 1.25
+    const hit = hitMap[qt]
+    if (hit.title) score += 64
+    else if (hit.alias) score += 46
+    else if (hit.heading) score += 34
+    else if (hit.path) score += 26
+    else if (hit.body) score += 18
   }
 
-  if (tokensInTitle === queryTokens.length) {
-    score += 28
-  }
+  if (allInTitle) score += 90
+  else if (allInAlias) score += 55
+  else if (allInHeading) score += 40
 
-  if (queryTokens.length >= 2 && win !== null && win <= 48) {
-    score += Math.round(Math.max(0, 50 - win * 0.85))
+  if (queryTokens.length >= 2 && win !== null) {
+    score += Math.max(0, 52 - win)
   }
-
   score += proximityBonus(bodyWords, queryTokens)
+  score += Math.round(coverage * 60)
   return score
 }
 
@@ -369,7 +504,7 @@ export function findFirstStrongMatchWordIndex(plain, queryTokens) {
   while ((m = re.exec(plain)) !== null) {
     const norm = normalizeToken(m[0])
     for (const qt of queryTokens) {
-      if (strongTokenMatch(qt, norm)) return idx
+      if (strongTokenMatch(qt, normalizeRussianStem(norm))) return idx
     }
     idx++
   }
@@ -414,7 +549,7 @@ export function buildSnippetResult(plain, queryTokens, radius = 118, forceCenter
       raw: m[0],
       start: m.index,
       end: m.index + m[0].length,
-      norm: normalizeToken(m[0]),
+      norm: normalizeRussianStem(normalizeToken(m[0])),
     })
   }
 
@@ -524,13 +659,34 @@ export function searchDocuments(docsMap, query, sectionRootPath = null) {
     if (sectionRootPath && !articleUnderSectionRoot(article.path, sectionRootPath)) continue
     // Разводящая страница раздела (user-guide) даёт ложные совпадения по ссылкам в списке и дублирует название раздела.
     if (sectionRootPath && article.path === sectionRootPath) continue
-    const titleFromMdRaw = extractLeadingHeading(md)
+    const { body: bodyWithoutFrontmatter, meta } = parseSearchFrontmatter(md)
+    const externalMeta = searchMetadataByPath[article.path] || {}
+    const mergedMeta = {
+      aliases: [...(meta.aliases || []), ...(externalMeta.aliases || [])],
+      keywords: [...(meta.keywords || []), ...(externalMeta.keywords || [])],
+      searchTerms: [...(meta.searchTerms || []), ...(externalMeta.searchTerms || [])],
+    }
+    const titleFromMdRaw = extractLeadingHeading(bodyWithoutFrontmatter)
     const titleFromMd = titleFromMdRaw ? toPlainTextForSearch(titleFromMdRaw) : ''
     const titleNavPlain = toPlainTextForSearch(article.title)
     const titleBlob = dedupeTitleBlob(titleNavPlain, titleFromMd)
-    const plainBody = toPlainTextForSearch(md)
+    const headingsPlain = toPlainTextForSearch(extractHeadings(bodyWithoutFrontmatter).join(' '))
+    const aliasesPlain = toPlainTextForSearch(
+      [...mergedMeta.aliases, ...mergedMeta.keywords, ...mergedMeta.searchTerms].join(' '),
+    )
+    const plainBody = toPlainTextForSearch(bodyWithoutFrontmatter)
     const plainFull = buildPlainFullForSnippet(titleNavPlain, titleFromMd, plainBody)
-    let score = scoreDocument(titleBlob, plainBody, queryTokens)
+    const pathPlain = toPlainTextForSearch(article.path.replace(/\//g, ' '))
+    let score = scoreDocument(
+      {
+        titleText: titleBlob,
+        aliasText: aliasesPlain,
+        headingsText: headingsPlain,
+        bodyText: plainBody,
+        pathText: pathPlain,
+      },
+      queryTokens,
+    )
     if (score <= 0) continue
     let { snippet, scrollPhrase, windowMatchScore } = buildSnippetResult(
       plainFull,
@@ -564,13 +720,61 @@ export function searchDocuments(docsMap, query, sectionRootPath = null) {
   return results
 }
 
+function titleFromSlug(path) {
+  const last = path.split('/').pop() || path
+  const pretty = last.replace(/-/g, ' ')
+  return pretty.charAt(0).toUpperCase() + pretty.slice(1)
+}
+
+function isNewsPath(path) {
+  const top = (path || '').split('/')[0] || ''
+  return top.toLowerCase() === 'news'
+}
+
+function isSectionRootPath(path) {
+  return /\/user-guide$/.test(path)
+}
+
 /**
  * @returns {Promise<Map<string, { md: string, article: { title: string, path: string } }>>}
  */
 export async function loadAllDocs() {
-  const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
+  /** @type {Record<string, () => Promise<string>>} */
+  const contentModules = import.meta.glob('../../public/content/**/*.md', {
+    query: '?raw',
+    import: 'default',
+  })
+
+  const fromNav = new Map(flatArticles.map((a) => [a.path, a]))
+  const fromFiles = Object.keys(contentModules)
+    .map((filePath) => {
+      const path = filePath
+        .replace(/^.*\/public\/content\//, '')
+        .replace(/\.md$/, '')
+      return {
+        path,
+        title: fromNav.get(path)?.title || titleFromSlug(path),
+      }
+    })
+    .filter((a) => !isNewsPath(a.path))
+
+  const articleMap = new Map(fromFiles.map((a) => [a.path, a]))
+  for (const a of flatArticles) {
+    if (!articleMap.has(a.path)) articleMap.set(a.path, a)
+  }
+
   const entries = await Promise.all(
-    flatArticles.map(async (article) => {
+    Array.from(articleMap.values()).map(async (article) => {
+      const loader = contentModules[`../../public/content/${article.path}.md`]
+      if (loader) {
+        try {
+          const md = await loader()
+          return [article.path, { md: typeof md === 'string' ? md : '', article }]
+        } catch {
+          return [article.path, { md: '', article }]
+        }
+      }
+      const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
       const path = `${base}/content/${article.path}.md`.replace(/^\/+/, '/')
       const url = new URL(path, window.location.origin).href
       try {
@@ -583,6 +787,7 @@ export async function loadAllDocs() {
       }
     }),
   )
+
   return new Map(entries)
 }
 
@@ -627,4 +832,71 @@ export function suggestArticlesByTitle(query, limit = 6, sectionRootPath = null)
     title: x.article.title,
     sectionTitle: x.sectionTitle,
   }))
+}
+
+/**
+ * Подсказки с учетом title + aliases/keywords/searchTerms + path.
+ * @param {Map<string, { md: string, article: { title: string, path: string } }>} docsMap
+ * @param {string} query
+ * @param {number} limit
+ * @param {string | null} sectionRootPath
+ */
+export function suggestArticles(docsMap, query, limit = 6, sectionRootPath = null) {
+  const qTokens = searchTokensFromQuery(query)
+  if (!docsMap || qTokens.length === 0) return []
+  /** @type {{ path: string, title: string, sectionTitle: string, score: number }[]} */
+  const scored = []
+  for (const [path, { md, article }] of docsMap) {
+    if (sectionRootPath && !articleUnderSectionRoot(path, sectionRootPath)) continue
+    if (sectionRootPath && path === sectionRootPath) continue
+    if (isSectionRootPath(path)) continue
+    const { meta, body } = parseSearchFrontmatter(md)
+    const externalMeta = searchMetadataByPath[path] || {}
+    const mergedMeta = {
+      aliases: [...(meta.aliases || []), ...(externalMeta.aliases || [])],
+      keywords: [...(meta.keywords || []), ...(externalMeta.keywords || [])],
+      searchTerms: [...(meta.searchTerms || []), ...(externalMeta.searchTerms || [])],
+    }
+    const aliasText = [
+      ...mergedMeta.aliases,
+      ...mergedMeta.keywords,
+      ...mergedMeta.searchTerms,
+    ].join(' ')
+    const titleWords = tokenizeForSearch(article.title)
+    const aliasWords = tokenizeForSearch(aliasText)
+    const pathWords = tokenizeForSearch(path.replace(/\//g, ' '))
+    const phrase = normalizeText(qTokens.join(' ')).replace(/\s+/g, ' ').trim()
+    const titleNorm = normalizeText(article.title)
+    const aliasNorm = normalizeText(aliasText)
+
+    let covered = 0
+    let score = 0
+    for (const qt of qTokens) {
+      if (tokenMatchesSomeWord(qt, titleWords)) {
+        score += 38
+        covered++
+      } else if (tokenMatchesSomeWord(qt, aliasWords)) {
+        score += 28
+        covered++
+      } else if (tokenMatchesSomeWord(qt, pathWords)) {
+        score += 20
+        covered++
+      }
+    }
+    if (covered === 0) continue
+    if (phrase.length >= 4 && titleNorm.includes(phrase)) score += 90
+    else if (phrase.length >= 4 && aliasNorm.includes(phrase)) score += 54
+    if (covered === qTokens.length && qTokens.length > 1) score += 25
+    // Небольшой бонус за наличие содержимого: выше "живые" статьи.
+    if (body?.trim()) score += 4
+
+    scored.push({
+      path: article.path,
+      title: article.title,
+      sectionTitle: getSectionTitleForPath(article.path),
+      score,
+    })
+  }
+  scored.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title, 'ru'))
+  return scored.slice(0, limit).map(({ score, ...rest }) => rest)
 }

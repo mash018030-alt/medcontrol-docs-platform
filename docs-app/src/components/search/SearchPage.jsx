@@ -4,10 +4,10 @@ import DocsDashboardGrid from '../dashboard/DocsDashboardGrid'
 import SearchInput from './SearchInput'
 import SearchResults from './SearchResults'
 import { useDocSearchIndex } from '../../hooks/useDocSearchIndex'
-import { searchDocuments, suggestArticlesByTitle } from '../../search/docSearch'
+import { searchDocuments, suggestArticles, suggestArticlesByTitle } from '../../search/docSearch'
 import { getDashboardSectionMeta, normalizeDashboardSectionParam } from '../../data/docsDashboardSections'
 
-const DEBOUNCE_MS = 420
+const DEBOUNCE_MS = 320
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -18,20 +18,28 @@ export default function SearchPage() {
   const [inputValue, setInputValue] = useState(urlQ)
   const [searchQ, setSearchQ] = useState(urlQ)
   const debounceTimer = useRef(null)
+  const internalUrlSyncRef = useRef(false)
   const { status, docs, error } = useDocSearchIndex()
 
   useEffect(() => {
+    if (internalUrlSyncRef.current) {
+      internalUrlSyncRef.current = false
+      setSearchQ(urlQ.trim())
+      return
+    }
     setInputValue(urlQ)
-    setSearchQ(urlQ)
+    setSearchQ(urlQ.trim())
   }, [urlQ])
 
   const flushQuery = useCallback(
     (raw) => {
-      const q = raw.trim()
+      const qRaw = raw
+      const q = qRaw.trim()
       setSearchQ(q)
       const next = {}
-      if (q) next.q = q
+      if (qRaw) next.q = qRaw
       if (sectionPath) next.section = sectionPath
+      internalUrlSyncRef.current = true
       setSearchParams(next, { replace: true })
     },
     [setSearchParams, sectionPath],
@@ -50,10 +58,10 @@ export default function SearchPage() {
     flushQuery(inputValue)
   }, [inputValue, flushQuery])
 
-  const suggestions = useMemo(
-    () => suggestArticlesByTitle(inputValue, 6, sectionPath),
-    [inputValue, sectionPath],
-  )
+  const suggestions = useMemo(() => {
+    if (!docs) return suggestArticlesByTitle(inputValue, 6, sectionPath)
+    return suggestArticles(docs, inputValue, 6, sectionPath)
+  }, [docs, inputValue, sectionPath])
 
   const results = useMemo(() => {
     if (!docs || !searchQ.trim()) return []

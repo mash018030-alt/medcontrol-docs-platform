@@ -1,9 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SearchInput from '../search/SearchInput'
 import { suggestArticlesByTitle } from '../../search/docSearch'
-
-const DEBOUNCE_MS = 420
 
 /**
  * @param {{ sectionRootPath?: string | null }} props если задан — переход на /search с ?section=… и подсказки только по разделу
@@ -11,7 +9,6 @@ const DEBOUNCE_MS = 420
 export default function SearchBar({ sectionRootPath = null }) {
   const navigate = useNavigate()
   const [value, setValue] = useState('')
-  const timer = useRef(null)
 
   const suggestions = useMemo(
     () => suggestArticlesByTitle(value, 6, sectionRootPath),
@@ -25,16 +22,6 @@ export default function SearchBar({ sectionRootPath = null }) {
     return `/search?${sp.toString()}`
   }
 
-  useEffect(() => {
-    clearTimeout(timer.current)
-    timer.current = setTimeout(() => {
-      const q = value.trim()
-      if (!q) return
-      navigate(searchUrl(q), { replace: true })
-    }, DEBOUNCE_MS)
-    return () => clearTimeout(timer.current)
-  }, [value, navigate, sectionRootPath])
-
   return (
     <>
       <SearchInput
@@ -42,7 +29,6 @@ export default function SearchBar({ sectionRootPath = null }) {
         value={value}
         onChange={setValue}
         onEnter={() => {
-          clearTimeout(timer.current)
           const q = value.trim()
           if (q) navigate(searchUrl(q), { replace: true })
         }}
@@ -51,7 +37,7 @@ export default function SearchBar({ sectionRootPath = null }) {
         aria-describedby="docs-dashboard-search-hint"
       />
       <span id="docs-dashboard-search-hint" className="docs-sr-only">
-        Введите запрос. После паузы откроется страница результатов или нажмите Enter.
+        Введите запрос и нажмите Enter, чтобы открыть страницу результатов.
       </span>
     </>
   )

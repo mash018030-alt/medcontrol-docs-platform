@@ -5,7 +5,7 @@
   - [Работа с осмотром](/medkabinet/rabota-v-medkabinete)
   - [Вынесение заключения по осмотру](/medkabinet/vynesenie-zaklyucheniya-po-osmotru)
 - [Регламент отстранения работников](/medkabinet/reglament-otstraneniya)
-- [Пользователи](/medkabinet/polzovateli)
+- [Разблокировка пользователя](/medkabinet/polzovateli)
 - [Документы](/medkabinet/dokumenty)
 - [Подпись](/medkabinet/podpis)
 - [Частые вопросы](/medkabinet/chastye-voprosy)
