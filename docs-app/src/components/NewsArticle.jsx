@@ -393,21 +393,6 @@ export default function NewsArticle() {
               >
                 {pdfExporting ? 'Формирование PDF…' : 'Скачать в PDF'}
               </button>
-              {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && (
-                <p className="docs-pdf-service-hint">
-                  {import.meta.env.PROD ? (
-                    <>
-                      PDF сохраняется как снимок страницы: текст в файле нельзя выделить или искать. С
-                      локальным сервисом печати — PDF с настоящим текстом, см. <code>pdf-server/README.md</code>.
-                    </>
-                  ) : (
-                    <>
-                      Сейчас PDF строится как снимок страницы (текст не выделяется). Для PDF с
-                      выделяемым текстом см. <code>pdf-server/README.md</code> и <code>.env.local</code>.
-                    </>
-                  )}
-                </p>
-              )}
             </div>
           )}
           <div

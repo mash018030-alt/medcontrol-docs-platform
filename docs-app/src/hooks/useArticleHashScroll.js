@@ -6,7 +6,7 @@ import { scrollToIdAfterReveal } from '../utils/revealCitationTarget'
 const HEADER_SCROLL_OFFSET_PX = 96
 
 /** Не давать spy менять hash во время плавной прокрутки к якорю (иначе выигрывает предыдущий заголовок). */
-const SPY_SUPPRESS_AFTER_HASH_SCROLL_MS = 1100
+const SPY_SUPPRESS_AFTER_HASH_SCROLL_MS = 2000
 
 let hashSpyQuietUntil = 0
 
@@ -74,6 +74,18 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
 
         const h = location.hash.slice(1)
         if (h.startsWith(':~:text=') || h.includes(':~:text=')) return
+
+        /* Пока цель deep link (#якорь) ещё ниже «линии» scroll-spy, не подменяем hash — иначе во время
+         * smooth scroll к низу страницы spy успевает записать промежуточный заголовок и триггерит
+         * повторную прокрутку не туда (FAQ → «Блокировки» и т.п.). */
+        const hashTargetId = h ? decodeURIComponent(h) : ''
+        if (hashTargetId) {
+          const hashTargetEl = document.getElementById(hashTargetId)
+          if (hashTargetEl) {
+            const r = hashTargetEl.getBoundingClientRect()
+            if (r.top > HEADER_SCROLL_OFFSET_PX + 6) return
+          }
+        }
 
         const root = articleBodyRef.current
         if (!root) return

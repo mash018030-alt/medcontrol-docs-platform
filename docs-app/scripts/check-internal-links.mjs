@@ -109,20 +109,27 @@ console.log(warnings.length ? warnings.map((w) => JSON.stringify(w)).join('\n') 
 
 // Anchor checks for FAQ table links
 const anchorTargets = [
-  { md: 'admin/organizacii.md', ids: ['создание-дочерней-организации', 'редактирование', 'виды-осмотров'] },
+  { md: 'admin/organizacii.md', ids: ['создание-дочерней-организации'] },
+  { md: 'admin/deystviya-s-organizaciej.md', ids: ['редактирование'] },
+  { md: 'admin/nastroyki-organizacii.md', ids: ['настройки-организации', 'виды-осмотров'] },
   { md: 'admin/osmotry.md', ids: ['ручные-операции-над-осмотрами'] },
   { md: 'admin/pak.md', ids: ['создание-пак'] },
 ]
+
+function headingsFromMd(body) {
+  const headings = []
+  for (const line of body.split(/\r?\n/)) {
+    const hm = line.match(/^(#{1,6})\s+(.+)$/)
+    if (hm) headings.push(slugify(hm[2].replace(/\s*#+\s*$/, '').trim()))
+  }
+  return headings
+}
 
 for (const { md: tf, ids } of anchorTargets) {
   const full = path.join(contentDir, tf)
   if (!fs.existsSync(full)) continue
   const body = fs.readFileSync(full, 'utf8')
-  const headings = []
-  for (const line of body.split('\n')) {
-    const hm = line.match(/^(#{1,6})\s+(.+)$/)
-    if (hm) headings.push(slugify(hm[2].replace(/\s*#+\s*$/, '').trim()))
-  }
+  const headings = headingsFromMd(body)
   for (const id of ids) {
     if (!headings.includes(id)) {
       console.log(`\nAnchor missing: ${tf} #${id}`)
@@ -130,15 +137,6 @@ for (const { md: tf, ids } of anchorTargets) {
       if (close.length) console.log(`  similar slugs: ${close.slice(0, 8).join(', ')}`)
     }
   }
-}
-
-function headingsFromMd(body) {
-  const headings = []
-  for (const line of body.split('\n')) {
-    const hm = line.match(/^(#{1,6})\s+(.+)$/)
-    if (hm) headings.push(slugify(hm[2].replace(/\s*#+\s*$/, '').trim()))
-  }
-  return headings
 }
 
 console.log('\n=== Hash targets (in-page / cross-doc) ===')

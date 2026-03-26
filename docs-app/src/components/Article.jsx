@@ -322,24 +322,6 @@ export default function Article() {
             >
               {pdfExporting ? 'Формирование PDF…' : 'Скачать в PDF'}
             </button>
-            {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && (
-              <p className="docs-pdf-service-hint">
-                {import.meta.env.PROD ? (
-                  <>
-                    PDF сохраняется как снимок страницы: в файле текст нельзя выделить или искать. На
-                    локальной сборке с сервисом печати можно получить PDF с настоящим текстом — см.{' '}
-                    <code>pdf-server/README.md</code>.
-                  </>
-                ) : (
-                  <>
-                    Сейчас PDF строится как снимок страницы (текст не выделяется). Чтобы в файле был
-                    настоящий текст, запустите сервис в <code>docs-app/pdf-server</code> и задайте{' '}
-                    <code>VITE_PDF_SERVICE_URL</code> в <code>.env.local</code> — см.{' '}
-                    <code>pdf-server/README.md</code>.
-                  </>
-                )}
-              </p>
-            )}
           </div>
         )}
         <div

@@ -2,6 +2,16 @@ import html2pdf from 'html2pdf.js'
 
 const PDF_WIDTH_PX = 672
 
+/**
+ * URL POST для /api/pdf: в dev — прокси Vite → pdf-server; в prod — только VITE_PDF_SERVICE_URL.
+ */
+export function getPdfServiceApiUrl() {
+  const trimmed = import.meta.env.VITE_PDF_SERVICE_URL?.trim()
+  if (trimmed) return `${trimmed.replace(/\/$/, '')}/api/pdf`
+  if (import.meta.env.DEV) return '/api/pdf'
+  return null
+}
+
 function triggerBlobDownload(blob, filename) {
   const safe = filename.endsWith('.pdf') ? filename : `${filename}.pdf`
   const a = document.createElement('a')
@@ -38,10 +48,9 @@ export function buildSectionBundlePrintUrl(sectionRootPath) {
 /**
  * PDF через сервис Playwright (см. pdf-server/). Печатается страница по полному URL (с mc_pdf=1).
  */
-async function runArticlePdfExportPlaywright(serviceBase, filename, printUrl) {
-  const base = String(serviceBase).replace(/\/$/, '')
+async function runArticlePdfExportPlaywright(apiUrl, filename, printUrl) {
   const url = typeof printUrl === 'string' ? printUrl : String(printUrl)
-  const res = await fetch(`${base}/api/pdf`, {
+  const res = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url }),
@@ -113,7 +122,19 @@ async function runArticlePdfExportHtml2Pdf(rootEl, { filename }) {
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: {
           mode: ['css', 'legacy'],
-          avoid: ['img', 'h1', 'h2', 'h3', 'h4', '.docs-carousel', '.docs-carousel-slide', '.docs-important'],
+          avoid: [
+            'img',
+            'h1',
+            'h2',
+            'h3',
+            'h4',
+            'li',
+            'tr',
+            '.docs-carousel',
+            '.docs-carousel-slide',
+            '.docs-important',
+            'sup.docs-fnref',
+          ],
         },
       })
       .from(rootEl)
@@ -130,18 +151,19 @@ async function runArticlePdfExportHtml2Pdf(rootEl, { filename }) {
  * Без сервиса — показать сообщение, html2pdf не используем (другой DOM).
  */
 export async function runPdfFromPrintUrl(printUrl, { filename }) {
-  const service = import.meta.env.VITE_PDF_SERVICE_URL?.trim()
-  if (!service) {
+  const apiUrl = getPdfServiceApiUrl()
+  if (!apiUrl) {
     window.alert(
       [
         'Скачивание PDF всего раздела доступно при запущенном сервисе печати.',
-        'Задайте VITE_PDF_SERVICE_URL в .env.local и запустите docs-app/pdf-server — см. pdf-server/README.md.',
+        'В production задайте VITE_PDF_SERVICE_URL; локально: npm start в docs-app/pdf-server (в dev Vite проксирует /api/pdf).',
+        'См. pdf-server/README.md',
       ].join('\n'),
     )
     return
   }
   try {
-    await runArticlePdfExportPlaywright(service, filename, printUrl)
+    await runArticlePdfExportPlaywright(apiUrl, filename, printUrl)
   } catch (e) {
     const msg = e && typeof e === 'object' && 'message' in e ? String(e.message) : String(e)
     window.alert(['Не удалось сформировать PDF раздела.', '', msg].filter(Boolean).join('\n'))
@@ -150,17 +172,17 @@ export async function runPdfFromPrintUrl(printUrl, { filename }) {
 }
 
 /**
- * Сначала Playwright (если задан VITE_PDF_SERVICE_URL), иначе html2pdf (растр — текст в PDF не выделяется).
+ * Сначала Playwright (dev: прокси /api/pdf → pdf-server; prod: VITE_PDF_SERVICE_URL), иначе html2pdf.
  * @param {HTMLElement} rootEl корень контента статьи
  * @param {{ filename: string, printUrl?: string | null }} opts при printUrl печатается эта страница, rootEl для запаса не нужен
  */
 export async function runArticlePdfExport(rootEl, { filename, printUrl = null }) {
-  const service = import.meta.env.VITE_PDF_SERVICE_URL?.trim()
+  const apiUrl = getPdfServiceApiUrl()
   const targetPrintUrl = printUrl || null
-  if (service) {
+  if (apiUrl) {
     try {
       const url = targetPrintUrl ?? buildMcPdfUrlFromCurrentWindow()
-      await runArticlePdfExportPlaywright(service, filename, url)
+      await runArticlePdfExportPlaywright(apiUrl, filename, url)
       return
     } catch (e) {
       if (targetPrintUrl) {
@@ -176,7 +198,9 @@ export async function runArticlePdfExport(rootEl, { filename, printUrl = null })
           'Не удалось получить текстовый PDF через сервер печати.',
           'Сейчас будет скачан растровый PDF (как картинка).',
           '',
-          'Проверьте: pdf-server запущен, VITE_PDF_SERVICE_URL верный, после правок .env перезапущен npm run dev.',
+          'Проверьте: в каталоге docs-app/pdf-server выполнены npm install и npm start (порт 3001).',
+          'В режиме npm run dev запрос идёт через прокси /api/pdf — отдельно VITE_PDF_SERVICE_URL не обязателен.',
+          'Проверка: откройте в браузере http://127.0.0.1:3001/health — должен быть {"ok":true}.',
           'Инструкция: docs-app/pdf-server/README.md',
           '',
           msg ? `Детали: ${msg}` : '',
@@ -189,7 +213,7 @@ export async function runArticlePdfExport(rootEl, { filename, printUrl = null })
   if (targetPrintUrl) {
     window.alert(
       [
-        'Для PDF всего раздела нужен сервис печати (VITE_PDF_SERVICE_URL + pdf-server).',
+        'Для PDF всего раздела нужен сервис печати (pdf-server; в dev — прокси /api/pdf).',
         'Инструкция: docs-app/pdf-server/README.md',
       ].join('\n'),
     )
