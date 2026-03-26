@@ -43,7 +43,7 @@ export default function Header() {
     <header className="docs-header">
       <div className="docs-header-inner">
         <Link to="/" className="docs-logo" aria-label="MedControl документация — на главную">
-          <img src="/logo-3.png" alt="" decoding="async" />
+          <img src={`${import.meta.env.BASE_URL}logo-3.png`} alt="" decoding="async" />
         </Link>
         <nav className="docs-header-tabs" aria-label="Основные разделы">
           <Link
