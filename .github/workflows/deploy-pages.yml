@@ -32,9 +32,10 @@ jobs:
         working-directory: docs-app
         run: npm ci
 
+      # Подкаталог /medcontrol-docs-platform/ на github.io — иначе base '/' даёт 404 на JS/CSS
       - name: Build
         working-directory: docs-app
-        run: npm run build
+        run: npm run build:gh-pages
 
       - name: SPA fallback for GitHub Pages
         run: cp docs-app/dist/index.html docs-app/dist/404.html
