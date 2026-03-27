@@ -1,9 +1,38 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom'
 import { DocsLayoutProvider, useDocsLayout } from '../context/DocsLayoutContext'
+import { DOCS_HEADING_LINK_COPIED } from '../utils/headingCopyFeedback'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import NewsSidebar from './NewsSidebar'
+
+function HeadingLinkCopyToast() {
+  const [searchParams] = useSearchParams()
+  const isMcPdf = searchParams.get('mc_pdf') === '1'
+  const [visible, setVisible] = useState(false)
+  const hideTimerRef = useRef(0)
+
+  useEffect(() => {
+    if (isMcPdf) return undefined
+    const onCopied = () => {
+      setVisible(true)
+      window.clearTimeout(hideTimerRef.current)
+      hideTimerRef.current = window.setTimeout(() => setVisible(false), 2200)
+    }
+    window.addEventListener(DOCS_HEADING_LINK_COPIED, onCopied)
+    return () => {
+      window.removeEventListener(DOCS_HEADING_LINK_COPIED, onCopied)
+      window.clearTimeout(hideTimerRef.current)
+    }
+  }, [isMcPdf])
+
+  if (isMcPdf || !visible) return null
+  return (
+    <div className="docs-heading-copy-toast" role="status" aria-live="polite">
+      Ссылка скопирована
+    </div>
+  )
+}
 
 function LayoutShell() {
   const location = useLocation()
@@ -35,6 +64,7 @@ function LayoutShell() {
 
   return (
     <div className={isMcPdf ? 'docs-layout docs-layout--mc-pdf' : 'docs-layout'}>
+      <HeadingLinkCopyToast />
       {!isMcPdf && <Header />}
       {!isMcPdf && isMobileLayout && showTreeSidebar && mobileNavOpen && (
         <button

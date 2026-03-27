@@ -1,4 +1,7 @@
-/** Обёртка таблицы из markdown: горизонтальная прокрутка на узких экранах. */
+/**
+ * Обёртка таблицы из markdown: при переполнении по ширине — прокрутка влево/вправо
+ * и горизонтальный скроллбар снизу (см. `.docs-table-scroll` в App.css).
+ */
 export default function MarkdownTable({ children, ...props }) {
   return (
     <div

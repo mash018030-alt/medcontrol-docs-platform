@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useLocation, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -22,27 +22,14 @@ import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useSearchTextScroll } from '../hooks/useSearchTextScroll'
 import { useArticleTocHeadings } from '../hooks/useArticleTocHeadings'
+import MarkdownHeading from './MarkdownHeading'
+import { createHeadingSlugAllocator } from '../utils/headingSlug'
+import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
 function getLandingTitle(md) {
   const firstLine = (md || '').trim().split('\n')[0] || ''
   const m = firstLine.match(/^#\s+(.+)$/)
   return m ? m[1].trim() : ''
-}
-
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\u0400-\u04FF-]/g, '')
-}
-
-/** Плоский текст заголовка для id: String(children) даёт «[object Object]» при выделениях/ссылках внутри ## */
-function headingPlainText(children) {
-  if (children == null || children === false) return ''
-  if (typeof children === 'string' || typeof children === 'number') return String(children)
-  if (Array.isArray(children)) return children.map(headingPlainText).join('')
-  if (React.isValidElement(children)) return headingPlainText(children.props?.children)
-  return ''
 }
 
 const SECTION_LANDING_PDF_LABEL = 'Скачать в PDF'
@@ -145,6 +132,16 @@ export default function Article() {
   const [lightbox, setLightbox] = useState(null)
   const currentArticle = flatArticles.find((a) => a.path === slug)
   const pdfFromSearchRef = useRef(false)
+
+  /* Новый аллокатор id при смене статьи или текста — иначе счётчики дубликатов «прилипнут» к старому документу. */
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренный сброс по slug/md
+  const allocateHeadingId = useMemo(() => createHeadingSlugAllocator(), [slug, md])
+
+  const landingH1Id = useMemo(() => {
+    if (!landingSection) return ''
+    const alloc = createHeadingSlugAllocator()
+    return alloc(getLandingTitle(md) || landingSection.title)
+  }, [landingSection, md])
 
   useEffect(() => {
     pdfFromSearchRef.current = false
@@ -278,9 +275,14 @@ export default function Article() {
           <>
             <div className="docs-section-landing-title-row">
               <div className="docs-section-landing-title-row__cluster">
-                <h1 id={slugify(landingSection.title)} className="docs-section-landing-title-row__heading">
+                <MarkdownHeading
+                  level={1}
+                  id={landingH1Id}
+                  isMcPdf={isMcPdf}
+                  className="docs-section-landing-title-row__heading"
+                >
                   {getLandingTitle(md) || landingSection.title}
-                </h1>
+                </MarkdownHeading>
                 {!isMcPdf && landingDashboardMeta?.sectionPdfBundle ? (
                   <button
                     type="button"
@@ -338,22 +340,7 @@ export default function Article() {
                   </a>
                 )
               },
-              h1: ({ children, ...props }) => {
-                const text = headingPlainText(children)
-                return <h1 id={slugify(text)} {...props}>{children}</h1>
-              },
-              h2: ({ children, ...props }) => {
-                const text = headingPlainText(children)
-                return <h2 id={slugify(text)} {...props}>{children}</h2>
-              },
-              h3: ({ children, ...props }) => {
-                const text = headingPlainText(children)
-                return <h3 id={slugify(text)} {...props}>{children}</h3>
-              },
-              h4: ({ children, ...props }) => {
-                const text = headingPlainText(children)
-                return <h4 id={slugify(text)} {...props}>{children}</h4>
-              },
+              ...buildMarkdownHeadingComponents(allocateHeadingId, isMcPdf),
             }}
           >
             {md}
@@ -404,6 +391,18 @@ export default function Article() {
           aria-label="Закрыть"
         >
           <div className="docs-lightbox-backdrop" />
+          <button
+            type="button"
+            className="docs-lightbox-close"
+            aria-label="Закрыть просмотр изображения"
+            title="Закрыть"
+            onClick={(e) => {
+              e.stopPropagation()
+              setLightbox(null)
+            }}
+          >
+            ×
+          </button>
           {lightbox.images.length > 1 && (
             <>
               {lightbox.currentIndex > 0 && (

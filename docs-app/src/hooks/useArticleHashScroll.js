@@ -7,6 +7,7 @@ import {
   resolveAnchorElement,
 } from '../utils/revealCitationTarget'
 import { consumeTocHashNavigationLock } from '../utils/hashNavigationLock'
+import { scheduleHeadingHashFlash } from '../utils/headingHashFlash'
 
 /** Не давать spy «перетягивать» подсветку TOC во время плавной прокрутки к якорю (TOC / сноска). */
 const SPY_SUPPRESS_AFTER_HASH_SCROLL_MS = 2000
@@ -28,7 +29,7 @@ function isTextFragmentHash(raw) {
  */
 export function computeActiveHeadingIdFromArticleRoot(root) {
   if (!root) return null
-  const headings = root.querySelectorAll('h1[id], h2[id], h3[id], h4[id]')
+  const headings = root.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]')
   if (!headings.length) return null
 
   const offsetPx = resolveArticleSpyOffsetPx(root)
@@ -76,6 +77,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     let attempts = 0
     const maxAttempts = 120
     let rafId = 0
+    let cancelFlash = () => {}
 
     const tick = () => {
       if (cancelled) return
@@ -84,6 +86,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
         const behavior = attempts === 0 ? 'smooth' : 'auto'
         quietHashSpy()
         scrollToIdAfterReveal(targetId, { behavior })
+        cancelFlash = scheduleHeadingHashFlash(targetId)
         return
       }
       attempts += 1
@@ -95,11 +98,13 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     if (resolveAnchorElement(targetId)) {
       quietHashSpy()
       scrollToIdAfterReveal(targetId, { behavior: 'smooth' })
+      cancelFlash = scheduleHeadingHashFlash(targetId)
     } else {
       rafId = requestAnimationFrame(tick)
     }
     return () => {
       cancelled = true
+      cancelFlash()
       if (rafId) cancelAnimationFrame(rafId)
     }
   }, [enabled, loading, location.hash, md, slug])
@@ -175,7 +180,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     }
 
     const root = articleBodyRef.current
-    const nodes = root ? [...root.querySelectorAll('h1[id], h2[id], h3[id], h4[id]')] : []
+    const nodes = root ? [...root.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]')] : []
     const ioTopMargin = resolveArticleSpyOffsetPx(root)
 
     const io =

@@ -52,7 +52,7 @@ export function resolveAnchorScrollOffsetPx(el) {
 export function resolveArticleSpyOffsetPx(articleRoot) {
   if (typeof document === 'undefined') return FALLBACK_ANCHOR_OFFSET_PX
   if (document.documentElement.classList.contains('docs-layout--mc-pdf')) return 0
-  const probe = articleRoot?.querySelector?.('h1[id], h2[id], h3[id], h4[id]') ?? null
+  const probe = articleRoot?.querySelector?.('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]') ?? null
   return resolveAnchorScrollOffsetPx(probe)
 }
 

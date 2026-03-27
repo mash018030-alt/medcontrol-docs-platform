@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
-import { useParams, useLocation, Link, useNavigate, Navigate, useSearchParams } from 'react-router-dom'
+import { useParams, Link, useNavigate, Navigate, useSearchParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -22,58 +22,12 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
-
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\u0400-\u04FF-]/g, '')
-}
+import { createHeadingSlugAllocator } from '../utils/headingSlug'
+import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
 function mdFileSlugFromPath(newsPath) {
   const parts = newsPath.split('/')
   return parts[parts.length - 1] || ''
-}
-
-const markdownComponents = {
-  tr: MarkdownTr,
-  table: MarkdownTable,
-  img: MarkdownImg,
-  a: ({ href, className, children, ...props }) => {
-    const isBackref =
-      (typeof className === 'string' && className.includes('data-footnote-backref')) ||
-      (href && String(href).startsWith('#user-content-fnref-'))
-    const resolvedHref =
-      href && typeof href === 'string' && href.startsWith('/') && !href.startsWith('//')
-        ? publicAssetUrl(href)
-        : href
-    return (
-      <a
-        href={resolvedHref}
-        className={className}
-        {...props}
-        {...(isBackref ? { title: 'Вернуться к месту в тексте', 'aria-label': 'Вернуться к месту в тексте' } : {})}
-      >
-        {children}
-      </a>
-    )
-  },
-  h1: ({ children, ...props }) => {
-    const text = String(children ?? '')
-    return <h1 id={slugify(text)} {...props}>{children}</h1>
-  },
-  h2: ({ children, ...props }) => {
-    const text = String(children ?? '')
-    return <h2 id={slugify(text)} {...props}>{children}</h2>
-  },
-  h3: ({ children, ...props }) => {
-    const text = String(children ?? '')
-    return <h3 id={slugify(text)} {...props}>{children}</h3>
-  },
-  h4: ({ children, ...props }) => {
-    const text = String(children ?? '')
-    return <h4 id={slugify(text)} {...props}>{children}</h4>
-  },
 }
 
 export default function NewsArticle() {
@@ -82,7 +36,6 @@ export default function NewsArticle() {
   const newsSlugPath = String(splat).replace(/^\/+|\/+$/g, '')
   const fullSlug = newsSlugPath ? `news/${newsSlugPath}` : ''
 
-  const location = useLocation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const isMcPdf = searchParams.get('mc_pdf') === '1'
@@ -99,6 +52,38 @@ export default function NewsArticle() {
   const [pdfExporting, setPdfExporting] = useState(false)
   const [lightbox, setLightbox] = useState(null)
   const articleBodyRef = useRef(null)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренный сброс аллокатора при смене страницы/markdown
+  const allocateHeadingId = useMemo(() => createHeadingSlugAllocator(), [fullSlug, md])
+
+  const markdownComponents = useMemo(
+    () => ({
+      tr: MarkdownTr,
+      table: MarkdownTable,
+      img: MarkdownImg,
+      a: ({ href, className, children, ...props }) => {
+        const isBackref =
+          (typeof className === 'string' && className.includes('data-footnote-backref')) ||
+          (href && String(href).startsWith('#user-content-fnref-'))
+        const resolvedHref =
+          href && typeof href === 'string' && href.startsWith('/') && !href.startsWith('//')
+            ? publicAssetUrl(href)
+            : href
+        return (
+          <a
+            href={resolvedHref}
+            className={className}
+            {...props}
+            {...(isBackref ? { title: 'Вернуться к месту в тексте', 'aria-label': 'Вернуться к месту в тексте' } : {})}
+          >
+            {children}
+          </a>
+        )
+      },
+      ...buildMarkdownHeadingComponents(allocateHeadingId, isMcPdf),
+    }),
+    [allocateHeadingId, isMcPdf],
+  )
 
   useEffect(() => {
     if (!fullSlug) {
@@ -394,6 +379,18 @@ export default function NewsArticle() {
             aria-label="Закрыть"
           >
             <div className="docs-lightbox-backdrop" />
+            <button
+              type="button"
+              className="docs-lightbox-close"
+              aria-label="Закрыть просмотр изображения"
+              title="Закрыть"
+              onClick={(e) => {
+                e.stopPropagation()
+                setLightbox(null)
+              }}
+            >
+              ×
+            </button>
             {lightbox.images.length > 1 && (
               <>
                 {lightbox.currentIndex > 0 && (

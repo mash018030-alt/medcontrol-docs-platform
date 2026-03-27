@@ -322,6 +322,113 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
 .docs-toc-item.docs-toc-h2{padding-left:.65rem}
 .docs-toc-item.docs-toc-h3{padding-left:1.1rem}
 .docs-toc-item.docs-toc-h4{padding-left:1.55rem}
+.docs-toc-item.docs-toc-h5{padding-left:2rem}
+.docs-toc-item.docs-toc-h6{padding-left:2.4rem}
+
+/* Якорь «#» у заголовков (экран): слева, без сдвига текста; в mc_pdf / печати скрыт */
+.docs-markdown-heading{position:relative}
+.docs-markdown-heading__anchor{
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translate(calc(-100% - 0.35rem),-50%);
+  font-weight:600;
+  font-size:.92em;
+  color:#94a3b8;
+  text-decoration:none!important;
+  line-height:1;
+  opacity:0;
+  transition:opacity .12s ease,color .12s ease;
+  user-select:none;
+}
+.docs-markdown-heading:hover .docs-markdown-heading__anchor,
+.docs-markdown-heading:focus-within .docs-markdown-heading__anchor{
+  opacity:1;
+}
+.docs-markdown-heading__anchor:hover,
+.docs-markdown-heading__anchor:focus-visible{
+  color:var(--docs-ui-accent);
+  outline:none;
+}
+.docs-markdown-heading__anchor:focus-visible{
+  opacity:1;
+  box-shadow:0 0 0 2px #4a69ff59;
+  border-radius:2px;
+}
+@media (hover: none) and (pointer: coarse){
+  .docs-markdown-heading__anchor{
+    opacity:.45;
+  }
+  .docs-markdown-heading__anchor:active,
+  .docs-markdown-heading__anchor:focus-visible{
+    opacity:1;
+  }
+}
+.docs-heading--hash-flash{
+  border-radius:6px;
+  transition:background-color .35s ease,box-shadow .35s ease;
+  background-color:rgba(74,105,255,.1);
+  box-shadow:inset 0 0 0 1px rgba(74,105,255,.2);
+}
+.docs-layout--mc-pdf .docs-markdown-heading__anchor,
+.docs-pdf-export .docs-markdown-heading__anchor{display:none!important}
+.docs-heading-copy-toast{
+  position:fixed;
+  z-index:2000;
+  left:50%;
+  bottom:1.5rem;
+  transform:translateX(-50%);
+  padding:.55rem 1.15rem;
+  font-size:.875rem;
+  font-weight:500;
+  color:#0f172a;
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:999px;
+  box-shadow:0 8px 24px #0f172a26;
+  pointer-events:none;
+}
+@media print{
+  .docs-markdown-heading__anchor,
+  .docs-heading-copy-toast{display:none!important}
+}
+
+/* Заголовки 5–6 уровня (базовые отступы совпадают с логикой h3–h4) */
+.docs-article h5{font-size:.97rem;margin-top:.9rem;margin-bottom:.35rem;scroll-margin-top:80px}
+.docs-article h6{font-size:.92rem;margin-top:.85rem;margin-bottom:.3rem;scroll-margin-top:80px}
+
+/* Лайтбокс изображений: крестик закрытия (слева сверху, поверх затемнения) */
+.docs-lightbox-close{
+  position:fixed;
+  z-index:1003;
+  top:1rem;
+  left:1rem;
+  width:2.75rem;
+  height:2.75rem;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:1.45rem;
+  font-weight:400;
+  line-height:1;
+  color:#fff;
+  background:rgba(30,41,59,.52);
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 2px 14px #0000004d;
+  transition:background .15s ease,color .15s ease;
+}
+.docs-lightbox-close:hover{
+  background:rgba(30,41,59,.78);
+  color:#fff;
+}
+.docs-lightbox-close:focus-visible{
+  outline:2px solid #fff;
+  outline-offset:3px;
+}
 
 /* Правое оглавление: активный раздел (scrollspy) — экран; в печати .docs-toc скрыт */
 .docs-toc .docs-toc-link{
@@ -535,27 +642,46 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   widows:3;
 }
 
-/* Горизонтальная прокрутка широких таблиц (обёртка из MarkdownTable) */
+/* Горизонтальная прокрутка широких таблиц (обёртка из MarkdownTable.jsx) */
 .docs-table-scroll{
   margin:1rem 0;
+  max-width:100%;
   overflow-x:auto;
-  overflow-y:visible;
   -webkit-overflow-scrolling:touch;
   border-radius:10px;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  scrollbar-gutter:stable;
+  scrollbar-width:thin;
+  scrollbar-color:#c1c9d4 #f1f5f9;
 }
+/* Не делаем обёртку вертикальным scrollport — липкий thead страницы (.docs-article thead th) остаётся предсказуемым */
+@supports (overflow:clip){
+  .docs-table-scroll{
+    overflow-y:clip;
+  }
+}
+.docs-table-scroll::-webkit-scrollbar{
+  height:10px;
+}
+.docs-table-scroll::-webkit-scrollbar-track{
+  background:#f1f5f9;
+  border-radius:6px;
+  margin:2px 4px;
+}
+.docs-table-scroll::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:6px;
+}
+.docs-table-scroll::-webkit-scrollbar-thumb:hover{
+  background:#94a3b8;
+}
+/* Узкая таблица — на всю ширину колонки; широкий контент — таблица растёт, снизу появляется горизонтальный бегунок */
 .docs-table-scroll table{
   margin:0;
-  width:100%;
-}
-/*
- * Липкий thead: при overflow-x:auto на обёртке браузер считает её scrollport — шапка наезжает на строки.
- * На широком экране таблица чаще вмещается → оставляем overflow-x:visible, работает общий .docs-article thead th{position:sticky}.
- * Узкая вёрстка: см. @media (max-width:1023px) — там overflow-x:auto и thead без sticky.
- */
-@media (min-width:1024px){
-  .docs-article .docs-table-scroll{
-    overflow-x:visible;
-  }
+  width:auto;
+  min-width:100%;
+  max-width:none;
 }
 
 /* ——— Адаптив ≤1023px: выдвижное меню, шапка (сетка), TOC, таблицы, карточки ——— */
@@ -717,6 +843,8 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   .docs-article h2,
   .docs-article h3,
   .docs-article h4,
+  .docs-article h5,
+  .docs-article h6,
   .docs-article a[id^='user-content-fnref-']{
     scroll-margin-top:calc(var(--docs-header-sticky-offset) + 12px);
   }
