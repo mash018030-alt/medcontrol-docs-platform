@@ -20,6 +20,7 @@ import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useArticleTocHeadings } from '../hooks/useArticleTocHeadings'
 import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
+import LightboxCloseButton from './LightboxCloseButton'
 import MarkdownImg from './MarkdownImg'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { createHeadingSlugAllocator } from '../utils/headingSlug'
@@ -45,7 +46,6 @@ export default function NewsArticle() {
   const [treeReady, setTreeReady] = useState(false)
 
   const [md, setMd] = useState('')
-  const [lastUpdated, setLastUpdated] = useState(null)
   const [mdLoading, setMdLoading] = useState(false)
   const [mdError, setMdError] = useState(null)
 
@@ -153,14 +153,12 @@ export default function NewsArticle() {
     if (!fullSlug || !treeReady || !node) {
       if (!fullSlug || !treeReady) return
       setMd('')
-      setLastUpdated(null)
       setMdError(null)
       setMdLoading(false)
       return
     }
     if (node.children?.length) {
       setMd('')
-      setLastUpdated(null)
       setMdError(null)
       setMdLoading(false)
       return
@@ -168,15 +166,12 @@ export default function NewsArticle() {
     const fileSlug = mdFileSlugFromPath(fullSlug)
     setMdLoading(true)
     setMdError(null)
-    setLastUpdated(null)
     const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
     const path = `${base}/content/News/${fileSlug}.md`.replace(/^\/+/, '/')
     const url = new URL(path, window.location.origin).href
     fetch(url)
       .then((r) => {
         if (!r.ok) throw new Error('Не удалось загрузить страницу')
-        const lastMod = r.headers.get('last-modified')
-        if (lastMod) setLastUpdated(new Date(lastMod))
         return r.text()
       })
       .then((text) => {
@@ -330,12 +325,6 @@ export default function NewsArticle() {
             >
               {md}
             </ReactMarkdown>
-            {lastUpdated && (
-              <p className="docs-article-updated">
-                Последнее обновление:{' '}
-                {`${String(lastUpdated.getDate()).padStart(2, '0')}.${String(lastUpdated.getMonth() + 1).padStart(2, '0')}.${lastUpdated.getFullYear()}`}
-              </p>
-            )}
             <footer className="docs-article-footer">
               {prev && (
                 <Link to={`/${prev.path}`} className="docs-nav-prev">
@@ -379,18 +368,7 @@ export default function NewsArticle() {
             aria-label="Закрыть"
           >
             <div className="docs-lightbox-backdrop" />
-            <button
-              type="button"
-              className="docs-lightbox-close"
-              aria-label="Закрыть просмотр изображения"
-              title="Закрыть"
-              onClick={(e) => {
-                e.stopPropagation()
-                setLightbox(null)
-              }}
-            >
-              ×
-            </button>
+            <LightboxCloseButton onClose={() => setLightbox(null)} />
             {lightbox.images.length > 1 && (
               <>
                 {lightbox.currentIndex > 0 && (

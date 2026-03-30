@@ -23,6 +23,7 @@ import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useSearchTextScroll } from '../hooks/useSearchTextScroll'
 import { useArticleTocHeadings } from '../hooks/useArticleTocHeadings'
 import MarkdownHeading from './MarkdownHeading'
+import LightboxCloseButton from './LightboxCloseButton'
 import { createHeadingSlugAllocator } from '../utils/headingSlug'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
@@ -347,11 +348,11 @@ export default function Article() {
           </ReactMarkdown>
         )}
 
-        {lastUpdated && (
+        {lastUpdated && !landingSection ? (
           <p className="docs-article-updated">
             Последнее обновление: {`${String(lastUpdated.getDate()).padStart(2, '0')}.${String(lastUpdated.getMonth() + 1).padStart(2, '0')}.${lastUpdated.getFullYear()}`}
           </p>
-        )}
+        ) : null}
         {!landingSection && (prev || next) ? (
           <footer className="docs-article-footer">
             {prev && (
@@ -391,18 +392,7 @@ export default function Article() {
           aria-label="Закрыть"
         >
           <div className="docs-lightbox-backdrop" />
-          <button
-            type="button"
-            className="docs-lightbox-close"
-            aria-label="Закрыть просмотр изображения"
-            title="Закрыть"
-            onClick={(e) => {
-              e.stopPropagation()
-              setLightbox(null)
-            }}
-          >
-            ×
-          </button>
+          <LightboxCloseButton onClose={() => setLightbox(null)} />
           {lightbox.images.length > 1 && (
             <>
               {lightbox.currentIndex > 0 && (

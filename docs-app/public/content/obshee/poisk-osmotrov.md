@@ -61,7 +61,7 @@
 10.  Замечания, выявленные при анализе осмотра.
 11.  Дополнительные параметры.
 
-![image1.png](/content/images/obshee/image1.png)
+![Содержание расширенного фильтра](/content/images/obshee/Poisk_osmotrov/Frame%202131329945.png)
 
 </div>
 </details>

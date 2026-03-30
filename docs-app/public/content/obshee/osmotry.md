@@ -18,7 +18,7 @@
 4.  Вид осмотра.
 5.  Дата и время прохождения осмотра.
 
-![image137.png](/content/images/obshee/image137.png)
+![Основные данные в списке осмотров](/content/images/obshee/Osmotry/1.png)
 
 **Дополнительные данные:**
 1.  Метки (при наличии) – например, о тестовом осмотре (проведённом в тестовой организации).
@@ -26,16 +26,16 @@
 3.  Графические обозначения медицинских показателей – отклонения от нормы выделены цветом:
 
 <div class="docs-indicators-legend">
-  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/image142.png" alt=""> — артериальное давление;</span>
-  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/image160.png" alt=""> — пульс;</span>
-  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/image156.png" alt=""> — температура кожных покровов;</span>
-  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/image10.png" alt=""> — этанол (алкоголь) в выдыхаемом воздухе</span>
+  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/Osmotry/legend-ad.png" alt=""> — артериальное давление;</span>
+  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/Osmotry/legend-pulse.png" alt=""> — пульс;</span>
+  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/Osmotry/legend-temp.png" alt=""> — температура кожных покровов;</span>
+  <span class="docs-indicators-legend-item"><img src="/content/images/obshee/Osmotry/legend-ethanol.png" alt=""> — этанол (алкоголь) в выдыхаемом воздухе</span>
 </div>
 
 4.  Примечание, если заключение по осмотру выносилось с отключенным Ассистентом.
 5.  Медицинское заключение по осмотру.
 
-![image23.png](/content/images/obshee/image23.png)
+![Дополнительные данные и заключение по осмотру](/content/images/obshee/Osmotry/2.png)
 
 **Информацию о [серии осмотров](/obshee/seriya-osmotrov#серия-осмотров)**:
 1.  Обозначение серии и количества попыток.
@@ -43,8 +43,8 @@
 3.  Порядковый номер текущей попытки в серии.
 4.  ID попытки, дата и время её прохождения.
 
-![image102.png](/content/images/obshee/image102.png)
+![Серия осмотров в карточке](/content/images/obshee/Osmotry/3.png)
 
 **Технические данные**: где осмотр был пройден, местоположение ПАК – адрес/координаты.
 
-![image124.png](/content/images/obshee/image124.png)
+![Технические данные осмотра](/content/images/obshee/Osmotry/4.png)

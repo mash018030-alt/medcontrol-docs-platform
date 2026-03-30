@@ -62,8 +62,15 @@ function LayoutShell() {
     window.scrollTo(0, 0)
   }, [location.pathname, location.search])
 
+  const layoutClassNames = [
+    isMcPdf ? 'docs-layout docs-layout--mc-pdf' : 'docs-layout',
+    !isMcPdf && !showTreeSidebar ? 'docs-layout--no-side-nav' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <div className={isMcPdf ? 'docs-layout docs-layout--mc-pdf' : 'docs-layout'}>
+    <div className={layoutClassNames}>
       <HeadingLinkCopyToast />
       {!isMcPdf && <Header />}
       {!isMcPdf && isMobileLayout && showTreeSidebar && mobileNavOpen && (

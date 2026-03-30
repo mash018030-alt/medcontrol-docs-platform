@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { quietHashSpy } from '../hooks/useArticleHashScroll'
-import { scrollToIdAfterReveal, decodeHashFragment } from '../utils/revealCitationTarget'
+import { scrollToIdAfterReveal, decodeHashFragment, resolveAnchorElement } from '../utils/revealCitationTarget'
 import { armTocHashNavigation } from '../utils/hashNavigationLock'
 
 export default function Toc({ headings, activeId }) {
@@ -40,6 +40,18 @@ export default function Toc({ headings, activeId }) {
 
   if (!headings?.length) return null
 
+  /** После navigate с # React Router и разметка должны примениться до scrollIntoView; microtask часто раньше commit — прокрутка не срабатывает. */
+  const scheduleScrollToHeading = (rawId) => {
+    const tryScroll = (attempt = 0) => {
+      if (resolveAnchorElement(rawId)) {
+        scrollToIdAfterReveal(rawId, { behavior: 'smooth' })
+        return
+      }
+      if (attempt < 90) requestAnimationFrame(() => tryScroll(attempt + 1))
+    }
+    setTimeout(tryScroll, 0)
+  }
+
   const handleClick = (e, id) => {
     e.preventDefault()
     quietHashSpy()
@@ -48,16 +60,14 @@ export default function Toc({ headings, activeId }) {
     const nextFrag = decodeHashFragment(id)
     /* Сравниваем декодированные фрагменты: RR/браузер могут отличаться от `#${id}` по кодированию. */
     if (locFrag === nextFrag && locFrag !== '') {
-      scrollToIdAfterReveal(id, { behavior: 'smooth' })
+      scheduleScrollToHeading(id)
       return
     }
-    /* Строковый to надёжнее объекта в RR7; прокрутка из TOC — одна (arm + microtask), эффект по hash пропускаем. */
+    /* Строковый to надёжнее объекта в RR7; прокрутка из TOC — одна (arm + timeout), эффект по hash пропускаем. */
     armTocHashNavigation()
     const to = `${location.pathname}${location.search}${nextHash}`
     navigate(to, { replace: true, preventScrollReset: true })
-    queueMicrotask(() => {
-      scrollToIdAfterReveal(id, { behavior: 'smooth' })
-    })
+    scheduleScrollToHeading(id)
   }
 
   return (

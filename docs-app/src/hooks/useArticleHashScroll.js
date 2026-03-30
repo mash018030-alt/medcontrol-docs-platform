@@ -213,5 +213,12 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
     return () => cancelAnimationFrame(raf)
   }, [enabled, loading, location.hash, location.pathname, location.search])
 
+  /* После commit markdown заголовки уже в DOM; rAF из schedule() может отстрелять на кадр раньше — тогда spy
+   * один раз остаётся с пустым списком и activeHeadingId не обновляется (подсветка TOC пропадает). */
+  useLayoutEffect(() => {
+    if (!enabled || loading) return
+    runSpyRef.current()
+  }, [enabled, loading, md, slug])
+
   return activeHeadingId
 }
