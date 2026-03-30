@@ -9,6 +9,35 @@
 .docs-carousel [id="carousel-podpis-2"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-podpis-2"] {
   background: var(--docs-ui-accent);
 }
+
+/* Карусель: повторная печать талона (obshee/kartochka-osmotra) */
+.docs-carousel [id="carousel-kartochka-talony-1"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(1),
+.docs-carousel [id="carousel-kartochka-talony-2"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(2),
+.docs-carousel [id="carousel-kartochka-talony-3"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(3) {
+  visibility: visible;
+}
+
+.docs-carousel [id="carousel-kartochka-talony-1"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-kartochka-talony-1"],
+.docs-carousel [id="carousel-kartochka-talony-2"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-kartochka-talony-2"],
+.docs-carousel [id="carousel-kartochka-talony-3"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-kartochka-talony-3"] {
+  background: var(--docs-ui-accent);
+}
+
+/* Одна и та же высота области слайда: широкие и узкие скрины и иконка масштабируются в один блок */
+.docs-carousel.docs-carousel--uniform-slides .docs-carousel-slides,
+.docs-carousel.docs-carousel--uniform-slides .docs-carousel-slide {
+  height: min(52vw, 28rem);
+  max-height: 480px;
+}
+
+.docs-carousel.docs-carousel--uniform-slides .docs-carousel-slide img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: none;
+  object-fit: contain;
+  object-position: center;
+}
 *{box-sizing:border-box}html{overflow-anchor:none}:root{font-family:Rawline,system-ui,-apple-system,sans-serif;line-height:1.5;color:#000;background-color:#fff}body{margin:0;min-height:100vh}#root{min-height:100vh}:root{--docs-ui-accent: #4a69ff;--docs-ui-accent-hover: #3554d6;--docs-temno-sinii: #1a3399;--docs-header-sticky-offset: 56px;--docs-light-bg: #e6e9ff;--docs-light-0-bg: #f5f7ff;--docs-landing-tile-bg: var(--docs-light-bg);--docs-landing-tile-border: #c5cffc;--docs-landing-tile-text: var(--docs-temno-sinii);--docs-landing-tile-hover-bg: #dce2ff;--docs-landing-tile-hover-border: #a8b6fc}.docs-layout{min-height:100vh;display:flex;flex-direction:column}.docs-header{background:#fff;color:#1a1d29;padding:.625rem 1.5rem;position:sticky;top:0;z-index:10;border-bottom:1px solid #e5e7eb;box-sizing:border-box}.docs-header-inner{position:relative;max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:1rem}
 /* Главная, поиск, хаб новостей: левый край логотипа = левый край текста в main (как у .docs-content padding-inline) */
 @media (min-width:1024px){
@@ -910,6 +939,14 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   .docs-carousel-slide img{
     max-height:min(52vw,20rem);
   }
+  .docs-carousel.docs-carousel--uniform-slides .docs-carousel-slides,
+  .docs-carousel.docs-carousel--uniform-slides .docs-carousel-slide{
+    height:min(58vw,24rem);
+    max-height:380px;
+  }
+  .docs-carousel.docs-carousel--uniform-slides .docs-carousel-slide img{
+    max-height:none;
+  }
   .docs-nav-next,
   .docs-nav-prev{
     word-break:break-word;
@@ -1005,4 +1042,68 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   .docs-table-scroll table{
     min-width:0!important;
   }
+}
+
+/* Карусель: стрелки у центра, по бокам от точек (как изначально в макете) */
+.docs-carousel .docs-carousel-arrow-prev {
+  left: 42% !important;
+  right: auto !important;
+  transform: translate(-50%, -50%) !important;
+}
+.docs-carousel .docs-carousel-arrow-next {
+  right: 42% !important;
+  left: auto !important;
+  transform: translate(50%, -50%) !important;
+}
+
+/* Первый/последний слайд: скрытие стрелки до срабатывания JS и поверх любых конфликтов */
+.docs-carousel [id='carousel-kartochka-talony-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-kartochka-talony-3']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-podpis-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-podpis-2']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-nastroyka-3-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev,
+.docs-carousel [id='carousel-nastroyka-3-1']:checked ~ .docs-carousel-nav label.docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-nastroyka-3-2']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next,
+.docs-carousel [id='carousel-nastroyka-3-2']:checked ~ .docs-carousel-nav label.docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-uvedomleniya-web-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-uvedomleniya-web-2']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-organizacii-kartochka-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-organizacii-kartochka-3']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-osmotry-zamechaniya-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-osmotry-zamechaniya-3']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
 }

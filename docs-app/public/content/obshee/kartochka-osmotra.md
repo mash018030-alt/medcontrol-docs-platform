@@ -7,12 +7,11 @@
 
 При наличии соответствующих доступов откроется карточка осмотра с детальной информацией.
 
-## Информация
+## Данные осмотра
 
-Содержание вкладки можно разбить на блоки: данные осмотра, персональная информация о работнике, медицинские данные, информация о медработнике, документы.
+Содержание вкарточки осмотра можно разбить на два блока: общие данные осомтра и вкладки. 
 
-**Данные осмотра:**
-
+В данных осмотра показаны: 
 1.  Наименование организации работника.
 2.  Номер осмотра.
 3.  Вид осмотра.
@@ -20,7 +19,11 @@
 5.  Решение по осмотру.
 6.  Время прохождения осмотра на ПАК.
 
-![image111.png](/content/images/obshee/image111.png)
+![image111.png](/content/images/obshee/kartochka/1.png)
+
+## Информация
+
+На вкладке «Информация» отображена персональная информация о работнике, медицинские данные, информация о медработнике и документы. 
 
 **Персональные данные работника**:
 
@@ -30,7 +33,7 @@
 4.  Возраст и дата рождения.
 5.  Роль пользователя в АРМ.
 
-![image47.png](/content/images/obshee/image47.png)
+![image47.png](/content/images/obshee/kartochka/2.png)
 
 **Медицинские данные:**
 
@@ -41,17 +44,17 @@
 5.  Замечания – выявленные признаки воздействия вредных и (или) опасных производственных факторов, состояний и заболеваний, препятствующих выполнению трудовых обязанностей и/или прочие причины отстранения.
 6.  Референсные значения для сравнения с полученными в ходе осмотра показателями.
 
-![image41.png](/content/images/obshee/image41.png)
+![image41.png](/content/images/obshee/kartochka/3.png)
 
 **Информация о медработнике:**
 1.  ФИО и роль в АРМ пользователя, вынесшего заключение.
 2.  Медорганизация, в которой трудоустроен медработник.
 
-![image118.png](/content/images/obshee/image118.png)
+![image118.png](/content/images/obshee/kartochka/4.png)
 
 Исходящие документы (с возможностью просмотра и выгрузки) – медицинские документы, сформированные на основании проведенного осмотра.
 
-![image154.png](/content/images/obshee/image154.png)
+![image154.png](/content/images/obshee/kartochka/5.png)
 
 В меню карточки справа можно:
 
@@ -60,7 +63,7 @@
 3.  Скачать ИДС на проведение осмотра с подписью работника.
 4.  Открыть историю осмотров работника.
 
-![image74.png](/content/images/obshee/image74.png)
+![image74.png](/content/images/obshee/kartochka/5-1.png)
 
 ---
 
@@ -71,12 +74,13 @@
 **Данные окружающей среды, зарегистрированные в момент проведения осмотра:**
 
 <div class="docs-env-list">
-<div class="docs-env-item"><img src="/content/images/obshee/image126.png" alt=""> температура;</div>
-<div class="docs-env-item"><img src="/content/images/obshee/image9.png" alt=""> влажность;</div>
-<div class="docs-env-item"><img src="/content/images/obshee/image35.png" alt=""> уровень освещенности;</div>
+<div class="docs-env-item"><img src="/content/images/obshee/kartochka/6.png" alt=""> температура;</div>
+<div class="docs-env-item"><img src="/content/images/obshee/kartochka/7.png" alt=""> влажность;</div>
+<div class="docs-env-item"><img src="/content/images/obshee/kartochka/8.png" alt=""> уровень освещенности;</div>
 </div>
 
-**Допустимые параметры микроклимата окружающей среды:**
+<details class="docs-disclosure">
+<summary>Допустимые параметры микроклимата окружающей среды</summary>
 
 - температура 10-35 С;
 - влажность 15-80%;
@@ -84,26 +88,26 @@
 
 Параметры, выходящие за пределы допустимых значений, выделяются красным цветом.
 
+</details>
+
 **Индикатор поверки МИ и вскрытия корпуса ПАК:**
 
-![image141.png](/content/images/obshee/image141.png)
+![image141.png](/content/images/obshee/kartochka/9.png)
 
 **Техническая информация о встроенном ПО на ПАК:**
 
-![image3.png](/content/images/obshee/image3.png)
+![image3.png](/content/images/obshee/kartochka/10.png)
 
 <div class="docs-info">
 <div class="docs-info-title">Информация</div>
 
 <p>Осмотры, пройденные на ПАК с нарушениями условий эксплуатации, не назначаются медработникам, обрабатываются ИС автоматически и в карточке осмотра имеют статус «Нарушение тех.условий».</p>
 
-<img src="/content/images/obshee/image42.png" alt="Карточка осмотра: статус «Нарушение тех. условий»" />
+<img src="/content/images/obshee/kartochka/11.png" alt="Карточка осмотра: статус «Нарушение тех. условий»" />
 
 </div>
 
 **Адрес прохождения осмотра:**
-
-![image159.png](/content/images/obshee/image159.png)
 
 Чтобы результаты осмотров были корректными и достоверными, помимо нужных параметров окружающей среды должны соблюдаться технические требования к состоянию ПАК:
 
@@ -115,8 +119,6 @@
 
 На этой вкладке описан полный технологический маршрут прохождения осмотра в системе с указанием времени всех этапов обработки данных.
 
-![image76.png](/content/images/obshee/image76.png)
-
 ## Талоны
 
 На вкладке «Талоны» показаны:
@@ -126,18 +128,34 @@
 3.  Кнопка просмотра информации, отображенной на талоне.
 4.  Кнопка повторной печати талона.
 
-![image130.png](/content/images/obshee/image130.png)
+![image130.png](/content/images/obshee/kartochka/12.png)
 
 Если время на печать талона истекло или он был утерян/испорчен, можно напечатать талон повторно с результатами пройденного осмотра. Для этого нужно:
 
-1.  Нажать на кнопку печати. <img src="/content/images/obshee/image114.png" alt="" class="docs-inline-icon" />
+1.  Нажать на кнопку печати.
 
 2.  Выбрать из списка необходимый ПАК – на котором был пройден осмотр (есть в карточке осмотра – вкладка «Талоны»).
 
-![image188.png](/content/images/obshee/image188.png)
-
 3.  Нажать «Распечатать».
 
-![image116.png](/content/images/obshee/image116.png)
+<div class="docs-carousel docs-carousel--uniform-slides">
+<input type="radio" name="carousel-kartochka-talony" id="carousel-kartochka-talony-1" checked>
+<input type="radio" name="carousel-kartochka-talony" id="carousel-kartochka-talony-2">
+<input type="radio" name="carousel-kartochka-talony" id="carousel-kartochka-talony-3">
+<div class="docs-carousel-slides">
+<div class="docs-carousel-slide"><img src="/content/images/obshee/kartochka/13.png" alt="Шаг 1: нажать на кнопку печати талона" /></div>
+<div class="docs-carousel-slide"><img src="/content/images/obshee/kartochka/14.png" alt="Шаг 2: выбрать ПАК из списка (вкладка «Талоны» карточки осмотра)" /></div>
+<div class="docs-carousel-slide"><img src="/content/images/obshee/kartochka/15.png" alt="Шаг 3: нажать «Распечатать»" /></div>
+</div>
+<div class="docs-carousel-nav">
+<span class="docs-carousel-arrow docs-carousel-arrow-prev" role="button" tabIndex="0" aria-label="Предыдущий слайд">‹</span>
+<span class="docs-carousel-dots">
+<label for="carousel-kartochka-talony-1" aria-label="Шаг 1: кнопка печати">1</label>
+<label for="carousel-kartochka-talony-2" aria-label="Шаг 2: выбор ПАК">2</label>
+<label for="carousel-kartochka-talony-3" aria-label="Шаг 3: Распечатать">3</label>
+</span>
+<span class="docs-carousel-arrow docs-carousel-arrow-next" role="button" tabIndex="0" aria-label="Следующий слайд">›</span>
+</div>
+</div>
 
 ---

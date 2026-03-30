@@ -48,12 +48,29 @@ export function resolveAnchorScrollOffsetPx(el) {
   return FALLBACK_ANCHOR_OFFSET_PX
 }
 
+/**
+ * Отступ под липкую шапку: max(CSS scroll-margin заголовка, фактический низ .docs-header).
+ * Иначе при «высокой» шапке (две строки, меню) якорь остаётся ниже, чем видимая зона чтения.
+ */
+export function resolveEffectiveStickyOffsetPx(el) {
+  if (typeof document === 'undefined') return FALLBACK_ANCHOR_OFFSET_PX
+  if (document.documentElement.classList.contains('docs-layout--mc-pdf')) return 0
+  const fromMargin =
+    el instanceof Element ? resolveAnchorScrollOffsetPx(el) : FALLBACK_ANCHOR_OFFSET_PX
+  const header = document.querySelector('.docs-layout > .docs-header')
+  if (!header) return fromMargin
+  const bottom = header.getBoundingClientRect().bottom
+  if (!Number.isFinite(bottom) || bottom <= 0) return fromMargin
+  const fromHeader = Math.ceil(bottom) + 3
+  return Math.max(fromMargin, fromHeader)
+}
+
 /** Линия scroll-spy: по первому заголовку статьи (тот же offset, что и для якорей). */
 export function resolveArticleSpyOffsetPx(articleRoot) {
   if (typeof document === 'undefined') return FALLBACK_ANCHOR_OFFSET_PX
   if (document.documentElement.classList.contains('docs-layout--mc-pdf')) return 0
   const probe = articleRoot?.querySelector?.('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]') ?? null
-  return resolveAnchorScrollOffsetPx(probe)
+  return resolveEffectiveStickyOffsetPx(probe)
 }
 
 /** Пустой inline span (напр. id="ftnt_back*") даёт нулевой rect — берём следующий узел ([3]). */
@@ -77,21 +94,23 @@ export function scrollToIdAfterReveal(rawId, { behavior = 'smooth' } = {}) {
   const el = resolveAnchorElement(rawId)
   if (!el) return false
   openAncestorDetails(el)
-  const offsetPx = resolveAnchorScrollOffsetPx(el)
+  const offsetPx = () => resolveEffectiveStickyOffsetPx(el)
   const finalizePosition = () => {
+    const pad = offsetPx()
     const topNow = anchorViewportTopForScroll(el)
-    /* Целевая линия — такая же, как у scroll-spy: верх якоря у offset от viewport */
-    if (Math.abs(topNow - offsetPx) > 12) {
+    /* Целевая линия: верх якоря у «полосы» под шапкой (как scroll-spy) */
+    if (Math.abs(topNow - pad) > 6) {
       window.scrollBy({
-        top: topNow - offsetPx,
+        top: topNow - pad,
         behavior: behavior === 'smooth' ? 'auto' : behavior,
       })
     }
     requestAnimationFrame(() => {
+      const pad2 = offsetPx()
       const t = anchorViewportTopForScroll(el)
-      if (Math.abs(t - offsetPx) > 12) {
+      if (Math.abs(t - pad2) > 6) {
         const se = document.scrollingElement ?? document.documentElement
-        const y = se.scrollTop + t - offsetPx
+        const y = se.scrollTop + t - pad2
         window.scrollTo({ left: window.scrollX, top: Math.max(0, y), behavior: 'auto' })
       }
     })
@@ -104,7 +123,8 @@ export function scrollToIdAfterReveal(rawId, { behavior = 'smooth' } = {}) {
       } catch {
         const se = document.scrollingElement ?? document.documentElement
         const y0 = se.scrollTop
-        const top = anchorViewportTopForScroll(el) + y0 - offsetPx
+        const pad = offsetPx()
+        const top = anchorViewportTopForScroll(el) + y0 - pad
         window.scrollTo({ left: window.scrollX, top: Math.max(0, top), behavior: 'auto' })
         return
       }

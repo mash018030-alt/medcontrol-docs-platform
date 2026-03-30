@@ -11,6 +11,7 @@ import { MarkdownOl, MarkdownUl } from './markdownListComponents'
 import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
+import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
@@ -131,6 +132,7 @@ export default function SectionPdfBundlePage() {
             components={{
               ol: MarkdownOl,
               ul: MarkdownUl,
+              details: MarkdownDetails,
               tr: MarkdownTr,
               table: MarkdownTable,
               img: MarkdownImg,

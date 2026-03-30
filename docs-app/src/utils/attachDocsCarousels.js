@@ -131,6 +131,9 @@ export function attachDocsCarousels(rootEl) {
     }
 
     updateEdgeArrows(carousel)
+    requestAnimationFrame(() => {
+      updateEdgeArrows(carousel)
+    })
   })
 
   return () => {

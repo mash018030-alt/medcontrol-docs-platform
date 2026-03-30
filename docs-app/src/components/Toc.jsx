@@ -45,10 +45,11 @@ export default function Toc({ headings, activeId }) {
    * В декларативном режиме (BrowserRouter + Routes) опция preventScrollReset не действует: navigate с # может
    * сбрасывать прокрутку после нашего scrollIntoView. Делаем commit навигации через flushSync, затем прокрутку.
    */
+  /* TOC: только auto — два smooth подряд (Chromium + любой второй скролл) отменяют движение: подсветка по hash обновляется, а окно остаётся на месте. */
   const scrollToHeadingFromToc = (rawId) => {
     const run = () => {
       if (resolveAnchorElement(rawId)) {
-        scrollToIdAfterReveal(rawId, { behavior: 'smooth' })
+        scrollToIdAfterReveal(rawId, { behavior: 'auto' })
         return true
       }
       return false
@@ -77,10 +78,11 @@ export default function Toc({ headings, activeId }) {
     flushSync(() => {
       navigate(
         { pathname: location.pathname, search: location.search, hash: nextHash },
-        { replace: true },
+        { replace: true, preventScrollReset: true },
       )
     })
-    scrollToHeadingFromToc(id)
+    /* После commit + layout (consumeTocHashNavigationLock) — микротаск, чтобы не пересечься с ещё одним programmatic smooth. */
+    queueMicrotask(() => scrollToHeadingFromToc(id))
   }
 
   return (

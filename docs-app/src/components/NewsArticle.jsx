@@ -22,6 +22,7 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import LightboxCloseButton from './LightboxCloseButton'
 import MarkdownImg from './MarkdownImg'
+import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
@@ -56,6 +57,7 @@ export default function NewsArticle() {
     () => ({
       tr: MarkdownTr,
       table: MarkdownTable,
+      details: MarkdownDetails,
       img: MarkdownImg,
       a: ({ href, className, children, ...props }) => {
         const isBackref =
