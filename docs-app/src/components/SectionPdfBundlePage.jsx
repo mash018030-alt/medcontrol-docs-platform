@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -12,7 +12,6 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
-import { createHeadingSlugAllocator } from '../utils/headingSlug'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
 const ALLOWED_SECTION_PDF_ROOTS = new Set(
@@ -41,9 +40,6 @@ export default function SectionPdfBundlePage() {
   const [loading, setLoading] = useState(Boolean(root && ALLOWED_SECTION_PDF_ROOTS.has(root)))
   const [error, setError] = useState(null)
   const isMcPdf = searchParams.get('mc_pdf') === '1'
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренный сброс при новой сборке markdown
-  const allocateHeadingId = useMemo(() => createHeadingSlugAllocator(), [combinedMd])
 
   useEffect(() => {
     if (!root || !ALLOWED_SECTION_PDF_ROOTS.has(root)) {
@@ -159,7 +155,7 @@ export default function SectionPdfBundlePage() {
                   </a>
                 )
               },
-              ...buildMarkdownHeadingComponents(allocateHeadingId, isMcPdf),
+              ...buildMarkdownHeadingComponents(isMcPdf),
             }}
           >
             {combinedMd}

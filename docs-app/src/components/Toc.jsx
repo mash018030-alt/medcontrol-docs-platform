@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { flushSync } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { quietHashSpy } from '../hooks/useArticleHashScroll'
 import { scrollToIdAfterReveal, decodeHashFragment, resolveAnchorElement } from '../utils/revealCitationTarget'
@@ -40,16 +41,25 @@ export default function Toc({ headings, activeId }) {
 
   if (!headings?.length) return null
 
-  /** После navigate с # React Router и разметка должны примениться до scrollIntoView; microtask часто раньше commit — прокрутка не срабатывает. */
-  const scheduleScrollToHeading = (rawId) => {
-    const tryScroll = (attempt = 0) => {
+  /**
+   * В декларативном режиме (BrowserRouter + Routes) опция preventScrollReset не действует: navigate с # может
+   * сбрасывать прокрутку после нашего scrollIntoView. Делаем commit навигации через flushSync, затем прокрутку.
+   */
+  const scrollToHeadingFromToc = (rawId) => {
+    const run = () => {
       if (resolveAnchorElement(rawId)) {
         scrollToIdAfterReveal(rawId, { behavior: 'smooth' })
-        return
+        return true
       }
-      if (attempt < 90) requestAnimationFrame(() => tryScroll(attempt + 1))
+      return false
     }
-    setTimeout(tryScroll, 0)
+    if (run()) return
+    let attempt = 0
+    const step = () => {
+      if (run() || attempt++ > 90) return
+      requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
   }
 
   const handleClick = (e, id) => {
@@ -60,14 +70,17 @@ export default function Toc({ headings, activeId }) {
     const nextFrag = decodeHashFragment(id)
     /* Сравниваем декодированные фрагменты: RR/браузер могут отличаться от `#${id}` по кодированию. */
     if (locFrag === nextFrag && locFrag !== '') {
-      scheduleScrollToHeading(id)
+      scrollToHeadingFromToc(id)
       return
     }
-    /* Строковый to надёжнее объекта в RR7; прокрутка из TOC — одна (arm + timeout), эффект по hash пропускаем. */
     armTocHashNavigation()
-    const to = `${location.pathname}${location.search}${nextHash}`
-    navigate(to, { replace: true, preventScrollReset: true })
-    scheduleScrollToHeading(id)
+    flushSync(() => {
+      navigate(
+        { pathname: location.pathname, search: location.search, hash: nextHash },
+        { replace: true },
+      )
+    })
+    scrollToHeadingFromToc(id)
   }
 
   return (

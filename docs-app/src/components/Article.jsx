@@ -134,10 +134,6 @@ export default function Article() {
   const currentArticle = flatArticles.find((a) => a.path === slug)
   const pdfFromSearchRef = useRef(false)
 
-  /* Новый аллокатор id при смене статьи или текста — иначе счётчики дубликатов «прилипнут» к старому документу. */
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренный сброс по slug/md
-  const allocateHeadingId = useMemo(() => createHeadingSlugAllocator(), [slug, md])
-
   const landingH1Id = useMemo(() => {
     if (!landingSection) return ''
     const alloc = createHeadingSlugAllocator()
@@ -341,7 +337,7 @@ export default function Article() {
                   </a>
                 )
               },
-              ...buildMarkdownHeadingComponents(allocateHeadingId, isMcPdf),
+              ...buildMarkdownHeadingComponents(isMcPdf),
             }}
           >
             {md}

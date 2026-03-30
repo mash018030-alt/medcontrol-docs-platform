@@ -1,17 +1,14 @@
 import MarkdownHeading from '../components/MarkdownHeading'
 import { markdownHeadingPlainText } from './markdownHeadingPlainText'
+import { stableHeadingIdFromNode } from './headingSlug'
 
 /** h1–h6 для ReactMarkdown: стабильные id и якорь «#» (кроме mc_pdf). */
-export function buildMarkdownHeadingComponents(allocateHeadingId, isMcPdf) {
+export function buildMarkdownHeadingComponents(isMcPdf) {
   const mk = (level) => (incoming) => {
-    const { children, node: _ignoreNode, id: _ignoreMdId, ...props } = incoming
+    const { children, node, id: _ignoreMdId, ...props } = incoming
+    const id = stableHeadingIdFromNode(markdownHeadingPlainText(children), node)
     return (
-      <MarkdownHeading
-        level={level}
-        id={allocateHeadingId(markdownHeadingPlainText(children))}
-        isMcPdf={isMcPdf}
-        {...props}
-      >
+      <MarkdownHeading level={level} id={id} isMcPdf={isMcPdf} {...props}>
         {children}
       </MarkdownHeading>
     )

@@ -83,3 +83,25 @@ export function createHeadingSlugAllocator() {
     return `${base}-${next}`
   }
 }
+
+/**
+ * Стабильный id без мутаций между проходами рендера (Strict Mode вызывает render дважды —
+ * createHeadingSlugAllocator иначе «съедает» счётчик и id в DOM расходятся с одним проходом).
+ * Суффикс по offset в исходном md уникален для каждого заголовка.
+ *
+ * @param {string} plainText
+ * @param {{ position?: { start?: { offset?: number, line?: number } } } | null | undefined} node
+ */
+export function stableHeadingIdFromNode(plainText, node) {
+  let base = slugifyHeadingText(plainText)
+  if (!base) base = 'section'
+  const off = node?.position?.start?.offset
+  if (typeof off === 'number' && Number.isFinite(off)) {
+    return `${base}-p${off}`
+  }
+  const line = node?.position?.start?.line
+  if (typeof line === 'number' && Number.isFinite(line)) {
+    return `${base}-L${line}`
+  }
+  return base
+}

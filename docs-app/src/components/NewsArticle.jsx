@@ -23,7 +23,6 @@ import MarkdownTable from './MarkdownTable'
 import LightboxCloseButton from './LightboxCloseButton'
 import MarkdownImg from './MarkdownImg'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
-import { createHeadingSlugAllocator } from '../utils/headingSlug'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
 function mdFileSlugFromPath(newsPath) {
@@ -53,9 +52,6 @@ export default function NewsArticle() {
   const [lightbox, setLightbox] = useState(null)
   const articleBodyRef = useRef(null)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- намеренный сброс аллокатора при смене страницы/markdown
-  const allocateHeadingId = useMemo(() => createHeadingSlugAllocator(), [fullSlug, md])
-
   const markdownComponents = useMemo(
     () => ({
       tr: MarkdownTr,
@@ -80,9 +76,9 @@ export default function NewsArticle() {
           </a>
         )
       },
-      ...buildMarkdownHeadingComponents(allocateHeadingId, isMcPdf),
+      ...buildMarkdownHeadingComponents(isMcPdf),
     }),
-    [allocateHeadingId, isMcPdf],
+    [isMcPdf],
   )
 
   useEffect(() => {

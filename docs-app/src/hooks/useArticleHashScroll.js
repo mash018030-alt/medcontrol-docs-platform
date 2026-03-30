@@ -214,11 +214,12 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
   }, [enabled, loading, location.hash, location.pathname, location.search])
 
   /* После commit markdown заголовки уже в DOM; rAF из schedule() может отстрелять на кадр раньше — тогда spy
-   * один раз остаётся с пустым списком и activeHeadingId не обновляется (подсветка TOC пропадает). */
+   * один раз остаётся с пустым списком и activeHeadingId не обновляется (подсветка TOC пропадает).
+   * При клике по TOC меняется только hash — md/slug те же; без location.hash эффект не перезапускался. */
   useLayoutEffect(() => {
     if (!enabled || loading) return
     runSpyRef.current()
-  }, [enabled, loading, md, slug])
+  }, [enabled, loading, md, slug, location.hash])
 
   return activeHeadingId
 }
