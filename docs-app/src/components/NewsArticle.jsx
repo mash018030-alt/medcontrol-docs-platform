@@ -6,6 +6,7 @@ import rehypeRaw from 'rehype-raw'
 import { runArticlePdfExport } from '../utils/runArticlePdfExport'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
 import { rehypePublicAssets } from '../rehype-public-assets'
+import { rehypeRadioDefaultChecked } from '../rehype-radio-default-checked'
 import { attachDocsCarousels } from '../utils/attachDocsCarousels'
 import {
   fetchNewsTree,
@@ -317,7 +318,7 @@ export default function NewsArticle() {
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+              rehypePlugins={[rehypeRaw, rehypeRadioDefaultChecked(), rehypeFootnotesSection(), rehypePublicAssets()]}
               remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
               components={markdownComponents}
             >

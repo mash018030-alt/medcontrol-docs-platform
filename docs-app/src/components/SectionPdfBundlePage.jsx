@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
 import { rehypePublicAssets } from '../rehype-public-assets'
+import { rehypeRadioDefaultChecked } from '../rehype-radio-default-checked'
 import { orderedPathsInSection } from '../data/nav'
 import { docsDashboardSections } from '../data/docsDashboardSections'
 import { MarkdownOl, MarkdownUl } from './markdownListComponents'
@@ -127,7 +128,7 @@ export default function SectionPdfBundlePage() {
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+            rehypePlugins={[rehypeRaw, rehypeRadioDefaultChecked(), rehypeFootnotesSection(), rehypePublicAssets()]}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,

@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
 import { rehypePublicAssets } from '../rehype-public-assets'
+import { rehypeRadioDefaultChecked } from '../rehype-radio-default-checked'
 import { flatArticles, navTree } from '../data/nav'
 import { recordArticleOpened } from '../services/dashboardRecentArticles'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
@@ -311,7 +312,7 @@ export default function Article() {
         ) : (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+            rehypePlugins={[rehypeRaw, rehypeRadioDefaultChecked(), rehypeFootnotesSection(), rehypePublicAssets()]}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,
