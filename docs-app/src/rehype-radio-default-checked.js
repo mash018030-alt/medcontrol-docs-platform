@@ -13,6 +13,7 @@ function walk(node, fn) {
 
 function radioHasCheckedAttr(properties) {
   const p = properties || {}
+  if (p.checked === false) return false
   if (p.checked === true) return true
   if (p.checked === '') return true
   if (typeof p.checked === 'string' && p.checked.toLowerCase() === 'checked') return true

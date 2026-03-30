@@ -3,6 +3,15 @@
  * @param {HTMLElement | null} rootEl
  * @returns {() => void} detach — снять слушатели
  */
+function ensureCarouselHasCheckedRadio(carousel) {
+  const radios = carousel.querySelectorAll('input[type="radio"]')
+  if (radios.length === 0) return
+  const any = Array.from(radios).some((r) => r.checked)
+  if (!any) {
+    radios[0].checked = true
+  }
+}
+
 export function attachDocsCarousels(rootEl) {
   const attached = []
   const swipeTimeouts = []
@@ -32,6 +41,7 @@ export function attachDocsCarousels(rootEl) {
   }
 
   rootEl.querySelectorAll('.docs-carousel').forEach((carousel) => {
+    ensureCarouselHasCheckedRadio(carousel)
     const radios = carousel.querySelectorAll('input[type="radio"]')
     const labels = carousel.querySelectorAll('.docs-carousel-dots label')
     const arrowPrev = carousel.querySelector('.docs-carousel-arrow-prev')
@@ -132,6 +142,7 @@ export function attachDocsCarousels(rootEl) {
 
     updateEdgeArrows(carousel)
     requestAnimationFrame(() => {
+      ensureCarouselHasCheckedRadio(carousel)
       updateEdgeArrows(carousel)
     })
   })

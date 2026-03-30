@@ -191,13 +191,17 @@ export default function NewsArticle() {
   useEffect(() => {
     if (mdLoading || !isLeaf) return
     let detach = () => {}
-    const frame = requestAnimationFrame(() => {
-      const el = articleBodyRef.current
-      if (!el) return
-      detach = attachDocsCarousels(el)
+    let raf2 = null
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        const el = articleBodyRef.current
+        if (!el) return
+        detach = attachDocsCarousels(el)
+      })
     })
     return () => {
-      cancelAnimationFrame(frame)
+      cancelAnimationFrame(raf1)
+      if (raf2 != null) cancelAnimationFrame(raf2)
       detach()
     }
   }, [md, mdLoading, isLeaf])
