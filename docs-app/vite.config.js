@@ -13,8 +13,11 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   server: {
+    /* true: слушать 0.0.0.0 — удобнее с Windows/WSL и показывает URL для сети */
+    host: true,
     port: 5174,
-    strictPort: true,
+    /* false: если 5174 занят (старый vite / второй терминал), Vite возьмёт 5175 и т.д. */
+    strictPort: false,
     /* PDF: браузер бьёт в тот же origin → без CORS; цель — docs-app/pdf-server (npm start) */
     proxy: {
       '/api/pdf': {

@@ -44,7 +44,25 @@
 - не отражаются в Едином реестре перевозчиков;
 - выделяются метками:
 
-![image183.png](/content/images/obshee/image183.png)
+<div class="docs-carousel docs-carousel--uniform-slides">
+<input type="radio" name="carousel-vidy-osmotrov-metki" id="carousel-vidy-osmotrov-metki-1" checked>
+<input type="radio" name="carousel-vidy-osmotrov-metki" id="carousel-vidy-osmotrov-metki-2">
+<input type="radio" name="carousel-vidy-osmotrov-metki" id="carousel-vidy-osmotrov-metki-3">
+<div class="docs-carousel-slides">
+<div class="docs-carousel-slide"><img src="/content/images/obshee/vidy_osmotrov/1.png" alt="Карточка осмотра с меткой «Сервисное меню» в списке" /></div>
+<div class="docs-carousel-slide"><img src="/content/images/obshee/vidy_osmotrov/2.png" alt="Карточка осмотра с меткой «Тестовый»" /></div>
+<div class="docs-carousel-slide"><img src="/content/images/obshee/vidy_osmotrov/3.png" alt="Карточка осмотра с меткой «Эмуляция»" /></div>
+</div>
+<div class="docs-carousel-nav">
+<span class="docs-carousel-arrow docs-carousel-arrow-prev" role="button" tabIndex="0" aria-label="Предыдущий слайд">‹</span>
+<span class="docs-carousel-dots">
+<label for="carousel-vidy-osmotrov-metki-1" aria-label="Слайд 1: метка «Сервисное меню»">1</label>
+<label for="carousel-vidy-osmotrov-metki-2" aria-label="Слайд 2: метка «Тестовый»">2</label>
+<label for="carousel-vidy-osmotrov-metki-3" aria-label="Слайд 3: метка «Эмуляция»">3</label>
+</span>
+<span class="docs-carousel-arrow docs-carousel-arrow-next" role="button" tabIndex="0" aria-label="Следующий слайд">›</span>
+</div>
+</div>
 
 ### Сервисный осмотр
 

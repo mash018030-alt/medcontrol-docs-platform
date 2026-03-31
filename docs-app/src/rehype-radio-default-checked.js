@@ -4,10 +4,13 @@
  * defaultChecked даёт корректное начальное состояние для нативной группы радиокнопок.
  */
 function walk(node, fn) {
+  if (node == null || typeof node !== 'object') return
   fn(node)
   const ch = node.children
   if (Array.isArray(ch)) {
-    for (const c of ch) walk(c, fn)
+    for (const c of ch) {
+      if (c != null) walk(c, fn)
+    }
   }
 }
 

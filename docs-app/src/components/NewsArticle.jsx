@@ -25,6 +25,7 @@ import LightboxCloseButton from './LightboxCloseButton'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { fetchMarkdownText } from '../utils/fetchMarkdownText'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
 function mdFileSlugFromPath(newsPath) {
@@ -60,7 +61,7 @@ export default function NewsArticle() {
       table: MarkdownTable,
       details: MarkdownDetails,
       img: MarkdownImg,
-      a: ({ href, className, children, ...props }) => {
+      a: ({ href, className, children, node: _mdNode, ...props }) => {
         const isBackref =
           (typeof className === 'string' && className.includes('data-footnote-backref')) ||
           (href && String(href).startsWith('#user-content-fnref-'))
@@ -168,12 +169,8 @@ export default function NewsArticle() {
     const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
     const path = `${base}/content/News/${fileSlug}.md`.replace(/^\/+/, '/')
     const url = new URL(path, window.location.origin).href
-    fetch(url)
-      .then((r) => {
-        if (!r.ok) throw new Error('Не удалось загрузить страницу')
-        return r.text()
-      })
-      .then((text) => {
+    fetchMarkdownText(url, { notFoundMessage: 'Не удалось загрузить страницу' })
+      .then(({ text }) => {
         setMd(text)
       })
       .catch((e) => setMdError(e.message || 'Ошибка'))

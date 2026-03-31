@@ -10,7 +10,27 @@ export function publicAssetUrl(path) {
   if (/^(?:https?:)?\/\//i.test(s) || s.startsWith('data:') || s.startsWith('blob:')) return path
   if (s.startsWith('/')) {
     const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
-    return base ? `${base}${s}` : s
+    if (!base) return s
+    if (s === base || s.startsWith(`${base}/`)) return s
+    return `${base}${s}`
   }
   return path
+}
+
+/**
+ * Путь для React Router <Link to={…}>: убрать дублирующий префикс BASE_URL, если href уже
+ * содержит подкаталог деплоя (старые сборки, сырой HTML).
+ */
+export function routerLinkTo(href) {
+  if (href == null || typeof href !== 'string') return href
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+  if (!base) return href
+  const i = href.indexOf('#')
+  const pathPart = i >= 0 ? href.slice(0, i) : href
+  const frag = i >= 0 ? href.slice(i) : ''
+  let p = pathPart
+  if (p === base || p.startsWith(`${base}/`)) {
+    p = p.slice(base.length) || '/'
+  }
+  return `${p}${frag}`
 }

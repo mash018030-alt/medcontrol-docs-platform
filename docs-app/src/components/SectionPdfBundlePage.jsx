@@ -14,6 +14,7 @@ import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { readFetchedMarkdownBody } from '../utils/fetchMarkdownText'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
 const ALLOWED_SECTION_PDF_ROOTS = new Set(
@@ -31,7 +32,7 @@ async function fetchMd(path) {
   const url = new URL(`${base}/content/${path}.md`.replace(/^\/+/, '/'), window.location.origin).href
   const r = await fetch(url)
   if (!r.ok) throw new Error(`${path}: ${r.status}`)
-  return r.text()
+  return readFetchedMarkdownBody(r, `${path}: не найден или не markdown`)
 }
 
 export default function SectionPdfBundlePage() {
@@ -137,7 +138,7 @@ export default function SectionPdfBundlePage() {
               tr: MarkdownTr,
               table: MarkdownTable,
               img: MarkdownImg,
-              a: ({ href, className, children, ...props }) => {
+              a: ({ href, className, children, node: _mdNode, ...props }) => {
                 const isBackref =
                   (typeof className === 'string' && className.includes('data-footnote-backref')) ||
                   (href && String(href).startsWith('#user-content-fnref-'))

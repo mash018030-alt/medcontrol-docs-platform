@@ -18,7 +18,8 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { publicAssetUrl, routerLinkTo } from '../utils/publicAssetUrl'
+import { fetchMarkdownText } from '../utils/fetchMarkdownText'
 import { attachDocsCarousels } from '../utils/attachDocsCarousels'
 import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
@@ -28,6 +29,14 @@ import MarkdownHeading from './MarkdownHeading'
 import LightboxCloseButton from './LightboxCloseButton'
 import { createHeadingSlugAllocator } from '../utils/headingSlug'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
+
+/** Ссылки на статьи (/obshee/…) — через Link, чтобы работала клиентская навигация и deep link. */
+function isInternalDocsPath(href) {
+  if (href == null || typeof href !== 'string') return false
+  if (!href.startsWith('/') || href.startsWith('//')) return false
+  if (href.startsWith('/content/')) return false
+  return true
+}
 
 function getLandingTitle(md) {
   const firstLine = (md || '').trim().split('\n')[0] || ''
@@ -89,14 +98,9 @@ export default function Article() {
     const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
     const path = `${base}/content/${slug}.md`.replace(/^\/+/, '/')
     const url = new URL(path, window.location.origin).href
-    fetch(url)
-      .then((r) => {
-        if (!r.ok) throw new Error('Статья не найдена')
-        const lastMod = r.headers.get('last-modified')
-        if (lastMod) setLastUpdated(new Date(lastMod))
-        return r.text()
-      })
-      .then((text) => {
+    fetchMarkdownText(url, { notFoundMessage: 'Статья не найдена' })
+      .then(({ text, lastModified }) => {
+        if (lastModified) setLastUpdated(new Date(lastModified))
         setMd(text)
       })
       .catch((e) => setError(`${e.message || 'Failed to fetch'} (${url})`))
@@ -325,10 +329,28 @@ export default function Article() {
               tr: MarkdownTr,
               table: MarkdownTable,
               img: MarkdownImg,
-              a: ({ href, className, children, ...props }) => {
+              /* passNode в react-markdown: не прокидывать `node` (hast) в Link/DOM */
+              a: ({ href, className, children, node: _mdNode, ...props }) => {
                 const isBackref =
                   (typeof className === 'string' && className.includes('data-footnote-backref')) ||
                   (href && String(href).startsWith('#user-content-fnref-'))
+                const hashOnly = href && typeof href === 'string' && href.startsWith('#')
+                const useNative =
+                  isBackref ||
+                  hashOnly ||
+                  props.download != null ||
+                  props.target === '_blank'
+                if (!useNative && isInternalDocsPath(href)) {
+                  return (
+                    <Link
+                      to={routerLinkTo(href)}
+                      className={className}
+                      {...props}
+                    >
+                      {children}
+                    </Link>
+                  )
+                }
                 const resolvedHref =
                   href && typeof href === 'string' && href.startsWith('/') && !href.startsWith('//')
                     ? publicAssetUrl(href)

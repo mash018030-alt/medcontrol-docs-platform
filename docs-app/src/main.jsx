@@ -4,7 +4,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './App.css'
 import App from './App.jsx'
 
-const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '') || undefined
+/* Пустая строка после strip tail / = корень приложения; React Router ждёт '/' или подкаталог, не undefined */
+const routerBasename = (import.meta.env.BASE_URL || '/').replace(/\/$/, '') || '/'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

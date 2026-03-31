@@ -23,6 +23,19 @@
   background: var(--docs-ui-accent);
 }
 
+/* Карусель: метки сервисный / тестовый / эмуляция (obshee/vidy-osmotrov) */
+.docs-carousel [id="carousel-vidy-osmotrov-metki-1"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(1),
+.docs-carousel [id="carousel-vidy-osmotrov-metki-2"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(2),
+.docs-carousel [id="carousel-vidy-osmotrov-metki-3"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(3) {
+  visibility: visible;
+}
+
+.docs-carousel [id="carousel-vidy-osmotrov-metki-1"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-vidy-osmotrov-metki-1"],
+.docs-carousel [id="carousel-vidy-osmotrov-metki-2"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-vidy-osmotrov-metki-2"],
+.docs-carousel [id="carousel-vidy-osmotrov-metki-3"]:checked ~ .docs-carousel-nav .docs-carousel-dots label[for="carousel-vidy-osmotrov-metki-3"] {
+  background: var(--docs-ui-accent);
+}
+
 /* Одна и та же высота области слайда: широкие и узкие скрины и иконка масштабируются в один блок */
 .docs-carousel.docs-carousel--uniform-slides .docs-carousel-slides,
 .docs-carousel.docs-carousel--uniform-slides .docs-carousel-slide {
@@ -724,6 +737,14 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   max-width:none;
 }
 
+/* Липкий thead внутри overflow-x даёт сбой раскладки (шапка «плывёт» и наезжает на первую строку) */
+.docs-table-scroll thead th{
+  position:static;
+  top:auto;
+  z-index:auto;
+  box-shadow:none;
+}
+
 /* ——— Адаптив ≤1023px: выдвижное меню, шапка (сетка), TOC, таблицы, карточки ——— */
 @media (max-width:1023px){
   :root{
@@ -1104,6 +1125,14 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   pointer-events: none !important;
 }
 .docs-carousel [id='carousel-osmotry-zamechaniya-3']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-vidy-osmotrov-metki-1']:checked ~ .docs-carousel-nav .docs-carousel-arrow-prev {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.docs-carousel [id='carousel-vidy-osmotrov-metki-3']:checked ~ .docs-carousel-nav .docs-carousel-arrow-next {
   visibility: hidden !important;
   pointer-events: none !important;
 }
