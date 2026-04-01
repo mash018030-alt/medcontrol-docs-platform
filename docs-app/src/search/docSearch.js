@@ -778,7 +778,7 @@ export async function loadAllDocs() {
       const path = `${base}/content/${article.path}.md`.replace(/^\/+/, '/')
       const url = new URL(path, window.location.origin).href
       try {
-        const r = await fetch(url)
+        const r = await fetch(url, { cache: 'no-cache' })
         if (!r.ok) return [article.path, { md: '', article }]
         const md = await r.text()
         return [article.path, { md, article }]

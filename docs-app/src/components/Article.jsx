@@ -46,12 +46,6 @@ function isInternalDocsPath(href) {
   return true
 }
 
-function getLandingTitle(md) {
-  const firstLine = (md || '').trim().split('\n')[0] || ''
-  const m = firstLine.match(/^#\s+(.+)$/)
-  return m ? m[1].trim() : ''
-}
-
 const SECTION_LANDING_PDF_LABEL = 'Скачать в PDF'
 
 function safeSectionBundleFilename(title) {
@@ -166,8 +160,9 @@ export default function Article() {
   const landingH1Id = useMemo(() => {
     if (!landingSection) return ''
     const alloc = createHeadingSlugAllocator()
-    return alloc(getLandingTitle(md) || landingSection.title)
-  }, [landingSection, md])
+    /* Заголовок из nav, не из .md: иначе при HTTP-кэше .md на GH Pages может «залипать» старый H1 из PDF. */
+    return alloc(landingSection.title)
+  }, [landingSection])
 
   const headings = useArticleTocHeadings(
     articleBodyRef,
@@ -268,7 +263,7 @@ export default function Article() {
                     isMcPdf={isMcPdf}
                     className="docs-section-landing-title-row__heading"
                   >
-                    {getLandingTitle(md) || landingSection.title}
+                    {landingSection.title}
                   </MarkdownHeading>
                   {!isMcPdf && landingDashboardMeta?.sectionPdfBundle ? (
                     <button

@@ -28,7 +28,8 @@ export async function readFetchedMarkdownBody(response, wrongBodyMessage = MARKD
  * @returns {Promise<{ text: string, lastModified: string | null }>}
  */
 export async function fetchMarkdownText(url, { notFoundMessage = MARKDOWN_FETCH_NOT_FOUND } = {}) {
-  const r = await fetch(url)
+  /* GitHub Pages отдаёт .md с max-age=600; без revalidate браузер может показывать старый заголовок после деплоя. */
+  const r = await fetch(url, { cache: 'no-cache' })
   if (!r.ok) throw new Error(notFoundMessage)
   const lastModified = r.headers.get('last-modified')
   const text = await readFetchedMarkdownBody(r, notFoundMessage)

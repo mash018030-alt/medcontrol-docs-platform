@@ -30,7 +30,7 @@ const SECTION_ARTICLE_SEPARATOR = '\n\n---\n\n'
 async function fetchMd(path) {
   const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
   const url = new URL(`${base}/content/${path}.md`.replace(/^\/+/, '/'), window.location.origin).href
-  const r = await fetch(url)
+  const r = await fetch(url, { cache: 'no-cache' })
   if (!r.ok) throw new Error(`${path}: ${r.status}`)
   return readFetchedMarkdownBody(r, `${path}: не найден или не markdown`)
 }
