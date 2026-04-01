@@ -96,9 +96,9 @@ export const navTree = [
         children: [
           { title: 'Работа с осмотром', path: 'medkabinet/rabota-v-medkabinete' },
           { title: 'Вынесение заключения по\u00A0осмотру', path: 'medkabinet/vynesenie-zaklyucheniya-po-osmotru' },
+          { title: 'Регламент отстранения работников', path: 'medkabinet/reglament-otstraneniya' },
         ],
       },
-      { title: 'Регламент отстранения работников', path: 'medkabinet/reglament-otstraneniya' },
       { title: 'Разблокировка пользователя', path: 'medkabinet/polzovateli' },
       { title: 'Документы', path: 'medkabinet/dokumenty' },
       { title: 'Подпись', path: 'medkabinet/podpis' },

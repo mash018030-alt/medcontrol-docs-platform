@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Accordion from './Accordion'
 import HighlightedText from './HighlightedText'
 import { navTree } from '../../data/nav'
+import { buildArticleMcPdfUrl, runPdfFromPrintUrl } from '../../utils/runArticlePdfExport'
 
 function isLandingHub(path) {
   return navTree.some((t) => t.path === path && t.children?.length)
@@ -28,6 +30,14 @@ function articleLinkTo(path, scrollPhrase) {
   }
 }
 
+function safeSearchPdfFilename(title) {
+  const base =
+    String(title)
+      .replace(/\s+/g, '_')
+      .replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'article'
+  return `${base}.pdf`
+}
+
 /**
  * @param {{
  *   result: { path: string, title: string, sectionTitle: string, snippet: string, scrollPhrase?: string },
@@ -42,6 +52,17 @@ export default function SearchResultItem({ result, query, expanded, onToggle, sh
   const showPdf = !isLandingHub(path)
   const panelId = `search-snippet-${path.replace(/\//g, '-')}`
   const docTo = articleLinkTo(path, scrollPhrase)
+  const [pdfBusy, setPdfBusy] = useState(false)
+
+  const handleSearchPdf = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (pdfBusy) return
+    setPdfBusy(true)
+    runPdfFromPrintUrl(buildArticleMcPdfUrl(path), { filename: safeSearchPdfFilename(title) }).finally(() => {
+      setPdfBusy(false)
+    })
+  }
 
   return (
     <Accordion expanded={expanded}>
@@ -91,13 +112,14 @@ export default function SearchResultItem({ result, query, expanded, onToggle, sh
                 Перейти к статье
               </Link>
               {showPdf && (
-                <Link
-                  to={`/${path}`}
+                <button
+                  type="button"
                   className="docs-search-action-link docs-search-action-link--secondary"
-                  state={{ downloadPdf: true }}
+                  onClick={handleSearchPdf}
+                  disabled={pdfBusy}
                 >
-                  Скачать PDF
-                </Link>
+                  {pdfBusy ? 'Формирование PDF…' : 'Скачать PDF'}
+                </button>
               )}
             </div>
           </div>

@@ -2,8 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import LandingTileIcon from './LandingTileIcon'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { buildArticleMcPdfUrl, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
 
 const PDF_LABEL = 'Скачать в PDF'
+
+function safeArticlePdfFilename(title) {
+  const base =
+    String(title)
+      .replace(/\s+/g, '_')
+      .replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'article'
+  return `${base}.pdf`
+}
 
 function PdfIcon() {
   return (
@@ -13,12 +22,24 @@ function PdfIcon() {
   )
 }
 
-/** Плитка статьи на разводящей странице раздела: клик по основной области ведёт к статье; PDF — отдельная ссылка. */
+/** Плитка на разводящей странице раздела (`…/user-guide`): одна тема — одна плитка, без вложенных списков ссылок на статьи. */
 export default function LandingSectionTile({ path, title, cardPreviewSrc, cardPreviewFallbackSrc }) {
   const previewUrl = cardPreviewSrc ? publicAssetUrl(cardPreviewSrc) : null
   const previewFallbackUrl = cardPreviewFallbackSrc ? publicAssetUrl(cardPreviewFallbackSrc) : null
   const [imgSrc, setImgSrc] = useState(previewUrl)
+  const [pdfBusy, setPdfBusy] = useState(false)
   const fallbackTriedRef = useRef(false)
+
+  const handleTilePdf = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (pdfBusy) return
+    const printUrl = buildArticleMcPdfUrl(path)
+    setPdfBusy(true)
+    runPdfFromPrintUrl(printUrl, { filename: safeArticlePdfFilename(title) }).finally(() => {
+      setPdfBusy(false)
+    })
+  }
 
   useEffect(() => {
     fallbackTriedRef.current = false
@@ -27,8 +48,10 @@ export default function LandingSectionTile({ path, title, cardPreviewSrc, cardPr
 
   if (previewUrl) {
     let cardPreviewClass = 'docs-landing-tile docs-landing-tile--card-preview'
-    if (path === 'obshee/pak') cardPreviewClass += ' docs-landing-tile--card-preview-inset-preview'
-    const isObsheeFaqPreview = path === 'obshee/chastye-voprosy'
+    if (path === 'obshee/pak' || path === 'admin/pak') {
+      cardPreviewClass += ' docs-landing-tile--card-preview-inset-preview'
+    }
+    const isDashFaqPreview = path === 'obshee/chastye-voprosy' || path === 'admin/chastye-voprosy'
     return (
       <div className={cardPreviewClass}>
         <div className="docs-landing-tile__card-header">
@@ -39,20 +62,21 @@ export default function LandingSectionTile({ path, title, cardPreviewSrc, cardPr
           >
             <span className="docs-landing-tile-text">{title}</span>
           </Link>
-          <Link
-            to={`/${path}`}
+          <button
+            type="button"
             className="docs-landing-tile__pdf-dash"
-            state={{ downloadPdf: true }}
-            title={PDF_LABEL}
-            aria-label={`${PDF_LABEL}: ${title}`}
+            onClick={handleTilePdf}
+            disabled={pdfBusy}
+            title={pdfBusy ? 'Формирование PDF…' : PDF_LABEL}
+            aria-label={pdfBusy ? 'Формирование PDF' : `${PDF_LABEL}: ${title}`}
           >
             <PdfIcon />
-          </Link>
+          </button>
         </div>
         <Link
           to={`/${path}`}
           className={
-            isObsheeFaqPreview
+            isDashFaqPreview
               ? 'docs-landing-tile__surface docs-landing-tile__surface--obshee-preview docs-landing-tile__surface--obshee-faq-preview'
               : 'docs-landing-tile__surface docs-landing-tile__surface--obshee-preview'
           }
@@ -60,7 +84,7 @@ export default function LandingSectionTile({ path, title, cardPreviewSrc, cardPr
         >
           <div
             className={
-              isObsheeFaqPreview
+              isDashFaqPreview
                 ? 'docs-landing-tile__preview-wrap docs-landing-tile__preview-wrap--obshee-faq'
                 : 'docs-landing-tile__preview-wrap'
             }
@@ -93,15 +117,16 @@ export default function LandingSectionTile({ path, title, cardPreviewSrc, cardPr
         <LandingTileIcon path={path} />
         <span className="docs-landing-tile-text">{title}</span>
       </Link>
-      <Link
-        to={`/${path}`}
+      <button
+        type="button"
         className="docs-news-release-row__pdf docs-landing-tile__pdf"
-        state={{ downloadPdf: true }}
-        title={PDF_LABEL}
-        aria-label={`${PDF_LABEL}: ${title}`}
+        onClick={handleTilePdf}
+        disabled={pdfBusy}
+        title={pdfBusy ? 'Формирование PDF…' : PDF_LABEL}
+        aria-label={pdfBusy ? 'Формирование PDF' : `${PDF_LABEL}: ${title}`}
       >
         <PdfIcon />
-      </Link>
+      </button>
     </div>
   )
 }

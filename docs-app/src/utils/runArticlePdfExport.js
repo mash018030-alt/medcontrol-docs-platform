@@ -62,6 +62,19 @@ export function buildSectionBundlePrintUrl(sectionRootPath) {
 }
 
 /**
+ * URL одной статьи с mc_pdf=1 (для Playwright с текущего origin, без перехода в SPA).
+ * @param {string} articlePath например obshee/user-guide
+ */
+export function buildArticleMcPdfUrl(articlePath) {
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '')
+  const norm = String(articlePath).replace(/^\/+/, '')
+  const pathSeg = base ? `${base}/${norm}` : `/${norm}`
+  const u = new URL(pathSeg.replace(/\/{2,}/g, '/'), window.location.origin)
+  u.searchParams.set('mc_pdf', '1')
+  return u.toString()
+}
+
+/**
  * PDF через сервис Playwright (см. pdf-server/). Печатается страница по полному URL (с mc_pdf=1).
  */
 async function runArticlePdfExportPlaywright(apiUrl, filename, printUrl) {

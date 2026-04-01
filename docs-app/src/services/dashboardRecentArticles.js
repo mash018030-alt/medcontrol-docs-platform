@@ -1,4 +1,9 @@
-import { flatArticles } from '../data/nav'
+/* Недавно открытые статьи: только для карточек главной «Документация» (DocsDashboardPage → SectionCard).
+ * Не подключать к разводящим разделов (Article + сетка LandingSectionTile, напр. /medkabinet/user-guide). */
+import { articleUnderSectionRoot, flatArticles } from '../data/nav'
+
+/** @type {Map<string, string>} */
+const pathToTitle = new Map(flatArticles.map((a) => [a.path, a.title]))
 
 /** @type {string} */
 export const DASHBOARD_RECENT_STORAGE_KEY = 'docs-dashboard-recent-opens'
@@ -26,4 +31,32 @@ export function recordArticleOpened(path) {
     /* ignore quota / private mode */
   }
   window.dispatchEvent(new CustomEvent(DASHBOARD_RECENT_UPDATED_EVENT))
+}
+
+/**
+ * Последние открытые статьи раздела (корень — путь вида obshee/user-guide), по порядку из localStorage.
+ * @param {string} sectionRootPath
+ * @param {number} [limit]
+ * @returns {{ path: string, title: string }[]}
+ */
+export function getRecentArticleOpensForSection(sectionRootPath, limit = 2) {
+  if (typeof localStorage === 'undefined' || !sectionRootPath) return []
+  try {
+    const raw = localStorage.getItem(DASHBOARD_RECENT_STORAGE_KEY)
+    const data = raw ? JSON.parse(raw) : { entries: [] }
+    const entries = Array.isArray(data?.entries) ? data.entries : []
+    const out = []
+    for (const e of entries) {
+      const p = e?.path
+      if (!p || typeof p !== 'string') continue
+      if (!articleUnderSectionRoot(p, sectionRootPath)) continue
+      const title = pathToTitle.get(p)
+      if (!title) continue
+      out.push({ path: p, title })
+      if (out.length >= limit) break
+    }
+    return out
+  } catch {
+    return []
+  }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { useLocation, useNavigate, Link, useSearchParams } from 'react-router-dom'
+import { useLocation, Link, useSearchParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -10,6 +10,10 @@ import { flatArticles, navTree } from '../data/nav'
 import { recordArticleOpened } from '../services/dashboardRecentArticles'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
 import { getDashboardSectionMeta } from '../data/docsDashboardSections'
+import {
+  ADMIN_LANDING_CARD_PREVIEW_FALLBACK,
+  resolveAdminLandingCardPreview,
+} from '../data/adminLandingCardPreview'
 import {
   OBSHEE_LANDING_CARD_PREVIEW_FALLBACK,
   resolveObsheeLandingCardPreview,
@@ -58,7 +62,7 @@ function safeSectionBundleFilename(title) {
   return `${base}.pdf`
 }
 
-/** Разводящая «Общее» (obshee/user-guide): карточки по макету public/content/images/dashboards/. */
+/** Разводящие с превью-картинками в карточках: «Общее», «Администрирование» (стили — docs-section-landing-root--obshee-stat). */
 function SectionLandingObsheeStatPanel({ enabled, children }) {
   if (!enabled) return children
   return (
@@ -70,13 +74,13 @@ function SectionLandingObsheeStatPanel({ enabled, children }) {
 
 export default function Article() {
   const location = useLocation()
-  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const isMcPdf = searchParams.get('mc_pdf') === '1'
   const slug = (location.pathname.replace(/^\//, '').replace(/\/$/, '') || 'medadmin/user-guide')
   const landingSection = navTree.find((item) => item.path === slug && item.children?.length)
-  const obsheeStatLandingPanel =
-    landingSection?.path === 'obshee/user-guide' && !isMcPdf
+  const statDashLandingPanel =
+    (landingSection?.path === 'obshee/user-guide' || landingSection?.path === 'admin/user-guide') &&
+    !isMcPdf
   const landingDashboardMeta = landingSection ? getDashboardSectionMeta(landingSection.path) : null
   const [md, setMd] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
@@ -158,17 +162,12 @@ export default function Article() {
   const [sectionBundlePdfBusy, setSectionBundlePdfBusy] = useState(false)
   const [lightbox, setLightbox] = useState(null)
   const currentArticle = flatArticles.find((a) => a.path === slug)
-  const pdfFromSearchRef = useRef(false)
 
   const landingH1Id = useMemo(() => {
     if (!landingSection) return ''
     const alloc = createHeadingSlugAllocator()
     return alloc(getLandingTitle(md) || landingSection.title)
   }, [landingSection, md])
-
-  useEffect(() => {
-    pdfFromSearchRef.current = false
-  }, [slug])
 
   const headings = useArticleTocHeadings(
     articleBodyRef,
@@ -227,42 +226,6 @@ export default function Article() {
     })
   }
 
-  useEffect(() => {
-    if (loading || error || landingSection) return
-    if (!location.state?.downloadPdf || pdfFromSearchRef.current) return
-    if (!md) return
-    const t = window.setTimeout(() => {
-      const el = articleBodyRef.current
-      if (!el) return
-      pdfFromSearchRef.current = true
-      const meta = flatArticles.find((a) => a.path === slug)
-      const safeName = (meta?.title || slug)
-        .replace(/\s+/g, '_')
-        .replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'article'
-      setPdfExporting(true)
-      runArticlePdfExport(el, { filename: `${safeName}.pdf` })
-        .finally(() => {
-          setPdfExporting(false)
-          navigate(
-            { pathname: location.pathname, search: location.search, hash: location.hash },
-            { replace: true, state: {} },
-          )
-        })
-    }, 150)
-    return () => clearTimeout(t)
-  }, [
-    loading,
-    error,
-    landingSection,
-    location.state,
-    location.pathname,
-    location.search,
-    location.hash,
-    slug,
-    navigate,
-    md,
-  ])
-
   if (loading) return <div className="docs-article docs-loading">Загрузка…</div>
   if (error) {
     return (
@@ -295,7 +258,7 @@ export default function Article() {
           role="presentation"
         >
         {landingSection ? (
-          <SectionLandingObsheeStatPanel enabled={obsheeStatLandingPanel}>
+          <SectionLandingObsheeStatPanel enabled={statDashLandingPanel}>
             <>
               <div className="docs-section-landing-title-row">
                 <div className="docs-section-landing-title-row__cluster">
@@ -328,6 +291,7 @@ export default function Article() {
               <div className="docs-section-landing-dashboard">
                 <SearchBar sectionRootPath={landingSection.path} />
               </div>
+              {/* Разводящая раздела: только плитки верхнего уровня из nav; без списков вложенных статей (недавние — только на главной). */}
               <div className="docs-landing-grid">
                 {landingSection.children.map((child) => (
                   <LandingSectionTile
@@ -335,12 +299,18 @@ export default function Article() {
                     path={child.path}
                     title={child.title}
                     cardPreviewSrc={
-                      obsheeStatLandingPanel
-                        ? resolveObsheeLandingCardPreview(child.path)
+                      statDashLandingPanel
+                        ? landingSection.path === 'obshee/user-guide'
+                          ? resolveObsheeLandingCardPreview(child.path)
+                          : resolveAdminLandingCardPreview(child.path)
                         : undefined
                     }
                     cardPreviewFallbackSrc={
-                      obsheeStatLandingPanel ? OBSHEE_LANDING_CARD_PREVIEW_FALLBACK : undefined
+                      statDashLandingPanel
+                        ? landingSection.path === 'obshee/user-guide'
+                          ? OBSHEE_LANDING_CARD_PREVIEW_FALLBACK
+                          : ADMIN_LANDING_CARD_PREVIEW_FALLBACK
+                        : undefined
                     }
                   />
                 ))}
