@@ -10,6 +10,10 @@ import { flatArticles, navTree } from '../data/nav'
 import { recordArticleOpened } from '../services/dashboardRecentArticles'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
 import { getDashboardSectionMeta } from '../data/docsDashboardSections'
+import {
+  OBSHEE_LANDING_CARD_PREVIEW_FALLBACK,
+  resolveObsheeLandingCardPreview,
+} from '../data/obsheeLandingCardPreview'
 import Toc from './Toc'
 import SearchBar from './dashboard/SearchBar'
 import LandingSectionTile from './LandingSectionTile'
@@ -54,6 +58,16 @@ function safeSectionBundleFilename(title) {
   return `${base}.pdf`
 }
 
+/** Разводящая «Общее» (obshee/user-guide): карточки по макету public/content/images/dashboards/. */
+function SectionLandingObsheeStatPanel({ enabled, children }) {
+  if (!enabled) return children
+  return (
+    <div className="docs-section-landing-root docs-section-landing-root--obshee-stat">
+      {children}
+    </div>
+  )
+}
+
 export default function Article() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -61,6 +75,8 @@ export default function Article() {
   const isMcPdf = searchParams.get('mc_pdf') === '1'
   const slug = (location.pathname.replace(/^\//, '').replace(/\/$/, '') || 'medadmin/user-guide')
   const landingSection = navTree.find((item) => item.path === slug && item.children?.length)
+  const obsheeStatLandingPanel =
+    landingSection?.path === 'obshee/user-guide' && !isMcPdf
   const landingDashboardMeta = landingSection ? getDashboardSectionMeta(landingSection.path) : null
   const [md, setMd] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
@@ -279,44 +295,58 @@ export default function Article() {
           role="presentation"
         >
         {landingSection ? (
-          <>
-            <div className="docs-section-landing-title-row">
-              <div className="docs-section-landing-title-row__cluster">
-                <MarkdownHeading
-                  level={1}
-                  id={landingH1Id}
-                  isMcPdf={isMcPdf}
-                  className="docs-section-landing-title-row__heading"
-                >
-                  {getLandingTitle(md) || landingSection.title}
-                </MarkdownHeading>
-                {!isMcPdf && landingDashboardMeta?.sectionPdfBundle ? (
-                  <button
-                    type="button"
-                    className="docs-section-landing-pdf-btn"
-                    onClick={handleSectionLandingBundlePdf}
-                    disabled={sectionBundlePdfBusy}
-                    title={sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
-                    aria-label={
-                      sectionBundlePdfBusy
-                        ? 'Формирование PDF'
-                        : `${SECTION_LANDING_PDF_LABEL}: ${landingDashboardMeta?.title || landingSection.title}`
-                    }
+          <SectionLandingObsheeStatPanel enabled={obsheeStatLandingPanel}>
+            <>
+              <div className="docs-section-landing-title-row">
+                <div className="docs-section-landing-title-row__cluster">
+                  <MarkdownHeading
+                    level={1}
+                    id={landingH1Id}
+                    isMcPdf={isMcPdf}
+                    className="docs-section-landing-title-row__heading"
                   >
-                    {sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
-                  </button>
-                ) : null}
+                    {getLandingTitle(md) || landingSection.title}
+                  </MarkdownHeading>
+                  {!isMcPdf && landingDashboardMeta?.sectionPdfBundle ? (
+                    <button
+                      type="button"
+                      className="docs-section-landing-pdf-btn"
+                      onClick={handleSectionLandingBundlePdf}
+                      disabled={sectionBundlePdfBusy}
+                      title={sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
+                      aria-label={
+                        sectionBundlePdfBusy
+                          ? 'Формирование PDF'
+                          : `${SECTION_LANDING_PDF_LABEL}: ${landingDashboardMeta?.title || landingSection.title}`
+                      }
+                    >
+                      {sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
+                    </button>
+                  ) : null}
+                </div>
               </div>
-            </div>
-            <div className="docs-section-landing-dashboard">
-              <SearchBar sectionRootPath={landingSection.path} />
-            </div>
-            <div className="docs-landing-grid">
-              {landingSection.children.map((child) => (
-                <LandingSectionTile key={child.path} path={child.path} title={child.title} />
-              ))}
-            </div>
-          </>
+              <div className="docs-section-landing-dashboard">
+                <SearchBar sectionRootPath={landingSection.path} />
+              </div>
+              <div className="docs-landing-grid">
+                {landingSection.children.map((child) => (
+                  <LandingSectionTile
+                    key={child.path}
+                    path={child.path}
+                    title={child.title}
+                    cardPreviewSrc={
+                      obsheeStatLandingPanel
+                        ? resolveObsheeLandingCardPreview(child.path)
+                        : undefined
+                    }
+                    cardPreviewFallbackSrc={
+                      obsheeStatLandingPanel ? OBSHEE_LANDING_CARD_PREVIEW_FALLBACK : undefined
+                    }
+                  />
+                ))}
+              </div>
+            </>
+          </SectionLandingObsheeStatPanel>
         ) : (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
