@@ -1,0 +1,88 @@
+================================================================================
+БАЗОВАЯ ЛИНИЯ (Шаг 0) — до миграции контента / разреза репозитория
+Создано автоматически: 2026-04-02
+Репозиторий: medcontrol-docs-platform
+================================================================================
+
+--- 1) Вывод: node docs-app/scripts/check-internal-links.mjs ---
+
+=== Broken / unknown internal links ===
+(none)
+
+=== md exists but not in nav (flatArticles) ===
+(none)
+
+=== Hash targets (in-page / cross-doc) ===
+(all hash links resolved)
+
+
+--- 2) Сверка flatArticles (nav.js) ↔ файлы docs-app/public/content/<path>.md ---
+
+Источник путей: export const flatArticles в docs-app/src/data/nav.js
+Всего статей в flatArticles: 55
+Отсутствующих .md файлов: 0 (все пути имеют соответствующий файл)
+
+Примечание: раздел News не входит в flatArticles; структура новостей — News/news-tree.json.
+
+
+--- 3) Полный перечень path из flatArticles (для повторной сверки после миграции) ---
+
+glossariy/user-guide
+glossariy/terminy-i-sokrashcheniya
+obshee/user-guide
+obshee/avtorizaciya-v-arm
+obshee/osmotry
+obshee/poisk-osmotrov
+obshee/kartochka-osmotra
+obshee/vidy-osmotrov
+obshee/seriya-osmotrov
+obshee/istoriya-prohozhdeniya-osmotrov
+obshee/vozmozhnye-rezultaty-osmotrov
+obshee/organizacii
+obshee/kartochka-organizacii
+obshee/nastroyki-organizacii
+obshee/polzovateli
+obshee/kartochka-polzovatelya
+obshee/sozdanie-polzovatelya
+obshee/profil-polzovatelya
+obshee/dokumenty
+obshee/otchety
+obshee/deystviya-s-otchetami
+obshee/pak
+obshee/uvedomleniya
+obshee/uvedomleniya-sozdanie-podpiski
+obshee/uvedomleniya-deystviya-s-podpiskoy
+obshee/uvedomleniya-shablony
+obshee/uvedomleniya-telegram
+obshee/chastye-voprosy
+admin/user-guide
+admin/polzovateli
+admin/gruppy-razresheniy-polzovateley
+admin/organizacii
+admin/deystviya-s-organizaciej
+admin/nastroyki-organizacii
+admin/osmotry
+admin/pak
+admin/adminpanel
+admin/chastye-voprosy
+medkabinet/user-guide
+medkabinet/podgotovka-i-avtorizaciya
+medkabinet/lichnyy-kabinet-medrabotnika
+medkabinet/rabota-v-medkabinete
+medkabinet/vynesenie-zaklyucheniya-po-osmotru
+medkabinet/reglament-otstraneniya
+medkabinet/polzovateli
+medkabinet/dokumenty
+medkabinet/podpis
+medkabinet/chastye-voprosy
+medkabinet/normativnaya-baza
+medadmin/user-guide
+medadmin/nastroyki-medorganizacii
+medadmin/uvedomleniya-o-nepodpisannyh-dokumentah
+medadmin/pereformirovanie-dokumenta
+medadmin/statistika-smen-medrabotnika
+medadmin/upravlenie-smenoy-medrabotnika
+
+================================================================================
+Конец файла базовой линии
+================================================================================
