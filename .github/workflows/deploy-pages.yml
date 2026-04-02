@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - uses: actions/setup-node@v4
         with:
@@ -33,8 +35,12 @@ jobs:
         run: npm ci
 
       # Подкаталог /medcontrol-docs-platform/ на github.io — иначе base '/' даёт 404 на JS/CSS
+      # Текстовый PDF: задеплойте docs-app/pdf-server отдельно, в репозитории Settings → Secrets → Actions
+      # добавьте VITE_PDF_SERVICE_URL (например https://your-pdf-api.fly.dev), см. pdf-server/README.md
       - name: Build
         working-directory: docs-app
+        env:
+          VITE_PDF_SERVICE_URL: ${{ secrets.VITE_PDF_SERVICE_URL }}
         run: npm run build:gh-pages
 
       - name: SPA fallback for GitHub Pages
