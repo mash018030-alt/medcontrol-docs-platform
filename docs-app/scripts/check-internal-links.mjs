@@ -57,13 +57,17 @@ function walkDir(d, rel = '') {
   for (const ent of fs.readdirSync(d, { withFileTypes: true })) {
     const p = path.join(d, ent.name)
     const r = rel ? `${rel}/${ent.name}` : ent.name
-    if (ent.isDirectory()) walkDir(p, r)
-    else if (ent.name.endsWith('.md')) mdFiles.push({ full: p, rel: r.split(path.sep).join('/') })
+    if (ent.isDirectory()) {
+      /* Служебная документация контент-репо (план миграции, архив чата) — не статьи сайта */
+      if (rel === '' && ent.name === 'docs') continue
+      walkDir(p, r)
+    } else if (ent.name.endsWith('.md')) mdFiles.push({ full: p, rel: r.split(path.sep).join('/') })
   }
 }
 walkDir(contentDir)
 
 for (const f of mdFiles) {
+  if (f.rel === 'README.md') continue
   const md = fs.readFileSync(f.full, 'utf8')
   for (const url of extractMdLinks(md)) {
     if (!url || url.startsWith('#')) continue
