@@ -198,9 +198,14 @@ export async function runPdfFromPrintUrl(printUrl, { filename }) {
   if (!apiUrl) {
     window.alert(
       [
-        'Скачивание PDF всего раздела доступно при запущенном сервисе печати.',
-        'В production задайте VITE_PDF_SERVICE_URL; локально: npm start в docs-app/pdf-server (в dev Vite проксирует /api/pdf).',
-        'См. pdf-server/README.md',
+        'Текстовый PDF (как при печати из Chromium) сейчас недоступен: в этой сборке не задан адрес сервиса печати.',
+        '',
+        'Статический хостинг (GitHub Pages и т.п.) не запускает pdf-server сам — его нужно вынести отдельно (Railway, VPS, свой домен).',
+        'Перед сборкой фронта задайте VITE_PDF_SERVICE_URL на публичный URL сервиса, например: https://pdf.example.com',
+        'На сервере в ALLOWED_HOSTS укажите хост вашей документации (например user.github.io), в CORS_ORIGIN — Origin сайта с доками.',
+        '',
+        'Локально: npm start в docs-app/pdf-server; в npm run dev прокси /api/pdf подставляется сам, переменная не обязательна.',
+        'Подробнее: docs-app/pdf-server/README.md и docs-app/.env.example',
       ].join('\n'),
     )
     return
@@ -209,7 +214,7 @@ export async function runPdfFromPrintUrl(printUrl, { filename }) {
     await runArticlePdfExportPlaywright(apiUrl, filename, printUrl)
   } catch (e) {
     const msg = e && typeof e === 'object' && 'message' in e ? String(e.message) : String(e)
-    window.alert(['Не удалось сформировать PDF раздела.', '', msg].filter(Boolean).join('\n'))
+    window.alert(['Не удалось сформировать PDF через сервер печати.', '', msg].filter(Boolean).join('\n'))
     throw e
   }
 }
@@ -262,11 +267,16 @@ export async function runArticlePdfExport(rootEl, { filename, printUrl = null })
   if (targetPrintUrl) {
     window.alert(
       [
-        'Для PDF всего раздела нужен сервис печати (pdf-server; в dev — прокси /api/pdf).',
+        'Для этого PDF нужен сервис печати (pdf-server). В production задайте VITE_PDF_SERVICE_URL при сборке фронта.',
         'Инструкция: docs-app/pdf-server/README.md',
       ].join('\n'),
     )
     return
+  }
+  if (!apiUrl && !import.meta.env.DEV) {
+    console.warn(
+      '[PDF] В прод-сборке не задан VITE_PDF_SERVICE_URL — скачивается растровый PDF (html2pdf), не текстовый. См. docs-app/.env.example и pdf-server/README.md',
+    )
   }
   await runArticlePdfExportHtml2Pdf(rootEl, { filename })
 }
