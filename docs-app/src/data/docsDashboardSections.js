@@ -10,7 +10,7 @@ export const docsDashboardSections = [
     description:
       'Словарь терминов, сокращений и сущностей платформы MedControl: роли, документы, осмотры, ПАК, подписи и другие базовые понятия',
     iconSrc: '/content/icons/dashboard/glossary.png',
-    sectionPath: 'glossariy/user-guide',
+    sectionPath: '0_docs/0_glossariy/user-guide',
     sectionPdfBundle: true,
   },
   {
@@ -18,7 +18,7 @@ export const docsDashboardSections = [
     description:
       'Общее руководство по работе в АРМ: осмотры, организации, пользователи, документы, отчёты, ПАК и уведомления',
     iconSrc: '/content/icons/dashboard/main.png',
-    sectionPath: 'obshee/user-guide',
+    sectionPath: '0_docs/1_obshee/user-guide',
     sectionPdfBundle: true,
   },
   {
@@ -26,7 +26,7 @@ export const docsDashboardSections = [
     description:
       'Описание ролей, групп разрешений и доступных действий в системе: работа с пользователями, организациями, ПАК, документами, подписками и медданными',
     iconSrc: '/content/icons/dashboard/admin.png',
-    sectionPath: 'admin/user-guide',
+    sectionPath: '0_docs/2_admin/articles/00_main',
     sectionPdfBundle: true,
   },
   {
@@ -34,7 +34,7 @@ export const docsDashboardSections = [
     description:
       'Руководство для медработников по проведению и обработке осмотров, вынесению заключений, работе с сериями осмотров, документами и блокировками пользователей',
     iconSrc: '/content/icons/dashboard/medcab.png',
-    sectionPath: 'medkabinet/user-guide',
+    sectionPath: '0_docs/3_medkabinet/user-guide',
     sectionPdfBundle: true,
   },
   {
@@ -42,7 +42,7 @@ export const docsDashboardSections = [
     description:
       'Расширенный функционал для медадминистратора: настройка нежелательных событий и целевых показателей, работа с неподписанными документами и контроль смен медработников',
     iconSrc: '/content/icons/dashboard/medadmin.png',
-    sectionPath: 'medadmin/user-guide',
+    sectionPath: '0_docs/4_medadmin/user-guide',
     sectionPdfBundle: true,
   },
 ]

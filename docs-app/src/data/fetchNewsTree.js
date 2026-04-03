@@ -1,11 +1,11 @@
-/** Загрузка дерева новостей из public/content/News/news-tree.json */
+/** Загрузка дерева новостей из public/content/1_news/news-tree.json */
 
 /** Главная страница раздела новостей / релизов (хаб со списком). */
 export const NEWS_ROOT_SLUG = 'news'
 
 export async function fetchNewsTree() {
   const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
-  const path = `${base}/content/News/news-tree.json`.replace(/^\/+/, '/')
+  const path = `${base}/content/1_news/news-tree.json`.replace(/^\/+/, '/')
   const url = new URL(path, window.location.origin).href
   const r = await fetch(url)
   if (!r.ok) throw new Error('Не удалось загрузить структуру новостей')

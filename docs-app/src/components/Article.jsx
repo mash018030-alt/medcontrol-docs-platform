@@ -38,7 +38,7 @@ import LightboxCloseButton from './LightboxCloseButton'
 import { createHeadingSlugAllocator } from '../utils/headingSlug'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
 
-/** Ссылки на статьи (/obshee/…) — через Link, чтобы работала клиентская навигация и deep link. */
+/** Ссылки на статьи (/0_docs/1_obshee/…) — через Link, чтобы работала клиентская навигация и deep link. */
 function isInternalDocsPath(href) {
   if (href == null || typeof href !== 'string') return false
   if (!href.startsWith('/') || href.startsWith('//')) return false
@@ -70,10 +70,11 @@ export default function Article() {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const isMcPdf = searchParams.get('mc_pdf') === '1'
-  const slug = (location.pathname.replace(/^\//, '').replace(/\/$/, '') || 'medadmin/user-guide')
+  const slug = (location.pathname.replace(/^\//, '').replace(/\/$/, '') || '0_docs/4_medadmin/user-guide')
   const landingSection = navTree.find((item) => item.path === slug && item.children?.length)
   const statDashLandingPanel =
-    (landingSection?.path === 'obshee/user-guide' || landingSection?.path === 'admin/user-guide') &&
+    (landingSection?.path === '0_docs/1_obshee/user-guide' ||
+      landingSection?.path === '0_docs/2_admin/articles/00_main') &&
     !isMcPdf
   const landingDashboardMeta = landingSection ? getDashboardSectionMeta(landingSection.path) : null
   const [md, setMd] = useState('')
@@ -295,14 +296,14 @@ export default function Article() {
                     title={child.title}
                     cardPreviewSrc={
                       statDashLandingPanel
-                        ? landingSection.path === 'obshee/user-guide'
+                        ? landingSection.path === '0_docs/1_obshee/user-guide'
                           ? resolveObsheeLandingCardPreview(child.path)
                           : resolveAdminLandingCardPreview(child.path)
                         : undefined
                     }
                     cardPreviewFallbackSrc={
                       statDashLandingPanel
-                        ? landingSection.path === 'obshee/user-guide'
+                        ? landingSection.path === '0_docs/1_obshee/user-guide'
                           ? OBSHEE_LANDING_CARD_PREVIEW_FALLBACK
                           : ADMIN_LANDING_CARD_PREVIEW_FALLBACK
                         : undefined

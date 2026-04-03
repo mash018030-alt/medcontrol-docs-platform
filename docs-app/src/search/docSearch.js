@@ -728,7 +728,7 @@ function titleFromSlug(path) {
 
 function isNewsPath(path) {
   const top = (path || '').split('/')[0] || ''
-  return top.toLowerCase() === 'news'
+  return top.toLowerCase() === 'news' || top === '1_news'
 }
 
 function isSectionRootPath(path) {

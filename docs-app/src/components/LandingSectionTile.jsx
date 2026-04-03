@@ -48,10 +48,11 @@ export default function LandingSectionTile({ path, title, cardPreviewSrc, cardPr
 
   if (previewUrl) {
     let cardPreviewClass = 'docs-landing-tile docs-landing-tile--card-preview'
-    if (path === 'obshee/pak' || path === 'admin/pak') {
+    if (path === '0_docs/1_obshee/pak' || path === '0_docs/2_admin/articles/08_pak') {
       cardPreviewClass += ' docs-landing-tile--card-preview-inset-preview'
     }
-    const isDashFaqPreview = path === 'obshee/chastye-voprosy' || path === 'admin/chastye-voprosy'
+    const isDashFaqPreview =
+      path === '0_docs/1_obshee/chastye-voprosy' || path === '0_docs/2_admin/articles/10_FAQ'
     return (
       <div className={cardPreviewClass}>
         <div className="docs-landing-tile__card-header">

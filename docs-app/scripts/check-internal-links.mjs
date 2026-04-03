@@ -16,7 +16,7 @@ const flatArticles = [...arr.matchAll(/path:\s*'([^']+)'/g)].map((m) => m[1])
 const docSet = new Set(flatArticles)
 
 const newsTree = JSON.parse(
-  fs.readFileSync(path.join(root, 'public/content/News/news-tree.json'), 'utf8'),
+  fs.readFileSync(path.join(root, 'public/content/1_news/news-tree.json'), 'utf8'),
 )
 
 function walkNews(nodes, out = []) {
@@ -88,7 +88,9 @@ for (const f of mdFiles) {
 
     if (!p) continue
 
-    const normNews = p.startsWith('News/') ? `news/${p.slice(5)}` : p
+    let normNews = p
+    if (p.startsWith('News/')) normNews = `news/${p.slice(5)}`
+    else if (p.startsWith('1_news/')) normNews = `news/${p.slice('1_news/'.length)}`
     const isNewsTarget = normNews.startsWith('news/')
 
     if (isNewsTarget) {
@@ -113,11 +115,14 @@ console.log(warnings.length ? warnings.map((w) => JSON.stringify(w)).join('\n') 
 
 // Anchor checks for FAQ table links
 const anchorTargets = [
-  { md: 'admin/organizacii.md', ids: ['создание-дочерней-организации'] },
-  { md: 'admin/deystviya-s-organizaciej.md', ids: ['редактирование'] },
-  { md: 'admin/nastroyki-organizacii.md', ids: ['настройки-организации', 'виды-осмотров'] },
-  { md: 'admin/osmotry.md', ids: ['ручные-операции-над-осмотрами'] },
-  { md: 'admin/pak.md', ids: ['создание-пак'] },
+  { md: '0_docs/2_admin/articles/02_organizacii_00.md', ids: ['создание-дочерней-организации'] },
+  { md: '0_docs/2_admin/articles/02_organizacii_01_deystviya-s-organizaciej.md', ids: ['редактирование'] },
+  {
+    md: '0_docs/2_admin/articles/02_organizacii_02_nastroyki-organizacii.md',
+    ids: ['настройки-организации', 'виды-осмотров'],
+  },
+  { md: '0_docs/2_admin/articles/07_osmotry.md', ids: ['ручные-операции-над-осмотрами'] },
+  { md: '0_docs/2_admin/articles/08_pak.md', ids: ['создание-пак'] },
 ]
 
 function headingsFromMd(body) {
@@ -163,10 +168,12 @@ for (const f of mdFiles) {
     if (pathPart.startsWith('/content/')) continue
 
     if (!pathPart || pathPart === '/') {
-      targetRoute = f.rel.replace(/\.md$/, '').replace(/^News\//, '')
-      if (!targetRoute.startsWith('news/') && !targetRoute.includes('/')) {
-        targetRoute = `news/${targetRoute}`
+      let tr = f.rel.replace(/\.md$/, '')
+      tr = tr.replace(/^News\//, '').replace(/^1_news\//, 'news/')
+      if (!tr.startsWith('news/') && !tr.includes('/')) {
+        tr = `news/${tr}`
       }
+      targetRoute = tr
     } else {
       let p = pathPart.startsWith('/') ? pathPart.slice(1) : pathPart
       if (!pathPart.startsWith('/')) {
@@ -180,7 +187,7 @@ for (const f of mdFiles) {
     let targetFile
     if (targetRoute.startsWith('news/')) {
       const base = targetRoute.replace(/^news\//, '')
-      targetFile = path.join(contentDir, 'News', `${base}.md`)
+      targetFile = path.join(contentDir, '1_news', `${base}.md`)
     } else {
       targetFile = path.join(contentDir, `${targetRoute}.md`)
     }

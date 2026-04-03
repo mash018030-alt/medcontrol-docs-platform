@@ -9,10 +9,15 @@ export function publicAssetUrl(path) {
   if (s.startsWith('#')) return path
   if (/^(?:https?:)?\/\//i.test(s) || s.startsWith('data:') || s.startsWith('blob:')) return path
   if (s.startsWith('/')) {
+    let assetPath = s
+    /* Старые ссылки в релизах: /content/News/… → фактическая папка 1_news */
+    if (assetPath.startsWith('/content/News/')) {
+      assetPath = `/content/1_news/${assetPath.slice('/content/News/'.length)}`
+    }
     const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
-    if (!base) return s
-    if (s === base || s.startsWith(`${base}/`)) return s
-    return `${base}${s}`
+    if (!base) return assetPath
+    if (assetPath === base || assetPath.startsWith(`${base}/`)) return assetPath
+    return `${base}${assetPath}`
   }
   return path
 }

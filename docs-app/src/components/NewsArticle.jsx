@@ -167,7 +167,7 @@ export default function NewsArticle() {
     setMdLoading(true)
     setMdError(null)
     const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
-    const path = `${base}/content/News/${fileSlug}.md`.replace(/^\/+/, '/')
+    const path = `${base}/content/1_news/${fileSlug}.md`.replace(/^\/+/, '/')
     const url = new URL(path, window.location.origin).href
     fetchMarkdownText(url, { notFoundMessage: 'Не удалось загрузить страницу' })
       .then(({ text }) => {

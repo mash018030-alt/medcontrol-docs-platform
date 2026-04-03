@@ -59,11 +59,11 @@ function IconSmena() {
 }
 
 const MEDADMIN_ICONS = {
-  'medadmin/nastroyki-medorganizacii': IconNastroyki,
-  'medadmin/uvedomleniya-o-nepodpisannyh-dokumentah': IconUvedomleniya,
-  'medadmin/pereformirovanie-dokumenta': IconPereformirovanie,
-  'medadmin/statistika-smen-medrabotnika': IconStatistika,
-  'medadmin/upravlenie-smenoy-medrabotnika': IconSmena,
+  '0_docs/4_medadmin/nastroyki-medorganizacii': IconNastroyki,
+  '0_docs/4_medadmin/uvedomleniya-o-nepodpisannyh-dokumentah': IconUvedomleniya,
+  '0_docs/4_medadmin/pereformirovanie-dokumenta': IconPereformirovanie,
+  '0_docs/4_medadmin/statistika-smen-medrabotnika': IconStatistika,
+  '0_docs/4_medadmin/upravlenie-smenoy-medrabotnika': IconSmena,
 }
 
 export default function LandingTileIcon({ path }) {
