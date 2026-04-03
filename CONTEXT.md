@@ -1,6 +1,6 @@
 # Контекст проекта MedControl Docs
 
-**Для новых чатов:** напиши ассистенту: «используй материалы из references/ (**references/README.md**), brief.md и при необходимости CONTEXT.md».
+**Для новых чатов:** напиши ассистенту: «используй материалы из **docs-app/public/content/references/** (**references/README.md** внутри контент-submodule), brief.md и при необходимости CONTEXT.md».
 
 ---
 
@@ -15,7 +15,7 @@
 ## Организация
 
 - **Рабочая папка** — отдельная на компе (не внутри git-learning).
-- **references/** — единая папка референсов (см. **`references/README.md`**): тексты требований и референс по видео, экспорты руководств (HTML + `images/`), палитра и лого (`Colors&logo/`), иконки, отчёты в PDF/PPTX, медиа. Скрипт **`docs-app/scripts/html-to-md.cjs`** читает отсюда же пути к HTML медкабинета: `references/manuals/medkabinet-extract/`.
+- **references/** — в **репозитории контента** (`docs-app/public/content/references/` после submodule): тексты требований и референс по видео, экспорты руководств (HTML + `images/`), палитра и лого, медиа. См. **`references/README.md`** там же. Скрипт **`docs-app/scripts/html-to-md.cjs`** читает HTML из `public/content/references/manuals/...`.
 - **brief.md** — описание платформы и требований (при необходимости).
 - Несколько репозиториев на компе — нормально; ассистент видит только папку, открытую в Cursor (File → Open Folder).
 - Текст из чата ассистент может сохранять в файлы.
@@ -26,7 +26,7 @@
 
 | Этап | Содержание |
 |------|------------|
-| **A** | Уточнение (материалы в папку: references/, brief.md) |
+| **A** | Уточнение (материалы в контент-репо: `references/`, brief.md) |
 | **B** | Прототип: каркас, навигация, Markdown (своя платформа в **docs-app/**: React + Vite) |
 | **C** | Перенос документов в Markdown |
 | **D** | Интеграция на платформу |

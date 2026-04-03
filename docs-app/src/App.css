@@ -73,7 +73,7 @@
 .docs-news-hub__section-title{font-size:1.35rem;font-weight:700;color:var(--docs-temno-sinii)}
 .docs-news-hub__subheading{margin:1.25rem 0 .75rem;font-size:.95rem;font-weight:600;color:var(--docs-temno-sinii);text-transform:uppercase;letter-spacing:.06em}
 
-/* Градиент баннера «Новый релиз» — Help_000 (references/Colors/help-gradient.md) */
+/* Градиент баннера «Новый релиз» — Help_000 (content/references/Colors/help-gradient.md) */
 :root{--docs-news-banner-gradient-start:#2194ff;--docs-news-banner-gradient-end:#ff4794}
 
 .docs-news-banner{position:relative;border-radius:16px;overflow:hidden;min-height:168px;margin:0 0 1.25rem;box-shadow:0 8px 28px #2194ff33}
@@ -107,7 +107,7 @@ button.docs-dashboard-card__pdf{cursor:pointer;font-family:inherit}
 button.docs-dashboard-card__pdf:disabled{opacity:.55;cursor:not-allowed}
 .docs-dashboard-card-top--with-pdf{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
 .docs-dashboard-card-main{display:flex;align-items:flex-start;gap:1rem;flex:1;min-width:0}
-/* Текст ссылок хаба: temno_sinii из references/Colors&logo/temno_sinii.md — перекрывает .docs-article a */
+/* Текст ссылок хаба: temno_sinii из content/references/Colors/temno_sinii.md — перекрывает .docs-article a */
 .docs-article.docs-news-hub a.docs-news-release-row__surface,
 .docs-article.docs-news-hub a.docs-news-banner__card-title-link{color:var(--docs-temno-sinii)}
 .docs-article.docs-news-hub a.docs-news-release-row__surface:hover{color:var(--docs-temno-sinii);text-decoration:none}

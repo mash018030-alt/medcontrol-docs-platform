@@ -6,7 +6,9 @@
  *   node scripts/html-to-md.cjs           — раздел «Медадминистратор» (4-rukovodstvo)
  *   node scripts/html-to-md.cjs admin      — раздел «Admin» (2. Администрирование)
  *   node scripts/html-to-md.cjs obshee    — раздел «Общее» (1. Общее. MC Cloud), без титула/содержания/аннотации/рекомендации
- *   node scripts/html-to-md.cjs medkabinet — раздел «Медкабинет» (источник: references/manuals/medkabinet-extract)
+ *   node scripts/html-to-md.cjs medkabinet — раздел «Медкабинет» (источник: public/content/references/manuals/medkabinet-extract)
+ *
+ * Исходники HTML лежат в репозитории контента: public/content/references/ (submodule).
  */
 
 const fs = require('fs')
@@ -14,7 +16,8 @@ const path = require('path')
 const { parse } = require('node-html-parser')
 const TurndownService = require('turndown')
 
-const ROOT = path.resolve(__dirname, '../..')
+const CONTENT_ROOT = path.resolve(__dirname, '../public/content')
+const REF_ROOT = path.join(CONTENT_ROOT, 'references')
 const arg = process.argv[2]
 const isAdmin = arg === 'admin'
 const isObshee = arg === 'obshee'
@@ -22,39 +25,39 @@ const isMedkabinet = arg === 'medkabinet'
 
 const config = isAdmin
   ? {
-      INPUT_HTML: path.join(ROOT, 'references/admin_extract/2..MCCloud..html'),
-      INPUT_IMAGES: path.join(ROOT, 'references/admin_extract/images'),
-      OUTPUT_MD: path.join(ROOT, 'docs-app/public/content/admin/user-guide.md'),
-      OUTPUT_IMAGES: path.join(ROOT, 'docs-app/public/content/images/admin'),
+      INPUT_HTML: path.join(REF_ROOT, 'manuals/admin_extract/2..MCCloud..html'),
+      INPUT_IMAGES: path.join(REF_ROOT, 'manuals/admin_extract/images'),
+      OUTPUT_MD: path.join(CONTENT_ROOT, 'admin/user-guide.md'),
+      OUTPUT_IMAGES: path.join(CONTENT_ROOT, 'images/admin'),
       IMAGE_URL_PREFIX: '/content/images/admin',
       TITLE: 'Администрирование. MC Cloud. Руководство пользователя',
       SKIP_UNTIL: null,
     }
   : isObshee
   ? {
-      INPUT_HTML: path.join(ROOT, 'references/1-obshee-extract/1..MCCloud..html'),
-      INPUT_IMAGES: path.join(ROOT, 'references/1-obshee-extract/images'),
-      OUTPUT_MD: path.join(ROOT, 'docs-app/public/content/obshee/user-guide.md'),
-      OUTPUT_IMAGES: path.join(ROOT, 'docs-app/public/content/images/obshee'),
+      INPUT_HTML: path.join(REF_ROOT, 'manuals/1-obshee-extract/1..MCCloud..html'),
+      INPUT_IMAGES: path.join(REF_ROOT, 'manuals/1-obshee-extract/images'),
+      OUTPUT_MD: path.join(CONTENT_ROOT, 'obshee/user-guide.md'),
+      OUTPUT_IMAGES: path.join(CONTENT_ROOT, 'images/obshee'),
       IMAGE_URL_PREFIX: '/content/images/obshee',
       TITLE: 'Общее. MC Cloud. Руководство пользователя',
       SKIP_UNTIL: 'АВТОРИЗАЦИЯ В АРМ',
     }
   : isMedkabinet
   ? {
-      INPUT_HTML: path.join(ROOT, 'references/manuals/medkabinet-extract/3..MCCloud..html'),
-      INPUT_IMAGES: path.join(ROOT, 'references/manuals/medkabinet-extract/images'),
-      OUTPUT_MD: path.join(ROOT, 'docs-app/public/content/medkabinet/user-guide.md'),
-      OUTPUT_IMAGES: path.join(ROOT, 'docs-app/public/content/images/medkabinet'),
+      INPUT_HTML: path.join(REF_ROOT, 'manuals/medkabinet-extract/3..MCCloud..html'),
+      INPUT_IMAGES: path.join(REF_ROOT, 'manuals/medkabinet-extract/images'),
+      OUTPUT_MD: path.join(CONTENT_ROOT, 'medkabinet/user-guide.md'),
+      OUTPUT_IMAGES: path.join(CONTENT_ROOT, 'images/medkabinet'),
       IMAGE_URL_PREFIX: '/content/images/medkabinet',
       TITLE: 'Медкабинет',
       SKIP_UNTIL: null,
     }
   : {
-      INPUT_HTML: path.join(ROOT, 'references/4-rukovodstvo/4..MCCloud..html'),
-      INPUT_IMAGES: path.join(ROOT, 'references/4-rukovodstvo/images'),
-      OUTPUT_MD: path.join(ROOT, 'docs-app/public/content/rukovodstvo/user-guide.md'),
-      OUTPUT_IMAGES: path.join(ROOT, 'docs-app/public/content/images/rukovodstvo'),
+      INPUT_HTML: path.join(REF_ROOT, 'manuals/4-rukovodstvo/4..MCCloud..html'),
+      INPUT_IMAGES: path.join(REF_ROOT, 'manuals/4-rukovodstvo/images'),
+      OUTPUT_MD: path.join(CONTENT_ROOT, 'rukovodstvo/user-guide.md'),
+      OUTPUT_IMAGES: path.join(CONTENT_ROOT, 'images/rukovodstvo'),
       IMAGE_URL_PREFIX: '/content/images/rukovodstvo',
       TITLE: 'Руководство пользователя. Медицинский администратор MC Cloud',
       SKIP_UNTIL: null,
