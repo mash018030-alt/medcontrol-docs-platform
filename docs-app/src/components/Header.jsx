@@ -4,6 +4,7 @@ import { useDocsLayout } from '../context/DocsLayoutContext'
 import { NEWS_ROOT_SLUG } from '../data/fetchNewsTree'
 import { docsTopSectionLandingPaths } from '../data/nav'
 import { suggestArticlesByTitle } from '../search/docSearch'
+import { publicAssetUrl } from '../utils/publicAssetUrl'
 import HighlightedText from './search/HighlightedText'
 
 export default function Header() {
@@ -75,7 +76,7 @@ export default function Header() {
           </button>
         ) : null}
         <Link to="/" className="docs-logo" aria-label="MedControl документация — на главную">
-          <img src={`${import.meta.env.BASE_URL}logo-3.png`} alt="" decoding="async" />
+          <img src={publicAssetUrl('/content/images/branding/logo-3.png')} alt="" decoding="async" />
         </Link>
         <nav className="docs-header-tabs" aria-label="Основные разделы">
           <Link

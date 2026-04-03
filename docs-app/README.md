@@ -4,7 +4,7 @@
 
 ## Контент (git submodule)
 
-Тексты и медиа живут в отдельном репозитории **`medcontrol-docs-content`**. В этом проекте они подключены как submodule в каталог **`public/content/`**.
+Тексты, иллюстрации к статьям, **иконки карточек главной** (`content/icons/dashboard/`) и **логотипы шапки** (`content/images/branding/`) живут в репозитории **`medcontrol-docs-content`**, submodule в **`public/content/`**.
 
 После клона движка:
 
