@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { newsAssetPublicUrl } from '../../data/newsAssets'
 import { NEWS_RELEASE_PDF_ANCHOR } from './releasePdfAnchor'
 
 function DownloadIcon() {
@@ -11,39 +10,12 @@ function DownloadIcon() {
 }
 
 /**
- * @param {{
- *   title: string
- *   categoryLabel: string
- *   articlePath: string
- *   pdfRelPath?: string
- * }} props
+ * Баннер последнего релиза: иконка PDF ведёт на страницу релиза к кнопке «Скачать в PDF»
+ * (тот же конвейер Playwright/html2pdf, что и в документации).
+ *
+ * @param {{ title: string, categoryLabel: string, articlePath: string }} props
  */
-export default function LatestReleaseBanner({ title, categoryLabel, articlePath, pdfRelPath }) {
-  const pdfFileUrl = pdfRelPath ? newsAssetPublicUrl(pdfRelPath) : ''
-
-  const pdfControl = pdfFileUrl ? (
-    <a
-      href={pdfFileUrl}
-      className="docs-news-banner__icon-btn"
-      download
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Скачать в PDF: ${title}`}
-      title="Скачать в PDF"
-    >
-      <DownloadIcon />
-    </a>
-  ) : (
-    <Link
-      to={`/${articlePath}#${NEWS_RELEASE_PDF_ANCHOR}`}
-      className="docs-news-banner__icon-btn"
-      aria-label={`Скачать в PDF: ${title}`}
-      title="Скачать в PDF"
-    >
-      <DownloadIcon />
-    </Link>
-  )
-
+export default function LatestReleaseBanner({ title, categoryLabel, articlePath }) {
   return (
     <div className="docs-news-banner" data-category={categoryLabel}>
       <div className="docs-news-banner__bg" aria-hidden />
@@ -60,7 +32,14 @@ export default function LatestReleaseBanner({ title, categoryLabel, articlePath,
             >
               {title}
             </Link>
-            {pdfControl}
+            <Link
+              to={`/${articlePath}#${NEWS_RELEASE_PDF_ANCHOR}`}
+              className="docs-news-banner__icon-btn"
+              aria-label={`Скачать в PDF: ${title}`}
+              title="Скачать в PDF"
+            >
+              <DownloadIcon />
+            </Link>
           </div>
         </div>
       </div>

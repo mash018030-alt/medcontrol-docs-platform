@@ -1,5 +1,5 @@
 
-/* Карусель для статьи "Подпись" (medkabinet/podpis) */
+/* Карусель для статьи "Подпись" (0_docs/3_medkabinet/articles/08_podpis) */
 .docs-carousel [id="carousel-podpis-1"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(1),
 .docs-carousel [id="carousel-podpis-2"]:checked ~ .docs-carousel-slides .docs-carousel-slide:nth-child(2) {
   visibility: visible;
@@ -73,7 +73,7 @@
 .docs-news-hub__section-title{font-size:1.35rem;font-weight:700;color:var(--docs-temno-sinii)}
 .docs-news-hub__subheading{margin:1.25rem 0 .75rem;font-size:.95rem;font-weight:600;color:var(--docs-temno-sinii);text-transform:uppercase;letter-spacing:.06em}
 
-/* Градиент баннера «Новый релиз» — Help_000 (content/references/Colors/help-gradient.md) */
+/* Градиент баннера «Новый релиз» — Help_000 (design/colors/help-gradient.md) */
 :root{--docs-news-banner-gradient-start:#2194ff;--docs-news-banner-gradient-end:#ff4794}
 
 .docs-news-banner{position:relative;border-radius:16px;overflow:hidden;min-height:168px;margin:0 0 1.25rem;box-shadow:0 8px 28px #2194ff33}
@@ -107,7 +107,7 @@ button.docs-dashboard-card__pdf{cursor:pointer;font-family:inherit}
 button.docs-dashboard-card__pdf:disabled{opacity:.55;cursor:not-allowed}
 .docs-dashboard-card-top--with-pdf{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
 .docs-dashboard-card-main{display:flex;align-items:flex-start;gap:1rem;flex:1;min-width:0}
-/* Текст ссылок хаба: temno_sinii из content/references/Colors/temno_sinii.md — перекрывает .docs-article a */
+/* Текст ссылок хаба: temno_sinii из design/colors/temno_sinii.md — перекрывает .docs-article a */
 .docs-article.docs-news-hub a.docs-news-release-row__surface,
 .docs-article.docs-news-hub a.docs-news-banner__card-title-link{color:var(--docs-temno-sinii)}
 .docs-article.docs-news-hub a.docs-news-release-row__surface:hover{color:var(--docs-temno-sinii);text-decoration:none}
@@ -119,6 +119,76 @@ button.docs-dashboard-card__pdf:disabled{opacity:.55;cursor:not-allowed}
 .docs-section-landing-title-row__heading{flex:0 1 auto;min-width:0;margin:0;font-size:1.75rem;font-weight:700;color:#000;scroll-margin-top:80px;line-height:1.2}
 .docs-section-landing-dashboard{margin:0 0 1.25rem}
 .docs-section-landing-dashboard .docs-dashboard-grid{margin-bottom:0}
+/* Разводящая раздела: плоский список с иконками (без маркеров ul/li — перекрываем стили статей) */
+.docs-section-landing-nav{
+  margin:.35rem 0 1rem;
+  margin-inline-start:0!important;
+  padding-inline-start:0!important
+}
+/* Специфичность как у main… ul:not(…) с !important — иначе остаётся padding/margin списков статей */
+main.docs-content article.docs-article .docs-article-body .docs-markdown-root .docs-section-landing-nav ul.docs-section-landing-nav-list,
+.docs-article .docs-markdown-root .docs-section-landing-nav ul.docs-section-landing-nav-list,
+.docs-section-landing-nav ul.docs-section-landing-nav-list{
+  list-style:none!important;
+  list-style-type:none!important;
+  margin:0!important;
+  padding:0!important;
+  padding-inline-start:0!important;
+  margin-inline-start:0!important
+}
+main.docs-content article.docs-article .docs-article-body .docs-markdown-root .docs-section-landing-nav li.docs-section-landing-nav-item,
+.docs-article .docs-markdown-root .docs-section-landing-nav li.docs-section-landing-nav-item,
+.docs-section-landing-nav li.docs-section-landing-nav-item{
+  list-style:none!important;
+  list-style-type:none!important;
+  margin-inline-start:0!important
+}
+.docs-section-landing-nav li.docs-section-landing-nav-item::marker{content:none;font-size:0}
+.docs-section-landing-nav-item{margin:0 0 .2rem}
+.docs-section-landing-nav-link{
+  display:inline-flex;
+  align-items:center;
+  gap:.55rem;
+  max-width:100%;
+  box-sizing:border-box;
+  padding:.4rem .55rem;
+  margin-left:-.55rem;
+  border-radius:8px;
+  color:var(--docs-temno-sinii);
+  font-weight:500;
+  text-decoration:none;
+  font-size:1.05rem;
+  line-height:1.45;
+  transition:background .12s ease,color .12s ease
+}
+.docs-section-landing-nav-icon{
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:1.85rem;
+  height:1.85rem;
+  border-radius:7px;
+  background:var(--docs-light-bg);
+  color:var(--docs-ui-accent)
+}
+.docs-section-landing-nav-icon svg{display:block}
+.docs-section-landing-nav-label{min-width:0}
+.docs-section-landing-nav-link:hover{
+  background:#f1f5f9;
+  text-decoration:none;
+  color:var(--docs-temno-sinii)
+}
+.docs-section-landing-nav-link:focus-visible{outline:2px solid var(--docs-ui-accent);outline-offset:2px;border-radius:8px}
+/* Названия статей: тёмно-синий из палитры (перекрывает .docs-article a → --docs-ui-accent) */
+.docs-article .docs-markdown-root a.docs-section-landing-nav-link,
+.docs-article .docs-markdown-root a.docs-section-landing-nav-link:visited{
+  color:var(--docs-temno-sinii)
+}
+.docs-article .docs-markdown-root a.docs-section-landing-nav-link:hover{
+  color:var(--docs-temno-sinii)
+}
+.docs-section-landing-nav-label{color:var(--docs-temno-sinii)}
 button.docs-news-release-row__pdf{cursor:pointer;font-family:inherit}
 button.docs-news-release-row__pdf:disabled{opacity:.55;cursor:not-allowed}
 button.docs-search-action-link.docs-search-action-link--secondary{border:none;background:transparent;padding:0;margin:0;font:inherit;font-size:.9rem;font-weight:500;color:var(--docs-ui-accent);cursor:pointer;text-decoration:none}
@@ -161,214 +231,6 @@ button.docs-search-action-link.docs-search-action-link--secondary:disabled{opaci
 .docs-article td.docs-table-topic-cell{text-align:center;vertical-align:middle}
 .docs-article td.docs-table-topic-cell strong{font-weight:700}
 
-/* Разводящая «Общее»: палитра/шрифт как референс public/content/images/dashboards/ */
-.docs-section-landing-root--obshee-stat{
-  --obshee-dash-font:'Inter','Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-  /* «Light 0» из палитры: --docs-light-0-bg в :root; подмена токена плитки — чтобы базовый .docs-landing-tile тоже красился в этот фон */
-  --docs-landing-tile-bg:var(--docs-light-0-bg);
-  --obshee-dash-card:var(--docs-light-0-bg);
-  --obshee-dash-card-hover:var(--docs-light-bg);
-  --obshee-dash-title:#2b2f36;
-  --obshee-dash-line:rgba(15,23,42,.08);
-  margin:0 0 1.25rem;
-  padding:0;
-  background:transparent;
-  border:none;
-  box-shadow:none;
-  font-family:var(--obshee-dash-font)
-}
-.docs-section-landing-root--obshee-stat .docs-section-landing-title-row{margin-bottom:.55rem}
-.docs-section-landing-root--obshee-stat .docs-section-landing-title-row__heading{
-  font-family:var(--obshee-dash-font);
-  font-size:clamp(1.65rem,2.2vw,1.9rem);
-  font-weight:700;
-  color:#1a1d29;
-  letter-spacing:-.02em
-}
-.docs-section-landing-root--obshee-stat .docs-section-landing-pdf-btn{font-family:var(--obshee-dash-font)}
-.docs-section-landing-root--obshee-stat .docs-section-landing-dashboard{
-  margin-bottom:1.15rem;
-  font-family:var(--obshee-dash-font)
-}
-.docs-section-landing-root--obshee-stat .docs-dashboard-search-input{
-  font-family:var(--obshee-dash-font);
-  background:#fff;
-  border:1px solid #d8dce6;
-  box-shadow:none;
-  color:#2b2f36
-}
-.docs-section-landing-root--obshee-stat .docs-dashboard-search-input::placeholder{color:#6b7280}
-.docs-section-landing-root--obshee-stat .docs-landing-grid{margin-top:.15rem;gap:1.5rem}
-@media (min-width:700px){
-  .docs-section-landing-root--obshee-stat .docs-landing-grid{
-    grid-template-columns:repeat(3,minmax(0,1fr))
-  }
-}
-.docs-markdown-root .docs-section-landing-root--obshee-stat .docs-landing-tile.docs-landing-tile--card-preview{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:stretch;
-  gap:0;
-  padding:0;
-  min-height:calc(14rem + 30px);
-  height:100%;
-  overflow:hidden;
-  background:var(--obshee-dash-card);
-  color:var(--obshee-dash-title);
-  border:none;
-  border-radius:16px;
-  box-shadow:none;
-  transition:background .18s ease
-}
-.docs-markdown-root .docs-section-landing-root--obshee-stat .docs-landing-tile.docs-landing-tile--card-preview:hover{
-  background:var(--obshee-dash-card-hover)
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview .docs-landing-tile__surface.docs-landing-tile__surface--obshee-preview{
-  flex-direction:column;
-  align-items:stretch;
-  justify-content:flex-start;
-  flex:1 1 0;
-  gap:0;
-  align-self:stretch;
-  min-height:0;
-  padding:0;
-  margin:0;
-  border-radius:0;
-  box-sizing:border-box
-}
-/* Частые вопросы: клип на flex-контейнере ссылки + тот же верхний радиус, что у карточки (иначе белый PNG визуально «квадрит» углы) */
-/* min-width:0 — иначе у flex-элемента с overflow:hidden автоматический min-size по контенту сужает превью */
-.docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview .docs-landing-tile__surface.docs-landing-tile__surface--obshee-faq-preview{
-  overflow:hidden;
-  border-radius:16px 16px 0 0;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  box-sizing:border-box
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview .docs-landing-tile__card-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:.75rem;
-  width:100%;
-  padding:.5rem 1.35rem 0;
-  margin:0 0 .12rem;
-  flex-shrink:0;
-  box-sizing:border-box;
-  min-height:4.45rem
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__title-link{
-  flex:1 1 auto;
-  min-width:0;
-  text-decoration:none;
-  color:inherit;
-  outline-offset:2px
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__title-link:hover{
-  text-decoration:none;
-  color:inherit
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__title-link:focus-visible{
-  outline:2px solid var(--docs-ui-accent);
-  border-radius:4px
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview .docs-landing-tile-text{
-  margin:0;
-  display:block;
-  width:100%;
-  font-family:var(--obshee-dash-font);
-  font-size:calc(1.4375rem + 1pt);
-  font-weight:300;
-  color:var(--obshee-dash-title);
-  text-align:left;
-  line-height:1.28;
-  letter-spacing:-.015em;
-  -webkit-font-smoothing:antialiased
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__pdf-dash{
-  flex-shrink:0;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:2.75rem;
-  height:2.75rem;
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  color:var(--docs-temno-sinii);
-  text-decoration:none;
-  background:transparent;
-  border:1px solid #d0d7f0;
-  border-radius:10px;
-  transition:background .15s ease,border-color .15s ease,color .15s ease
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__pdf-dash:hover{
-  background:rgba(255,255,255,.5);
-  border-color:var(--docs-ui-accent);
-  color:var(--docs-temno-sinii)
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__pdf-dash:focus-visible{
-  outline:2px solid var(--docs-ui-accent);
-  outline-offset:2px
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__pdf-dash svg{flex-shrink:0;width:1.15rem;height:1.15rem}
-.docs-section-landing-root--obshee-stat button.docs-landing-tile__pdf-dash{cursor:pointer;font:inherit;font-family:var(--obshee-dash-font)}
-.docs-section-landing-root--obshee-stat button.docs-landing-tile__pdf-dash:disabled{opacity:.55;cursor:not-allowed}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__preview-wrap{
-  display:block;
-  flex:0 0 auto;
-  width:100%;
-  margin:0;
-  margin-top:auto;
-  border-radius:10px 10px 0 0;
-  overflow:hidden;
-  line-height:0;
-  font-size:0;
-  background:transparent;
-  box-shadow:none
-}
-/* Частые вопросы: скругление + клип превью (геометрия карточки — как у остальных: margin-top:auto у базового preview-wrap) */
-.docs-section-landing-root--obshee-stat .docs-landing-tile__preview-wrap.docs-landing-tile__preview-wrap--obshee-faq{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  align-self:stretch;
-  border-radius:16px 16px 0 0;
-  overflow:hidden;
-  isolation:isolate
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__preview-wrap--obshee-faq .docs-landing-tile__preview-img{
-  border-radius:16px 16px 0 0;
-  width:100%;
-  max-width:100%;
-  height:auto;
-  display:block;
-  min-width:0
-}
-/* ПАК: 7.png без полей в кадре — сужаем превью как у соседних карточек (поля в PNG) */
-.docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview-inset-preview .docs-landing-tile__preview-wrap{
-  align-self:center;
-  width:calc(100% - 2.7rem);
-  max-width:calc(100% - 2.7rem);
-  margin-left:auto;
-  margin-right:auto;
-  margin-top:auto
-}
-.docs-section-landing-root--obshee-stat .docs-landing-tile__preview-img{
-  display:block;
-  width:100%;
-  max-width:100%;
-  height:auto;
-  margin:0;
-  padding:0
-}
-.docs-layout--mc-pdf .docs-section-landing-root--obshee-stat{
-  margin:0;
-  padding:0;
-  font-family:inherit
-}
 /* Headless PDF (?mc_pdf=1): одна колонка текста, без шапки и бокового меню */
 .docs-layout--mc-pdf .docs-main{max-width:none;margin:0}
 .docs-layout--mc-pdf .docs-content{padding:1rem 1.25rem}
@@ -403,7 +265,6 @@ button.docs-search-action-link.docs-search-action-link--secondary:disabled{opaci
 @media screen{
   .docs-layout:not(.docs-layout--mc-pdf) .docs-article-body{max-width:48rem}
   .docs-layout:not(.docs-layout--mc-pdf) .docs-article-body:has(.docs-landing-grid){max-width:min(56rem,100%)}
-  .docs-layout:not(.docs-layout--mc-pdf) .docs-article-body:has(.docs-section-landing-root--obshee-stat){max-width:min(72rem,100%)}
   .docs-layout:not(.docs-layout--mc-pdf) .docs-article .docs-markdown-root :is(p,li){line-height:1.65}
   .docs-layout:not(.docs-layout--mc-pdf) .docs-article .docs-markdown-root a:hover{text-underline-offset:.18em}
   .docs-article .docs-markdown-root a:focus-visible{outline:2px solid var(--docs-ui-accent);outline-offset:2px;border-radius:2px}
@@ -970,13 +831,9 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   max-width:none;
 }
 
-/* Липкий thead внутри overflow-x даёт сбой раскладки (шапка «плывёт» и наезжает на первую строку) */
-.docs-table-scroll thead th{
-  position:static;
-  top:auto;
-  z-index:auto;
-  box-shadow:none;
-}
+/* Липкий thead: общие правила `.docs-article thead th` (sticky + top под шапку сайта).
+   Раньше здесь принудительно ставили `position:static` из‑за артефактов в связке overflow-x + sticky;
+   это отключало липкость у всех markdown-таблиц. На узкой ширине thead по-прежнему static в блоке ≤1023px. */
 
 /* ——— Адаптив ≤1023px: выдвижное меню, шапка (сетка), TOC, таблицы, карточки ——— */
 @media (max-width:1023px){
@@ -1265,26 +1122,6 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   .docs-landing-grid{
     grid-template-columns:1fr!important;
     gap:1rem;
-  }
-  .docs-markdown-root .docs-section-landing-root--obshee-stat .docs-landing-tile.docs-landing-tile--card-preview{
-    min-height:calc(13rem + 30px);
-  }
-  .docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview .docs-landing-tile__card-header{
-    padding:.45rem 1rem 0;
-    margin:0 0 .1rem;
-    min-height:4.2rem;
-  }
-  .docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview .docs-landing-tile-text{
-    font-size:calc(1.3125rem + 1pt);
-  }
-  .docs-section-landing-root--obshee-stat .docs-landing-tile__pdf-dash{
-    width:2.5rem;
-    height:2.5rem;
-    border-radius:9px;
-  }
-  .docs-section-landing-root--obshee-stat .docs-landing-tile--card-preview-inset-preview .docs-landing-tile__preview-wrap{
-    width:calc(100% - 2rem);
-    max-width:calc(100% - 2rem);
   }
 }
 @media (min-width:1024px){

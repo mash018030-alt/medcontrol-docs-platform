@@ -26,6 +26,15 @@ export default defineConfig({
       },
     },
   },
+  /* Тот же прокси для npm run preview — иначе встроенный VITE_PDF_SERVICE_URL на :3001 снова даёт cross-origin */
+  preview: {
+    proxy: {
+      '/api/pdf': {
+        target: 'http://127.0.0.1:3001',
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
     emptyOutDir: true,
   },

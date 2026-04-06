@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { newsArticleMdRelPaths } from '../src/data/newsArticlePaths.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..')
@@ -59,7 +60,8 @@ function walkDir(d, rel = '') {
     const r = rel ? `${rel}/${ent.name}` : ent.name
     if (ent.isDirectory()) {
       /* Служебная документация контент-репо — не статьи сайта */
-      if (rel === '' && (ent.name === 'docs' || ent.name === 'references')) continue
+      if (rel === '' && (ent.name === 'docs' || ent.name === 'references' || ent.name === 'repo-docs'))
+        continue
       walkDir(p, r)
     } else if (ent.name.endsWith('.md')) mdFiles.push({ full: p, rel: r.split(path.sep).join('/') })
   }
@@ -186,8 +188,14 @@ for (const f of mdFiles) {
 
     let targetFile
     if (targetRoute.startsWith('news/')) {
-      const base = targetRoute.replace(/^news\//, '')
-      targetFile = path.join(contentDir, '1_news', `${base}.md`)
+      targetFile = null
+      for (const rel of newsArticleMdRelPaths(newsTree.tree, targetRoute)) {
+        const candidate = path.join(contentDir, rel)
+        if (fs.existsSync(candidate)) {
+          targetFile = candidate
+          break
+        }
+      }
     } else {
       targetFile = path.join(contentDir, `${targetRoute}.md`)
     }

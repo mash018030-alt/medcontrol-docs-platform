@@ -10,15 +10,15 @@ export const OBSHEE_LANDING_CARD_PREVIEW_FALLBACK = `${DASHBOARDS}/Obshee.png`
  * (соответствует перечислению «1,2,3» затем «ниже» 4–6 и т.д.).
  */
 const BY_PATH = {
-  '0_docs/1_obshee/avtorizaciya-v-arm': `${OBSHEE_TILES}/1.png`,
-  '0_docs/1_obshee/osmotry': `${OBSHEE_TILES}/2.png`,
-  '0_docs/1_obshee/organizacii': `${OBSHEE_TILES}/3.png`,
-  '0_docs/1_obshee/polzovateli': `${OBSHEE_TILES}/4.png`,
-  '0_docs/1_obshee/dokumenty': `${OBSHEE_TILES}/5.png`,
-  '0_docs/1_obshee/otchety': `${OBSHEE_TILES}/6.png`,
-  '0_docs/1_obshee/pak': `${OBSHEE_TILES}/7.png`,
-  '0_docs/1_obshee/uvedomleniya': `${OBSHEE_TILES}/8.png`,
-  '0_docs/1_obshee/chastye-voprosy': `${OBSHEE_TILES}/9.png`,
+  '0_docs/1_obshee/articles/01_avtorizaciya-v-arm': `${OBSHEE_TILES}/1.png`,
+  '0_docs/1_obshee/articles/02_osmotry': `${OBSHEE_TILES}/2.png`,
+  '0_docs/1_obshee/articles/09_organizacii': `${OBSHEE_TILES}/3.png`,
+  '0_docs/1_obshee/articles/12_polzovateli': `${OBSHEE_TILES}/4.png`,
+  '0_docs/1_obshee/articles/16_dokumenty': `${OBSHEE_TILES}/5.png`,
+  '0_docs/1_obshee/articles/17_otchety': `${OBSHEE_TILES}/6.png`,
+  '0_docs/1_obshee/articles/19_pak': `${OBSHEE_TILES}/7.png`,
+  '0_docs/1_obshee/articles/20_uvedomleniya': `${OBSHEE_TILES}/8.png`,
+  '0_docs/1_obshee/articles/25_chastye-voprosy': `${OBSHEE_TILES}/9.png`,
 }
 
 export function resolveObsheeLandingCardPreview(sectionPath) {

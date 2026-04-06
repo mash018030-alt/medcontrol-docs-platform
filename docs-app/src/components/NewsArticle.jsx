@@ -14,6 +14,7 @@ import {
   flattenNewsLeaves,
   NEWS_ROOT_SLUG,
 } from '../data/fetchNewsTree'
+import { newsArticleMdRelPaths } from '../data/newsArticlePaths'
 import Toc from './Toc'
 import { NEWS_RELEASE_PDF_ANCHOR } from './news/releasePdfAnchor'
 import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
@@ -27,11 +28,6 @@ import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { fetchMarkdownText } from '../utils/fetchMarkdownText'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
-
-function mdFileSlugFromPath(newsPath) {
-  const parts = newsPath.split('/')
-  return parts[parts.length - 1] || ''
-}
 
 export default function NewsArticle() {
   const params = useParams()
@@ -163,19 +159,40 @@ export default function NewsArticle() {
       setMdLoading(false)
       return
     }
-    const fileSlug = mdFileSlugFromPath(fullSlug)
     setMdLoading(true)
     setMdError(null)
     const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
-    const path = `${base}/content/1_news/${fileSlug}.md`.replace(/^\/+/, '/')
-    const url = new URL(path, window.location.origin).href
-    fetchMarkdownText(url, { notFoundMessage: 'Не удалось загрузить страницу' })
-      .then(({ text }) => {
-        setMd(text)
-      })
-      .catch((e) => setMdError(e.message || 'Ошибка'))
-      .finally(() => setMdLoading(false))
-  }, [fullSlug, treeReady, node])
+    const relPaths = newsArticleMdRelPaths(tree, fullSlug)
+    let cancelled = false
+    ;(async () => {
+      let lastErr = null
+      for (const rel of relPaths) {
+        const fetchPath = `${base}/content/${rel}`.replace(/^\/+/, '/')
+        const url = new URL(fetchPath, window.location.origin).href
+        try {
+          const { text } = await fetchMarkdownText(url, {
+            notFoundMessage: 'Не удалось загрузить страницу',
+          })
+          if (!cancelled) {
+            setMd(text)
+            setMdError(null)
+            setMdLoading(false)
+          }
+          return
+        } catch (e) {
+          lastErr = e
+        }
+      }
+      if (!cancelled) {
+        setMd('')
+        setMdError(lastErr?.message || 'Ошибка')
+        setMdLoading(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [fullSlug, treeReady, node, tree])
 
   const activeHeadingId = useArticleHashScroll(articleBodyRef, {
     loading: mdLoading,
@@ -246,7 +263,7 @@ export default function NewsArticle() {
   const handleDownloadPdf = () => {
     const el = articleBodyRef.current
     if (!el || pdfExporting) return
-    const safeName = (node?.title || mdFileSlugFromPath(fullSlug))
+    const safeName = (node?.title || fullSlug.split('/').pop() || '')
       .replace(/\s+/g, '_')
       .replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'news'
     setPdfExporting(true)

@@ -87,7 +87,6 @@ export default function NewsHubPage() {
               title={latest.title}
               categoryLabel={label}
               articlePath={latest.path}
-              pdfRelPath={latest.pdf}
             />
             {previous.length ? (
               <>

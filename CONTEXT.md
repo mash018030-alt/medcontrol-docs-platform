@@ -1,6 +1,6 @@
 # Контекст проекта MedControl Docs
 
-**Для новых чатов:** напиши ассистенту: «используй материалы из **docs-app/public/content/references/** (**references/README.md** внутри контент-submodule), brief.md и при необходимости CONTEXT.md».
+**Для новых чатов:** напиши ассистенту: «используй материалы из **docs-app/public/content/references/** (**references/README.md**), палитру из **`design/colors/`** в корне репозитория, brief.md и при необходимости CONTEXT.md».
 
 ---
 
@@ -15,7 +15,8 @@
 ## Организация
 
 - **Рабочая папка** — отдельная на компе (не внутри git-learning).
-- **references/** — в **репозитории контента** (`docs-app/public/content/references/` после submodule): тексты требований и референс по видео, экспорты руководств (HTML + `images/`), палитра и лого, медиа. См. **`references/README.md`** там же. Скрипт **`docs-app/scripts/html-to-md.cjs`** читает HTML из `public/content/references/manuals/...`.
+- **references/** — в **репозитории контента** (`docs-app/public/content/references/` после submodule): тексты требований и референс по видео, экспорты руководств (HTML + `images/`), лого и прочие медиа. См. **`references/README.md`** там же. Скрипт **`docs-app/scripts/html-to-md.cjs`** читает HTML из `public/content/references/manuals/...`.
+- **design/colors/** — в **репозитории движка** (корень, рядом с `docs-app/`): Markdown-референс цветовой палитры и при необходимости образцы `*.png`. Не входит в `public/content/`, чтобы не смешиваться со статьями и поиском по ним. Начало — **`design/colors/color-palette.md`**.
 - **brief.md** — описание платформы и требований (при необходимости).
 - Несколько репозиториев на компе — нормально; ассистент видит только папку, открытую в Cursor (File → Open Folder).
 - Текст из чата ассистент может сохранять в файлы.

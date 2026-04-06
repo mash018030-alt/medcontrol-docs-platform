@@ -1,5 +1,5 @@
 /* Недавно открытые статьи: только для карточек главной «Документация» (DocsDashboardPage → SectionCard).
- * Не подключать к разводящим разделов (Article + сетка LandingSectionTile, напр. /medkabinet/user-guide). */
+ * Не подключать к разводящим разделов (дерево статей на user-guide и т.п.). */
 import { articleUnderSectionRoot, flatArticles } from '../data/nav'
 
 /** @type {Map<string, string>} */

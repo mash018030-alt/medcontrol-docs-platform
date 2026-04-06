@@ -76,7 +76,7 @@ export default function Header() {
           </button>
         ) : null}
         <Link to="/" className="docs-logo" aria-label="MedControl документация — на главную">
-          <img src={publicAssetUrl('/content/images/branding/logo-3.png')} alt="" decoding="async" />
+          <img src={publicAssetUrl('/content/images/logo/logo-3.png')} alt="" decoding="async" />
         </Link>
         <nav className="docs-header-tabs" aria-label="Основные разделы">
           <Link

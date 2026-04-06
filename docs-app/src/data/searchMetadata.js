@@ -3,7 +3,7 @@
  * Ключ — path статьи без .md.
  */
 export const searchMetadataByPath = {
-  '0_docs/3_medkabinet/rabota-v-medkabinete': {
+  '0_docs/3_medkabinet/articles/03_rabota-v-medkabinete': {
     aliases: [
       'как обработать осмотр',
       'обработать осмотр',

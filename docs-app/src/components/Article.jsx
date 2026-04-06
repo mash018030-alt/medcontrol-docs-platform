@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { useLocation, Link, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, Link, useSearchParams, Navigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
@@ -7,20 +7,12 @@ import { rehypeFootnotesSection } from '../rehype-footnotes-section'
 import { rehypePublicAssets } from '../rehype-public-assets'
 import { rehypeRadioDefaultChecked } from '../rehype-radio-default-checked'
 import { flatArticles, navTree } from '../data/nav'
+import { articlePathRedirects } from '../data/articlePathRedirects'
 import { recordArticleOpened } from '../services/dashboardRecentArticles'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
 import { getDashboardSectionMeta } from '../data/docsDashboardSections'
-import {
-  ADMIN_LANDING_CARD_PREVIEW_FALLBACK,
-  resolveAdminLandingCardPreview,
-} from '../data/adminLandingCardPreview'
-import {
-  OBSHEE_LANDING_CARD_PREVIEW_FALLBACK,
-  resolveObsheeLandingCardPreview,
-} from '../data/obsheeLandingCardPreview'
 import Toc from './Toc'
-import SearchBar from './dashboard/SearchBar'
-import LandingSectionTile from './LandingSectionTile'
+import SectionArticleNavList from './SectionArticleNavList'
 import { MarkdownOl, MarkdownUl } from './markdownListComponents'
 import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
@@ -56,26 +48,10 @@ function safeSectionBundleFilename(title) {
   return `${base}.pdf`
 }
 
-/** Разводящие с превью-картинками в карточках: «Общее», «Администрирование» (стили — docs-section-landing-root--obshee-stat). */
-function SectionLandingObsheeStatPanel({ enabled, children }) {
-  if (!enabled) return children
-  return (
-    <div className="docs-section-landing-root docs-section-landing-root--obshee-stat">
-      {children}
-    </div>
-  )
-}
-
-export default function Article() {
+function ArticleContent({ slug, isMcPdf }) {
   const location = useLocation()
-  const [searchParams] = useSearchParams()
-  const isMcPdf = searchParams.get('mc_pdf') === '1'
-  const slug = (location.pathname.replace(/^\//, '').replace(/\/$/, '') || '0_docs/4_medadmin/user-guide')
+  const navigate = useNavigate()
   const landingSection = navTree.find((item) => item.path === slug && item.children?.length)
-  const statDashLandingPanel =
-    (landingSection?.path === '0_docs/1_obshee/user-guide' ||
-      landingSection?.path === '0_docs/2_admin/articles/00_main') &&
-    !isMcPdf
   const landingDashboardMeta = landingSection ? getDashboardSectionMeta(landingSection.path) : null
   const [md, setMd] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
@@ -153,10 +129,15 @@ export default function Article() {
   const next = currentIndex >= 0 && currentIndex < flatArticles.length - 1
     ? flatArticles[currentIndex + 1]
     : null
-  const [pdfExporting, setPdfExporting] = useState(false)
   const [sectionBundlePdfBusy, setSectionBundlePdfBusy] = useState(false)
+  const [pdfExporting, setPdfExporting] = useState(false)
   const [lightbox, setLightbox] = useState(null)
+  const pdfFromSearchRef = useRef(false)
   const currentArticle = flatArticles.find((a) => a.path === slug)
+
+  useEffect(() => {
+    pdfFromSearchRef.current = false
+  }, [slug])
 
   const landingH1Id = useMemo(() => {
     if (!landingSection) return ''
@@ -202,16 +183,6 @@ export default function Article() {
     if (images.length > 0) setLightbox({ images, currentIndex: idx >= 0 ? idx : 0 })
   }
 
-  const handleDownloadPdf = () => {
-    const el = articleBodyRef.current
-    if (!el || pdfExporting) return
-    const safeName = (currentArticle?.title || slug)
-      .replace(/\s+/g, '_')
-      .replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'article'
-    setPdfExporting(true)
-    runArticlePdfExport(el, { filename: `${safeName}.pdf` }).finally(() => setPdfExporting(false))
-  }
-
   const handleSectionLandingBundlePdf = () => {
     if (!landingSection || !landingDashboardMeta?.sectionPdfBundle || sectionBundlePdfBusy || isMcPdf) return
     const printUrl = buildSectionBundlePrintUrl(landingSection.path)
@@ -221,6 +192,50 @@ export default function Article() {
       setSectionBundlePdfBusy(false)
     })
   }
+
+  const handleDownloadPdf = () => {
+    const el = articleBodyRef.current
+    if (!el || pdfExporting) return
+    const safeName =
+      (currentArticle?.title || slug).replace(/\s+/g, '_').replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'article'
+    setPdfExporting(true)
+    runArticlePdfExport(el, { filename: `${safeName}.pdf` }).finally(() => setPdfExporting(false))
+  }
+
+  useEffect(() => {
+    if (loading || error || landingSection) return
+    if (!location.state?.downloadPdf || pdfFromSearchRef.current) return
+    if (!md) return
+    const t = window.setTimeout(() => {
+      const el = articleBodyRef.current
+      if (!el) return
+      pdfFromSearchRef.current = true
+      const meta = flatArticles.find((a) => a.path === slug)
+      const safeName =
+        (meta?.title || slug).replace(/\s+/g, '_').replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'article'
+      setPdfExporting(true)
+      runArticlePdfExport(el, { filename: `${safeName}.pdf` })
+        .finally(() => {
+          setPdfExporting(false)
+          navigate(
+            { pathname: location.pathname, search: location.search, hash: location.hash },
+            { replace: true, state: {} },
+          )
+        })
+    }, 150)
+    return () => clearTimeout(t)
+  }, [
+    loading,
+    error,
+    landingSection,
+    location.state,
+    location.pathname,
+    location.search,
+    location.hash,
+    slug,
+    navigate,
+    md,
+  ])
 
   if (loading) return <div className="docs-article docs-loading">Загрузка…</div>
   if (error) {
@@ -245,6 +260,20 @@ export default function Article() {
             >
               {pdfExporting ? 'Формирование PDF…' : 'Скачать в PDF'}
             </button>
+            {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && import.meta.env.DEV && (
+              <p className="docs-pdf-service-hint">
+                Текстовый PDF: в отдельном терминале из <code>docs-app</code> выполните{' '}
+                <code>npm run dev:with-pdf</code> или <code>npm start</code> в <code>pdf-server</code> (порт 3001).
+                Прокси <code>/api/pdf</code> подставляется сам; в <code>.env.local</code> не нужен URL на{' '}
+                <code>127.0.0.1:3001</code>. См. <code>pdf-server/README.md</code>.
+              </p>
+            )}
+            {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && !import.meta.env.DEV && (
+              <p className="docs-pdf-service-hint">
+                Для текстового PDF в production при сборке задайте <code>VITE_PDF_SERVICE_URL</code> на публичный
+                сервис печати. Иначе скачивается растровый PDF. См. <code>pdf-server/README.md</code>.
+              </p>
+            )}
           </div>
         )}
         <div
@@ -254,65 +283,37 @@ export default function Article() {
           role="presentation"
         >
         {landingSection ? (
-          <SectionLandingObsheeStatPanel enabled={statDashLandingPanel}>
-            <>
-              <div className="docs-section-landing-title-row">
-                <div className="docs-section-landing-title-row__cluster">
-                  <MarkdownHeading
-                    level={1}
-                    id={landingH1Id}
-                    isMcPdf={isMcPdf}
-                    className="docs-section-landing-title-row__heading"
+          <>
+            <div className="docs-section-landing-title-row">
+              <div className="docs-section-landing-title-row__cluster">
+                <MarkdownHeading
+                  level={1}
+                  id={landingH1Id}
+                  isMcPdf={isMcPdf}
+                  className="docs-section-landing-title-row__heading"
+                >
+                  {landingSection.title}
+                </MarkdownHeading>
+                {!isMcPdf && landingDashboardMeta?.sectionPdfBundle ? (
+                  <button
+                    type="button"
+                    className="docs-section-landing-pdf-btn"
+                    onClick={handleSectionLandingBundlePdf}
+                    disabled={sectionBundlePdfBusy}
+                    title={sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
+                    aria-label={
+                      sectionBundlePdfBusy
+                        ? 'Формирование PDF'
+                        : `${SECTION_LANDING_PDF_LABEL}: ${landingDashboardMeta?.title || landingSection.title}`
+                    }
                   >
-                    {landingSection.title}
-                  </MarkdownHeading>
-                  {!isMcPdf && landingDashboardMeta?.sectionPdfBundle ? (
-                    <button
-                      type="button"
-                      className="docs-section-landing-pdf-btn"
-                      onClick={handleSectionLandingBundlePdf}
-                      disabled={sectionBundlePdfBusy}
-                      title={sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
-                      aria-label={
-                        sectionBundlePdfBusy
-                          ? 'Формирование PDF'
-                          : `${SECTION_LANDING_PDF_LABEL}: ${landingDashboardMeta?.title || landingSection.title}`
-                      }
-                    >
-                      {sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
-                    </button>
-                  ) : null}
-                </div>
+                    {sectionBundlePdfBusy ? 'Формирование PDF…' : SECTION_LANDING_PDF_LABEL}
+                  </button>
+                ) : null}
               </div>
-              <div className="docs-section-landing-dashboard">
-                <SearchBar sectionRootPath={landingSection.path} />
-              </div>
-              {/* Разводящая раздела: только плитки верхнего уровня из nav; без списков вложенных статей (недавние — только на главной). */}
-              <div className="docs-landing-grid">
-                {landingSection.children.map((child) => (
-                  <LandingSectionTile
-                    key={child.path}
-                    path={child.path}
-                    title={child.title}
-                    cardPreviewSrc={
-                      statDashLandingPanel
-                        ? landingSection.path === '0_docs/1_obshee/user-guide'
-                          ? resolveObsheeLandingCardPreview(child.path)
-                          : resolveAdminLandingCardPreview(child.path)
-                        : undefined
-                    }
-                    cardPreviewFallbackSrc={
-                      statDashLandingPanel
-                        ? landingSection.path === '0_docs/1_obshee/user-guide'
-                          ? OBSHEE_LANDING_CARD_PREVIEW_FALLBACK
-                          : ADMIN_LANDING_CARD_PREVIEW_FALLBACK
-                        : undefined
-                    }
-                  />
-                ))}
-              </div>
-            </>
-          </SectionLandingObsheeStatPanel>
+            </div>
+            <SectionArticleNavList nodes={landingSection.children} />
+          </>
         ) : (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -455,4 +456,16 @@ export default function Article() {
       )}
     </article>
   )
+}
+
+export default function Article() {
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const isMcPdf = searchParams.get('mc_pdf') === '1'
+  const rawSlug = location.pathname.replace(/^\//, '').replace(/\/$/, '') || '0_docs/4_medadmin/articles/00_main'
+  const redirectTarget = articlePathRedirects[rawSlug]
+  if (redirectTarget) {
+    return <Navigate to={`/${redirectTarget}`} replace />
+  }
+  return <ArticleContent slug={rawSlug} isMcPdf={isMcPdf} />
 }

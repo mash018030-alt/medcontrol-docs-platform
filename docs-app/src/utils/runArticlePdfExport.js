@@ -19,12 +19,34 @@ export function preferClientSideArticlePdf() {
 }
 
 /**
- * URL POST для /api/pdf: в dev — прокси Vite → pdf-server; в prod — только VITE_PDF_SERVICE_URL.
+ * База в VITE_PDF_SERVICE_URL указывает на тот же pdf-server, что и прокси Vite.
+ * Прямой fetch с localhost:5174 на 127.0.0.1:3001 — другой «site» для браузера → часто TypeError: Failed to fetch (CORS / Private Network Access).
+ */
+function isLikelyLocalPdfServiceBase(url) {
+  try {
+    const u = new URL(url)
+    const h = u.hostname.toLowerCase()
+    return h === 'localhost' || h === '127.0.0.1' || h === '[::1]'
+  } catch {
+    return false
+  }
+}
+
+/**
+ * URL POST для печати: в dev — всегда same-origin `/api/pdf` (прокси → pdf-server:3001),
+ * если не задан удалённый сервис. В production — только VITE_PDF_SERVICE_URL (полный URL сервиса).
  */
 export function getPdfServiceApiUrl() {
   const trimmed = import.meta.env.VITE_PDF_SERVICE_URL?.trim()
+
+  if (import.meta.env.DEV) {
+    if (!trimmed || isLikelyLocalPdfServiceBase(trimmed)) {
+      return '/api/pdf'
+    }
+    return `${trimmed.replace(/\/$/, '')}/api/pdf`
+  }
+
   if (trimmed) return `${trimmed.replace(/\/$/, '')}/api/pdf`
-  if (import.meta.env.DEV) return '/api/pdf'
   return null
 }
 
@@ -88,10 +110,12 @@ async function runArticlePdfExportPlaywright(apiUrl, filename, printUrl) {
     let detail = res.statusText
     try {
       const j = await res.json()
-      if (j.error) detail = j.error
+      const fromBody = j?.error || j?.message
+      if (fromBody) detail = String(fromBody)
     } catch {
       try {
-        detail = await res.text()
+        const t = await res.text()
+        if (t) detail = t.slice(0, 800)
       } catch {
         /* ignore */
       }
@@ -252,8 +276,8 @@ export async function runArticlePdfExport(rootEl, { filename, printUrl = null })
           'Не удалось получить текстовый PDF через сервер печати.',
           'Сейчас будет скачан растровый PDF (как картинка).',
           '',
-          'Проверьте: в каталоге docs-app/pdf-server выполнены npm install и npm start (порт 3001).',
-          'В режиме npm run dev запрос идёт через прокси /api/pdf — отдельно VITE_PDF_SERVICE_URL не обязателен.',
+          'Проверьте: из каталога docs-app выполните npm run dev:with-pdf (или в pdf-server: npm install && npm start, порт 3001).',
+          'В npm run dev запрос идёт на тот же сайт: POST /api/pdf (прокси Vite → pdf-server).',
           'Проверка: откройте в браузере http://127.0.0.1:3001/health — должен быть {"ok":true}.',
           'Инструкция: docs-app/pdf-server/README.md',
           '',
