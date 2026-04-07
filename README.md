@@ -44,11 +44,13 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 
 | Каталог / файл | Назначение | Подробнее |
 |----------------|------------|-----------|
-| **`docs-app/`** | Платформа: навигация, поиск, Markdown, утилиты и скрипты. | [**`docs-app/README.md`**](docs-app/README.md) |
+| **`docs-app/`** | Код **веб-движка** (не пользовательские статьи): навигация, поиск, Markdown, утилиты и скрипты. | [**`docs-app/README.md`**](docs-app/README.md) |
+| **`docs-app/engine-docs/`** | Служебные регламенты **про движок** (PDF, таблицы и т.д.); не путать с контентом в submodule. | [**`docs-app/engine-docs/README.md`**](docs-app/engine-docs/README.md) |
 | **`docs-app/public/content/`** | Submodule: `.md`, медиа, **`references/`** для переноса и исходников. | См. README в репозитории контента; URL — **`.gitmodules`**. |
 | **`docs-app/pdf-server/`** | Сервис печати PDF для продакшена и локальной отладки. | [**`pdf-server/README.md`**](docs-app/pdf-server/README.md) |
-| **`design/`** | Референсы **организации платформы** (палитра бренда, согласование UI документации), **без** пользовательских медиа и лого — те лежат в submodule. | [**`design/README.md`**](design/README.md), вход в цвета — [`design/colors/color-palette.md`](design/colors/color-palette.md) |
+| **`docs-brand/`** | Референсы **организации платформы** (палитра бренда, согласование UI документации), **без** пользовательских медиа и лого — те лежат в submodule. | [**`docs-brand/README.md`**](docs-brand/README.md), вход в цвета — [`docs-brand/colors/color-palette.md`](docs-brand/colors/color-palette.md) |
 | **`archive/migration/`** | Снимки этапа разделения репозиториев (базовая линия проверки ссылок и навигации). | [**`archive/migration/README.md`**](archive/migration/README.md) |
+| **`REPO-LAYOUT.md`** | Шпаргалка: движок vs контент vs `engine-docs`; опциональное переименование `docs-app`. | — |
 | **`brief.md`** | Краткий бриф платформы (цели, границы, куда смотреть дальше). | — |
 | **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`** | Общие правила для Cursor AI по проекту (UX, контент, PDF). Личные дополнения — любые другие `.mdc` в `.cursor/rules/` (не в git). | — |
 | **`CONTEXT.md`** | Контекст проекта, устройство репозиториев, этапы. | После **`brief.md`** и `docs-app/README.md`. |
@@ -56,7 +58,7 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 | **`.github/workflows/`** | Деплой на GitHub Pages (`deploy-pages.yml`, с submodule). **CI на PR** в `main`: **`ci.yml`** — клон с submodule, `npm ci` и **`npm run build`** в `docs-app/` (обязательный гейт); ESLint и `check-internal-links.mjs` запускаются, но пока **не блокируют** merge (`continue-on-error`), пока не вычищен долг. Скрипт ссылок завершает с **exit 1**, если есть битые ссылки или якоря. |
 | **`.github/dependabot.yml`** | **Dependabot**: раз в неделю предлагает PR с обновлениями npm в **`docs-app/`** и **`docs-app/pdf-server/`** (отдельные манифесты). После мержа смотреть CI и при необходимости чейнджлог пакета. |
 
-Служебные how-to по коду приложения: **[`docs-app/docs/README.md`](docs-app/docs/README.md)** (в т.ч. пакетный PDF раздела и снимок разводящей «Общее»).
+Служебные how-to **про движок** (не статьи MedControl): **[`docs-app/engine-docs/README.md`](docs-app/engine-docs/README.md)** (в т.ч. пакетный PDF раздела и снимок разводящей «Общее»). См. также **[`REPO-LAYOUT.md`](REPO-LAYOUT.md)**.
 
 ---
 

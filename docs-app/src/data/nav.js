@@ -254,3 +254,11 @@ export function orderedPathsInSection(sectionRootPath) {
   if (!sectionRootPath) return []
   return flatArticles.filter((a) => articleUnderSectionRoot(a.path, sectionRootPath)).map((a) => a.path)
 }
+
+/**
+ * Порядок как у {@link orderedPathsInSection}, но без разводящей `…/00_main.md`
+ * (список подстатей на лендинге раздела в PDF не нужен).
+ */
+export function orderedPathsForSectionPdfBundle(sectionRootPath) {
+  return orderedPathsInSection(sectionRootPath).filter((p) => !p.endsWith('/00_main'))
+}

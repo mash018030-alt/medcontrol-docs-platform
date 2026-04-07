@@ -5,10 +5,8 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
 import { rehypePublicAssets } from '../rehype-public-assets'
-import { rehypeRadioDefaultChecked } from '../rehype-radio-default-checked'
 import { flatArticles, navTree } from '../data/nav'
 import { articlePathRedirects } from '../data/articlePathRedirects'
-import { recordArticleOpened } from '../services/dashboardRecentArticles'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
 import { getDashboardSectionMeta } from '../data/docsDashboardSections'
 import Toc from './Toc'
@@ -20,7 +18,6 @@ import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl, routerLinkTo } from '../utils/publicAssetUrl'
 import { fetchMarkdownText } from '../utils/fetchMarkdownText'
-import { attachDocsCarousels } from '../utils/attachDocsCarousels'
 import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useSearchTextScroll } from '../hooks/useSearchTextScroll'
@@ -59,28 +56,6 @@ function ArticleContent({ slug, isMcPdf }) {
   const [error, setError] = useState(null)
 
   const articleBodyRef = useRef(null)
-
-  useEffect(() => {
-    recordArticleOpened(slug)
-  }, [slug])
-  /* Карусели: точки, стрелки, свайп по области слайдов (см. attachDocsCarousels). */
-  useEffect(() => {
-    if (loading) return
-    let detach = () => {}
-    let raf2 = null
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        const el = articleBodyRef.current
-        if (!el) return
-        detach = attachDocsCarousels(el)
-      })
-    })
-    return () => {
-      cancelAnimationFrame(raf1)
-      if (raf2 != null) cancelAnimationFrame(raf2)
-      detach()
-    }
-  }, [md, loading])
 
   useEffect(() => {
     setLoading(true)
@@ -164,23 +139,14 @@ function ArticleContent({ slug, isMcPdf }) {
 
   const handleContentClick = (e) => {
     if (e.target.tagName !== 'IMG') return
-    const inCarousel = e.target.closest('.docs-carousel')
-    if (inCarousel?.dataset.docsCarouselSwipeJustNow === '1') return
     e.preventDefault()
-    const el = articleBodyRef.current
-    if (!el) return
     const clicked = e.target
-    const carousel = clicked.closest('.docs-carousel')
-    /* Только карусель — несколько слайдов со стрелками; иначе одна картинка (не вся статья). */
-    const imgs = carousel
-      ? Array.from(carousel.querySelectorAll('.docs-carousel-slide img'))
-      : [clicked]
-    const images = imgs.map((img) => ({
-      src: img.currentSrc || img.getAttribute('src') || '',
-      alt: img.alt || '',
-    })).filter((x) => x.src)
-    const idx = imgs.findIndex((img) => (img.currentSrc || img.getAttribute('src')) === (clicked.currentSrc || clicked.getAttribute('src')))
-    if (images.length > 0) setLightbox({ images, currentIndex: idx >= 0 ? idx : 0 })
+    const src = clicked.currentSrc || clicked.getAttribute('src') || ''
+    if (!src) return
+    setLightbox({
+      images: [{ src, alt: clicked.alt || '' }],
+      currentIndex: 0,
+    })
   }
 
   const handleSectionLandingBundlePdf = () => {
@@ -260,20 +226,6 @@ function ArticleContent({ slug, isMcPdf }) {
             >
               {pdfExporting ? 'Формирование PDF…' : 'Скачать в PDF'}
             </button>
-            {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && import.meta.env.DEV && (
-              <p className="docs-pdf-service-hint">
-                Текстовый PDF: в отдельном терминале из <code>docs-app</code> выполните{' '}
-                <code>npm run dev:with-pdf</code> или <code>npm start</code> в <code>pdf-server</code> (порт 3001).
-                Прокси <code>/api/pdf</code> подставляется сам; в <code>.env.local</code> не нужен URL на{' '}
-                <code>127.0.0.1:3001</code>. См. <code>pdf-server/README.md</code>.
-              </p>
-            )}
-            {!import.meta.env.VITE_PDF_SERVICE_URL?.trim() && !import.meta.env.DEV && (
-              <p className="docs-pdf-service-hint">
-                Для текстового PDF в production при сборке задайте <code>VITE_PDF_SERVICE_URL</code> на публичный
-                сервис печати. Иначе скачивается растровый PDF. См. <code>pdf-server/README.md</code>.
-              </p>
-            )}
           </div>
         )}
         <div
@@ -317,7 +269,7 @@ function ArticleContent({ slug, isMcPdf }) {
         ) : (
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeRadioDefaultChecked(), rehypeFootnotesSection(), rehypePublicAssets()]}
+            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,

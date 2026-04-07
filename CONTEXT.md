@@ -2,7 +2,9 @@
 
 Организация репозиториев, этапы и служебные заметки. Настройки агента Cursor (Run, Auto-Run, Protection) вынесены в **[`CURSOR-AGENT-SETTINGS.md`](CURSOR-AGENT-SETTINGS.md)**.
 
-**Для новых чатов:** «используй материалы из **docs-app/public/content/references/** (**references/README.md**), палитру из **`design/colors/`**, **`brief.md`** и при необходимости **`CONTEXT.md`**».
+**Для новых чатов:** «используй материалы из **docs-app/public/content/references/** (**references/README.md**), палитру из **`docs-brand/colors/`**, **`brief.md`** и при необходимости **`CONTEXT.md`**».
+
+**PDF (Playwright, прокси, новости, сборка раздела):** единый регламент — **[`docs-app/engine-docs/PDF-EXPORT.md`](docs-app/engine-docs/PDF-EXPORT.md)**; сервис — [`docs-app/pdf-server/README.md`](docs-app/pdf-server/README.md).
 
 ---
 
@@ -17,8 +19,8 @@
 ## Организация
 
 - **Рабочая папка** — отдельная на компе (не внутри git-learning).
-- **references/** — только в **репозитории контента** (`docs-app/public/content/references/` после submodule): тексты требований, экспорты руководств (HTML + `images/`), лого, PDF-эталоны и прочие медиа. См. **`references/README.md`** там же. Скрипт **`docs-app/scripts/html-to-md.cjs`** читает HTML из `public/content/references/manuals/...`. В **репозитории движка** отдельной папки `references/` в корне нет — референсы организации платформы (палитра и т.п.) только в **`design/`**.
-- **design/colors/** — в **репозитории движка** (корень, рядом с `docs-app/`): Markdown-референс цветовой палитры и при необходимости образцы `*.png`. Не входит в `public/content/`, чтобы не смешиваться со статьями и поиском по ним. Начало — **`design/colors/color-palette.md`**.
+- **references/** — только в **репозитории контента** (`docs-app/public/content/references/` после submodule): тексты требований, экспорты руководств (HTML + `images/`), лого, PDF-эталоны и прочие медиа. См. **`references/README.md`** там же. Скрипт **`docs-app/scripts/html-to-md.cjs`** читает HTML из `public/content/references/manuals/...`. В **репозитории движка** отдельной папки `references/` в корне нет — референсы организации платформы (палитра и т.п.) только в **`docs-brand/`**.
+- **docs-brand/colors/** — в **репозитории движка** (корень, рядом с `docs-app/`): Markdown-референс цветовой палитры и при необходимости образцы `*.png`. Не входит в `public/content/`, чтобы не смешиваться со статьями и поиском по ним. Начало — **`docs-brand/colors/color-palette.md`**.
 - **brief.md** — краткий бриф платформы (цели и границы); этот файл — **контекст репо и процесса**. Настройки Cursor для агента — **`CURSOR-AGENT-SETTINGS.md`**.
 - Несколько репозиториев на компе — нормально; ассистент видит только папку, открытую в Cursor (File → Open Folder).
 - Текст из чата ассистент может сохранять в файлы.

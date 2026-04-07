@@ -1,8 +1,22 @@
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { fetchNewsTree, releaseSectionCategories } from '../../data/fetchNewsTree'
+import {
+  runArticlePdfExport,
+  getPdfServiceApiUrl,
+  buildArticleMcPdfUrl,
+} from '../../utils/runArticlePdfExport'
 import LatestReleaseBanner from './LatestReleaseBanner'
+import NewsReleaseHubPdfExport from './NewsReleaseHubPdfExport'
 import ReleaseList from './ReleaseList'
+
+function safeNewsPdfFilename(title) {
+  const base =
+    String(title)
+      .replace(/\s+/g, '_')
+      .replace(/[^\w\u0400-\u04FF_-]/gi, '') || 'release'
+  return `${base}.pdf`
+}
 
 function hubSectionId(categoryPath) {
   const tail = categoryPath.split('/').filter(Boolean).pop() || 'releases'
@@ -18,6 +32,35 @@ export default function NewsHubPage() {
   const [tree, setTree] = useState([])
   const [err, setErr] = useState(null)
   const [ready, setReady] = useState(false)
+  const [pdfBusyPath, setPdfBusyPath] = useState(null)
+  const [clientPdfJob, setClientPdfJob] = useState(null)
+
+  const clearClientPdfJob = useCallback(() => {
+    setClientPdfJob(null)
+    setPdfBusyPath(null)
+  }, [])
+
+  const handleReleasePdf = useCallback(
+    async (articlePath, title) => {
+      if (pdfBusyPath != null) return
+      setPdfBusyPath(articlePath)
+      const filename = safeNewsPdfFilename(title)
+      try {
+        if (getPdfServiceApiUrl()) {
+          await runArticlePdfExport(document.body, {
+            filename,
+            printUrl: buildArticleMcPdfUrl(articlePath),
+          })
+          setPdfBusyPath(null)
+          return
+        }
+        setClientPdfJob({ articlePath, filename })
+      } catch {
+        setPdfBusyPath(null)
+      }
+    },
+    [pdfBusyPath],
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -64,7 +107,15 @@ export default function NewsHubPage() {
   const categories = releaseSectionCategories(tree)
 
   return (
-    <article className="docs-article docs-news-hub">
+    <article className="docs-article docs-news-hub" aria-busy={pdfBusyPath != null}>
+      {clientPdfJob ? (
+        <NewsReleaseHubPdfExport
+          tree={tree}
+          articlePath={clientPdfJob.articlePath}
+          filename={clientPdfJob.filename}
+          onDone={clearClientPdfJob}
+        />
+      ) : null}
       <header id="hub-releases" className="docs-news-hub__header">
         <h1 className="docs-news-hub__title">Релизы</h1>
       </header>
@@ -87,11 +138,13 @@ export default function NewsHubPage() {
               title={latest.title}
               categoryLabel={label}
               articlePath={latest.path}
+              onReleasePdf={handleReleasePdf}
+              releasePdfBusy={pdfBusyPath != null}
             />
             {previous.length ? (
               <>
                 <h3 className="docs-news-hub__subheading">Предыдущие релизы</h3>
-                <ReleaseList items={previous} />
+                <ReleaseList items={previous} onReleasePdf={handleReleasePdf} releasePdfBusy={pdfBusyPath != null} />
               </>
             ) : null}
           </section>

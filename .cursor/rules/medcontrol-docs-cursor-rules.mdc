@@ -41,6 +41,7 @@ alwaysApply: true
 
 - Использовать таблицы для структурированных сравнений и регламентов.
 - Добавлять схемы, если описывается процесс/поток действий.
+- **Реализация в приложении** (липкая шапка, обёртка `docs-table-scroll`, `border-collapse`, ограничения ширины): регламент **`docs-app/engine-docs/TABLES-DISPLAY.md`** — при правках `MarkdownTable.jsx`, таблиц в `App.css` или разметки таблиц в контенте сверяться с ним, чтобы не повторять регрессии.
 
 ### 6) Макросы (callouts)
 
@@ -125,8 +126,8 @@ alwaysApply: true
 
 ### Недавно открытые статьи
 
-- Показываются **только** в `SectionCard` на главной дашборда документации (`DocsDashboardPage` → `DocsDashboardGrid` → `SectionCard`), через `getRecentArticleOpensForSection`.
-- **Запрещено:** дублировать этот паттерн на страницах разводящих разделов (`Article` при `landingSection`), в шапке статей, в боковом меню как «последние».
+- На главной дашборда документации блок «последние открытые по разделу» **не используется** (раньше был в `SectionCard`).
+- **Запрещено:** вводить аналог на разводящих разделов (`Article` при `landingSection`), в шапке статей, в боковом меню как «последние».
 
 ### Разводящая раздела (`*/user-guide`, `…/00_main` и т.д.)
 
@@ -137,11 +138,11 @@ alwaysApply: true
 <!-- источник: docs-design-colors-location.mdc -->
 ## Палитра цветов
 
-- Текстовый референс (таблица HEX/RGB, назначение): **`design/colors/`** в корне репозитория, точка входа — **`color-palette.md`**.
+- Текстовый референс (таблица HEX/RGB, назначение): **`docs-brand/colors/`** в корне репозитория, точка входа — **`color-palette.md`**.
 - Реализация в интерфейсе: CSS-переменные в **`docs-app/src/App.css`**.
 - Папка **намеренно не** в `docs-app/public/content/`: иначе файлы попадали бы в общий glob статей и поиск.
 
-При смене цветов правьте **и** markdown в `design/colors/`, **и** соответствующие переменные в `App.css`.
+При смене цветов правьте **и** markdown в `docs-brand/colors/`, **и** соответствующие переменные в `App.css`.
 
 <!-- источник: docs-hash-and-scroll.mdc -->
 ## Hash и скролл документации
@@ -240,12 +241,14 @@ alwaysApply: true
 Ниже по файлу могли оставаться старые инварианты для:
 
 - сетки с превью (`obsheeLandingCardPreview.js`, `adminLandingCardPreview.js`, картинки `public/content/images/dashboards/`);
-- снимка конфигурации: `docs-app/docs/OBSHEE-LANDING-SNAPSHOT.md`.
+- снимка конфигурации: `docs-app/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`.
 
 Использовать только при намеренном восстановлении карточного UI.
 
-<!-- источник: docs-pdf-playwright.mdc -->
+<!-- источник: docs-pdf-playwright.mdc; см. также отдельное правило docs-pdf-playwright.mdc (globs) -->
 ## PDF (Playwright): инварианты для движка
+
+**Регламент целиком:** `docs-app/engine-docs/PDF-EXPORT.md` — прокси Vite, разбор ошибок fetch, новости, сборка раздела (`orderedPathsForSectionPdfBundle`, без `…/00_main`).
 
 ### Источник правды по тексту в PDF
 

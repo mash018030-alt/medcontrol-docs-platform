@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { NEWS_RELEASE_PDF_ANCHOR } from './releasePdfAnchor'
 
 const PDF_DOWNLOAD_TOOLTIP = 'Скачать в PDF'
 
@@ -12,10 +11,15 @@ function DownloadIcon() {
 }
 
 /**
- * Строка релиза в сетке «Предыдущие релизы»: название ведёт на страницу, справа — переход к кнопке PDF на статье.
- * @param {{ title: string, path: string }} props
+ * Строка релиза в сетке «Предыдущие релизы»: название — на статью; иконка — скачать PDF без ухода с хаба.
+ * @param {{ title: string, path: string, onReleasePdf?: function, releasePdfBusy?: boolean }} props
  */
-export default function ReleaseGridItem({ title, path: articlePath }) {
+export default function ReleaseGridItem({
+  title,
+  path: articlePath,
+  onReleasePdf,
+  releasePdfBusy = false,
+}) {
   return (
     <div className="docs-news-release-row">
       <Link
@@ -25,14 +29,16 @@ export default function ReleaseGridItem({ title, path: articlePath }) {
       >
         <span className="docs-news-release-row__label">{title}</span>
       </Link>
-      <Link
-        to={`/${articlePath}#${NEWS_RELEASE_PDF_ANCHOR}`}
+      <button
+        type="button"
         className="docs-news-release-row__pdf"
         title={PDF_DOWNLOAD_TOOLTIP}
         aria-label={`${PDF_DOWNLOAD_TOOLTIP}: ${title}`}
+        disabled={releasePdfBusy}
+        onClick={() => onReleasePdf?.(articlePath, title)}
       >
         <DownloadIcon />
-      </Link>
+      </button>
     </div>
   )
 }

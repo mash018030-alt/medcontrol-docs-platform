@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { NEWS_RELEASE_PDF_ANCHOR } from './releasePdfAnchor'
 
 function DownloadIcon() {
   return (
@@ -10,12 +9,23 @@ function DownloadIcon() {
 }
 
 /**
- * Баннер последнего релиза: иконка PDF ведёт на страницу релиза к кнопке «Скачать в PDF»
- * (тот же конвейер Playwright/html2pdf, что и в документации).
+ * Баннер последнего релиза: иконка скачивает PDF без ухода с хаба (тот же конвейер, что на странице релиза).
  *
- * @param {{ title: string, categoryLabel: string, articlePath: string }} props
+ * @param {{
+ *   title: string,
+ *   categoryLabel: string,
+ *   articlePath: string,
+ *   onReleasePdf?: (articlePath: string, title: string) => void,
+ *   releasePdfBusy?: boolean,
+ * }} props
  */
-export default function LatestReleaseBanner({ title, categoryLabel, articlePath }) {
+export default function LatestReleaseBanner({
+  title,
+  categoryLabel,
+  articlePath,
+  onReleasePdf,
+  releasePdfBusy = false,
+}) {
   return (
     <div className="docs-news-banner" data-category={categoryLabel}>
       <div className="docs-news-banner__bg" aria-hidden />
@@ -32,14 +42,16 @@ export default function LatestReleaseBanner({ title, categoryLabel, articlePath 
             >
               {title}
             </Link>
-            <Link
-              to={`/${articlePath}#${NEWS_RELEASE_PDF_ANCHOR}`}
+            <button
+              type="button"
               className="docs-news-banner__icon-btn"
               aria-label={`Скачать в PDF: ${title}`}
               title="Скачать в PDF"
+              disabled={releasePdfBusy}
+              onClick={() => onReleasePdf?.(articlePath, title)}
             >
               <DownloadIcon />
-            </Link>
+            </button>
           </div>
         </div>
       </div>

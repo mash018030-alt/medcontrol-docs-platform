@@ -6,8 +6,6 @@ import rehypeRaw from 'rehype-raw'
 import { runArticlePdfExport } from '../utils/runArticlePdfExport'
 import { rehypeFootnotesSection } from '../rehype-footnotes-section'
 import { rehypePublicAssets } from '../rehype-public-assets'
-import { rehypeRadioDefaultChecked } from '../rehype-radio-default-checked'
-import { attachDocsCarousels } from '../utils/attachDocsCarousels'
 import {
   fetchNewsTree,
   findNewsNode,
@@ -203,24 +201,6 @@ export default function NewsArticle() {
   useFootnoteBackrefClick(articleBodyRef, !mdLoading && !mdError && isLeaf && Boolean(node), md)
 
   useEffect(() => {
-    if (mdLoading || !isLeaf) return
-    let detach = () => {}
-    let raf2 = null
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        const el = articleBodyRef.current
-        if (!el) return
-        detach = attachDocsCarousels(el)
-      })
-    })
-    return () => {
-      cancelAnimationFrame(raf1)
-      if (raf2 != null) cancelAnimationFrame(raf2)
-      detach()
-    }
-  }, [md, mdLoading, isLeaf])
-
-  useEffect(() => {
     if (!lightbox) return
     const onKeyDown = (e) => {
       if (e.key === 'Escape') setLightbox(null)
@@ -236,28 +216,14 @@ export default function NewsArticle() {
     leafIndex >= 0 && leafIndex < flatLeaves.length - 1 ? flatLeaves[leafIndex + 1] : null
   const handleContentClick = (e) => {
     if (e.target.tagName !== 'IMG') return
-    const inCarousel = e.target.closest('.docs-carousel')
-    if (inCarousel?.dataset.docsCarouselSwipeJustNow === '1') return
     e.preventDefault()
-    const el = articleBodyRef.current
-    if (!el) return
     const clicked = e.target
-    const carousel = clicked.closest('.docs-carousel')
-    const imgs = carousel
-      ? Array.from(carousel.querySelectorAll('.docs-carousel-slide img'))
-      : [clicked]
-    const images = imgs
-      .map((img) => ({
-        src: img.currentSrc || img.getAttribute('src') || '',
-        alt: img.alt || '',
-      }))
-      .filter((x) => x.src)
-    const idx = imgs.findIndex(
-      (img) =>
-        (img.currentSrc || img.getAttribute('src')) ===
-        (clicked.currentSrc || clicked.getAttribute('src'))
-    )
-    if (images.length > 0) setLightbox({ images, currentIndex: idx >= 0 ? idx : 0 })
+    const src = clicked.currentSrc || clicked.getAttribute('src') || ''
+    if (!src) return
+    setLightbox({
+      images: [{ src, alt: clicked.alt || '' }],
+      currentIndex: 0,
+    })
   }
 
   const handleDownloadPdf = () => {
@@ -336,7 +302,7 @@ export default function NewsArticle() {
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw, rehypeRadioDefaultChecked(), rehypeFootnotesSection(), rehypePublicAssets()]}
+              rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
               remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
               components={markdownComponents}
             >

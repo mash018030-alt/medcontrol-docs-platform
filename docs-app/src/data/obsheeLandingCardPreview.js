@@ -3,7 +3,8 @@
 const DASHBOARDS = '/content/images/dashboards'
 const OBSHEE_TILES = `${DASHBOARDS}/Obshee`
 
-export const OBSHEE_LANDING_CARD_PREVIEW_FALLBACK = `${DASHBOARDS}/Obshee.png`
+/** Файла `Obshee.png` в корне dashboards нет в контент-репо — используем первую плитку сетки. */
+export const OBSHEE_LANDING_CARD_PREVIEW_FALLBACK = `${OBSHEE_TILES}/1.png`
 
 /**
  * Сетка 3×3 как на странице: в ряду слева направо; ряды сверху вниз — 1–3, 4–6, 7–9
