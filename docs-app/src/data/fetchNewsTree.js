@@ -1,17 +1,30 @@
-/** Загрузка дерева новостей из public/content/1_news/news-tree.json */
+/** Загрузка дерева новостей: public/content/1_news/news_tree.json (канон) или news-tree.json (совместимость). */
 
 /** Главная страница раздела новостей / релизов (хаб со списком). */
 export const NEWS_ROOT_SLUG = 'news'
 
+const NEWS_TREE_FILES = ['news_tree.json', 'news-tree.json']
+
 export async function fetchNewsTree() {
   const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
-  const path = `${base}/content/1_news/news-tree.json`.replace(/^\/+/, '/')
-  const url = new URL(path, window.location.origin).href
-  const r = await fetch(url)
-  if (!r.ok) throw new Error('Не удалось загрузить структуру новостей')
-  const data = await r.json()
-  const tree = Array.isArray(data.tree) ? data.tree : []
-  return tree
+  let lastErr = null
+  for (const file of NEWS_TREE_FILES) {
+    const path = `${base}/content/1_news/${file}`.replace(/^\/+/, '/')
+    const url = new URL(path, window.location.origin).href
+    try {
+      const r = await fetch(url)
+      if (!r.ok) {
+        lastErr = new Error(`HTTP ${r.status} ${url}`)
+        continue
+      }
+      const data = await r.json()
+      const tree = Array.isArray(data.tree) ? data.tree : []
+      return tree
+    } catch (e) {
+      lastErr = e
+    }
+  }
+  throw new Error(lastErr ? `Не удалось загрузить структуру новостей: ${lastErr.message}` : 'Не удалось загрузить структуру новостей')
 }
 
 /**

@@ -6,12 +6,27 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
-const NEWS = path.join(__dirname, '../public/content/News')
-const TREE = JSON.parse(fs.readFileSync(path.join(NEWS, 'news-tree.json'), 'utf8'))
+const CONTENT_ROOT = path.join(__dirname, '../public/content')
+const NEWS = path.join(CONTENT_ROOT, 'News')
+
+function readNewsTreeJson() {
+  const c = [
+    path.join(CONTENT_ROOT, '1_news/news_tree.json'),
+    path.join(CONTENT_ROOT, '1_news/news-tree.json'),
+    path.join(CONTENT_ROOT, 'News/news_tree.json'),
+    path.join(CONTENT_ROOT, 'News/news-tree.json'),
+  ]
+  for (const p of c) {
+    if (fs.existsSync(p)) return JSON.parse(fs.readFileSync(p, 'utf8'))
+  }
+  throw new Error('news tree JSON not found under public/content')
+}
+
+const TREE = readNewsTreeJson()
 
 function collectPdfLeaves(node, acc = []) {
   if (!node) return acc
-  if (node.pdf && node.path?.startsWith('news/mc-cloud-')) acc.push(node)
+  if (node.pdf && node.path && /^news\/mc_cloud_/.test(node.path)) acc.push(node)
   if (node.children) node.children.forEach((c) => collectPdfLeaves(c, acc))
   return acc
 }

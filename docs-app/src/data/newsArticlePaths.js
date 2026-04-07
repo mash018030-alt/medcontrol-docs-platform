@@ -30,15 +30,15 @@ function findNewsPathTrail(nodes, targetSlug, trail = []) {
  */
 export function newsArticlesPackDirFromTrail(trail) {
   if (!trail?.length) return null
-  if (trail.includes('news/mc-mobile')) return '1_mc_mobile'
-  if (trail.includes('news/mc-cloud')) return '0_mc_cloud'
+  if (trail.includes('news/mc_mobile')) return '1_mc_mobile'
+  if (trail.includes('news/mc_cloud')) return '0_mc_cloud'
   return null
 }
 
 /**
  * Относительные пути к .md относительно public/content (в порядке попытки загрузки).
  * @param {unknown[]} tree — массив из news-tree.json
- * @param {string} fullSlug — например news/mc-cloud-1-17
+ * @param {string} fullSlug — например news/mc_cloud_1_17
  * @returns {string[]}
  */
 export function newsArticleMdRelPaths(tree, fullSlug) {

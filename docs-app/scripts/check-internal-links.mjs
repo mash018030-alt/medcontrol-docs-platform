@@ -16,9 +16,10 @@ const arr = navSrc.slice(bracketStart, bracketEnd + 2)
 const flatArticles = [...arr.matchAll(/path:\s*'([^']+)'/g)].map((m) => m[1])
 const docSet = new Set(flatArticles)
 
-const newsTree = JSON.parse(
-  fs.readFileSync(path.join(root, 'public/content/1_news/news-tree.json'), 'utf8'),
-)
+const newsTreePath = fs.existsSync(path.join(root, 'public/content/1_news/news_tree.json'))
+  ? path.join(root, 'public/content/1_news/news_tree.json')
+  : path.join(root, 'public/content/1_news/news-tree.json')
+const newsTree = JSON.parse(fs.readFileSync(newsTreePath, 'utf8'))
 
 function walkNews(nodes, out = []) {
   for (const n of nodes || []) {
@@ -60,7 +61,10 @@ function walkDir(d, rel = '') {
     const r = rel ? `${rel}/${ent.name}` : ent.name
     if (ent.isDirectory()) {
       /* Служебная документация контент-репо — не статьи сайта */
-      if (rel === '' && (ent.name === 'docs' || ent.name === 'references' || ent.name === 'repo-docs'))
+      if (
+        rel === '' &&
+        (ent.name === 'docs' || ent.name === 'references' || ent.name === 'repo_docs' || ent.name === 'repo-docs')
+      )
         continue
       walkDir(p, r)
     } else if (ent.name.endsWith('.md')) mdFiles.push({ full: p, rel: r.split(path.sep).join('/') })
@@ -118,9 +122,9 @@ console.log(warnings.length ? warnings.map((w) => JSON.stringify(w)).join('\n') 
 // Anchor checks for FAQ table links
 const anchorTargets = [
   { md: '0_docs/2_admin/articles/02_organizacii_00.md', ids: ['создание-дочерней-организации'] },
-  { md: '0_docs/2_admin/articles/02_organizacii_01_deystviya-s-organizaciej.md', ids: ['редактирование'] },
+  { md: '0_docs/2_admin/articles/02_organizacii_01_deystviya_s_organizaciej.md', ids: ['редактирование'] },
   {
-    md: '0_docs/2_admin/articles/02_organizacii_02_nastroyki-organizacii.md',
+    md: '0_docs/2_admin/articles/02_organizacii_02_nastroyki_organizacii.md',
     ids: ['настройки-организации', 'виды-осмотров'],
   },
   { md: '0_docs/2_admin/articles/07_osmotry.md', ids: ['ручные-операции-над-осмотрами'] },
@@ -169,7 +173,13 @@ for (const f of mdFiles) {
     if (pathPart.startsWith('http') || pathPart.startsWith('mailto:')) continue
     if (pathPart.startsWith('/content/')) continue
 
-    if (!pathPart || pathPart === '/') {
+    /** #якорь в той же статье: для 1_news/.../articles/*.md маршрут news/... иначе строится неверно */
+    const sameFileNewsArticle =
+      (!pathPart || pathPart === '/') && /^1_news\/[^/]+\/articles\//.test(f.rel)
+
+    if (sameFileNewsArticle) {
+      targetRoute = ''
+    } else if (!pathPart || pathPart === '/') {
       let tr = f.rel.replace(/\.md$/, '')
       tr = tr.replace(/^News\//, '').replace(/^1_news\//, 'news/')
       if (!tr.startsWith('news/') && !tr.includes('/')) {
@@ -187,7 +197,9 @@ for (const f of mdFiles) {
     }
 
     let targetFile
-    if (targetRoute.startsWith('news/')) {
+    if (sameFileNewsArticle) {
+      targetFile = f.full
+    } else if (targetRoute.startsWith('news/')) {
       targetFile = null
       for (const rel of newsArticleMdRelPaths(newsTree.tree, targetRoute)) {
         const candidate = path.join(contentDir, rel)
@@ -213,3 +225,12 @@ for (const f of mdFiles) {
 console.log(
   hashIssues.length ? hashIssues.map((h) => JSON.stringify(h)).join('\n') : '(all hash links resolved)',
 )
+
+const linkProblems = issues.length + hashIssues.length
+if (linkProblems > 0) {
+  console.error(
+    `\ncheck-internal-links: ${issues.length} broken/unknown links, ${hashIssues.length} hash issues — exit 1 (только отчёт: LINK_CHECK_STRICT=0)`,
+  )
+  if (process.env.LINK_CHECK_STRICT === '0') process.exit(0)
+  process.exit(1)
+}

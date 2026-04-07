@@ -733,7 +733,7 @@ function isNewsPath(path) {
 
 function isSectionRootPath(path) {
   if (!path) return false
-  if (/\/user-guide$/.test(path)) return true
+  if (/\/user_guide$/.test(path)) return true
   if (/\/articles\/00_main$/.test(path)) return true
   return false
 }

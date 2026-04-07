@@ -10,7 +10,7 @@ export const docsDashboardSections = [
     description:
       'Словарь терминов, сокращений и сущностей платформы MedControl: роли, документы, осмотры, ПАК, подписи и другие базовые понятия',
     iconSrc: '/content/images/dashboards/glossary.png',
-    sectionPath: '0_docs/0_glossariy/user-guide',
+    sectionPath: '0_docs/0_glossariy/user_guide',
     sectionPdfBundle: true,
   },
   {

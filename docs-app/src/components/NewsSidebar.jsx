@@ -9,12 +9,12 @@ import {
 } from '../data/fetchNewsTree'
 import NewsBackLink from './NewsBackLink'
 
-/** Якоря хаба: #hub-mc-cloud → news/mc-cloud, #hub-releases → news/releases (любая глубина в дереве) */
+/** Якоря хаба: id hub-{tail}, tail как в дереве (mc_cloud); старые закладки с дефисами нормализуем в _. */
 function branchPathFromNewsHubHash(hash, tree) {
   const id = hash?.replace(/^#/, '') || ''
   const m = /^hub-(.+)$/.exec(id)
   if (!m) return null
-  const path = `${NEWS_ROOT_SLUG}/${m[1]}`
+  const path = `${NEWS_ROOT_SLUG}/${m[1].replace(/-/g, '_')}`
   function contains(nodes) {
     for (const t of nodes) {
       if (t.path === path) return true
