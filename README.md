@@ -53,7 +53,8 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 | **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`** | Общие правила для Cursor AI по проекту (UX, контент, PDF). Личные дополнения — любые другие `.mdc` в `.cursor/rules/` (не в git). | — |
 | **`CONTEXT.md`** | Контекст проекта, устройство репозиториев, этапы. | После **`brief.md`** и `docs-app/README.md`. |
 | **`CURSOR-AGENT-SETTINGS.md`** | Настройки агента Cursor (Run, Auto-Run, Protection) для этой папки. | Отдельно от **`CONTEXT.md`**. |
-| **`.github/workflows/`** | Сборка и публикация (в этом репозитории — GitHub Pages, submodule включается в job). | При другом хостинге достаточно той же **`npm ci`** + **`npm run build`** из `docs-app/` (см. workflow). |
+| **`.github/workflows/`** | Деплой на GitHub Pages (`deploy-pages.yml`, с submodule). **CI на PR** в `main`: **`ci.yml`** — клон с submodule, `npm ci` и **`npm run build`** в `docs-app/` (обязательный гейт); ESLint и `check-internal-links.mjs` запускаются, но пока **не блокируют** merge (`continue-on-error`), пока не вычищен долг. Скрипт ссылок завершает с **exit 1**, если есть битые ссылки или якоря. |
+| **`.github/dependabot.yml`** | **Dependabot**: раз в неделю предлагает PR с обновлениями npm в **`docs-app/`** и **`docs-app/pdf-server/`** (отдельные манифесты). После мержа смотреть CI и при необходимости чейнджлог пакета. |
 
 Служебные how-to по коду приложения: **[`docs-app/docs/README.md`](docs-app/docs/README.md)** (в т.ч. пакетный PDF раздела и снимок разводящей «Общее»).
 
@@ -67,6 +68,14 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 ---
 
 ## Перед коммитом (по желанию)
+
+На GitHub при PR в **`main`** см. **`.github/workflows/ci.yml`**: обязательна сборка; линт и проверка ссылок — для отчёта (пока без стоп-крана).
+
+**Проверка внутренних ссылок** (`docs-app/scripts/check-internal-links.mjs`) сканирует Markdown в **контентном submodule** **`docs-app/public/content/`** и сверяет пути с навигацией движка (`flatArticles` в `docs-app/src/data/nav.js` и дерево новостей). Без инициализированного submodule скрипт не даст полезной картины — см. раздел **«Первый запуск»**.
+
+Локально по умолчанию скрипт завершается с **кодом 1**, если есть ошибки по ссылкам или якорям; только отчёт без ошибки:
+
+`LINK_CHECK_STRICT=0 node scripts/check-internal-links.mjs` (из **`docs-app/`**).
 
 Из **`docs-app/`**:
 
