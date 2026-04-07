@@ -51,7 +51,8 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 | **`archive/migration/`** | Снимки этапа разделения репозиториев (базовая линия проверки ссылок и навигации). | [**`archive/migration/README.md`**](archive/migration/README.md) |
 | **`brief.md`** | Краткий бриф платформы (цели, границы, куда смотреть дальше). | — |
 | **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`** | Общие правила для Cursor AI по проекту (UX, контент, PDF). Личные дополнения — любые другие `.mdc` в `.cursor/rules/` (не в git). | — |
-| **`CONTEXT.md`** | Контекст проекта, план этапов, заметки для Cursor. | После **`brief.md`** и `docs-app/README.md`. |
+| **`CONTEXT.md`** | Контекст проекта, устройство репозиториев, этапы. | После **`brief.md`** и `docs-app/README.md`. |
+| **`CURSOR-AGENT-SETTINGS.md`** | Настройки агента Cursor (Run, Auto-Run, Protection) для этой папки. | Отдельно от **`CONTEXT.md`**. |
 | **`.github/workflows/`** | Сборка и публикация (в этом репозитории — GitHub Pages, submodule включается в job). | При другом хостинге достаточно той же **`npm ci`** + **`npm run build`** из `docs-app/` (см. workflow). |
 
 Дополнительно по продукту: [**`docs-app/SECTION_PDF_BUNDLE.md`**](docs-app/SECTION_PDF_BUNDLE.md) (пакетный PDF по разделу), [**`docs-app/OBSHEE-LANDING-SNAPSHOT.md`**](docs-app/OBSHEE-LANDING-SNAPSHOT.md) (архивный снимок разводящей «Общее» в коде).
@@ -76,4 +77,4 @@ node scripts/check-internal-links.mjs
 
 ---
 
-Платформа развивается; детали поведения и ограничений — в **`docs-app/README.md`** и **`CONTEXT.md`**.
+Платформа развивается; детали поведения и ограничений — в **`docs-app/README.md`** и **`CONTEXT.md`**. Работа агента Cursor в этом репо — **`CURSOR-AGENT-SETTINGS.md`**.
