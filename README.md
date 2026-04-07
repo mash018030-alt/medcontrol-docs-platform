@@ -50,6 +50,7 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 | **`design/`** | Референсы **организации платформы** (палитра бренда, согласование UI документации), **без** пользовательских медиа и лого — те лежат в submodule. | [**`design/README.md`**](design/README.md), вход в цвета — [`design/colors/color-palette.md`](design/colors/color-palette.md) |
 | **`archive/migration/`** | Снимки этапа разделения репозиториев (базовая линия проверки ссылок и навигации). | [**`archive/migration/README.md`**](archive/migration/README.md) |
 | **`brief.md`** | Краткий бриф платформы (цели, границы, куда смотреть дальше). | — |
+| **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`** | Общие правила для Cursor AI по проекту (UX, контент, PDF). Личные дополнения — любые другие `.mdc` в `.cursor/rules/` (не в git). | — |
 | **`CONTEXT.md`** | Контекст проекта, план этапов, заметки для Cursor. | После **`brief.md`** и `docs-app/README.md`. |
 | **`.github/workflows/`** | Сборка и публикация (в этом репозитории — GitHub Pages, submodule включается в job). | При другом хостинге достаточно той же **`npm ci`** + **`npm run build`** из `docs-app/` (см. workflow). |
 

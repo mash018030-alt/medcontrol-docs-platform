@@ -84,7 +84,7 @@
 - **ПАК** (`0_docs/1_obshee/pak`): модификатор `docs-landing-tile--card-preview-inset-preview` — превью уже по ширине (inset), чтобы кадр скрина совпал с макетом.
 - **Частые вопросы** (`0_docs/1_obshee/chastye-voprosy`): классы `…--obshee-faq-preview` / `…--obshee-faq` — другое скругление превью из-за белых углов PNG.
 
-Подробные числа (отступы, сетка 3 колонки, размеры кнопки PDF, запреты на изменения) зафиксированы в правиле Cursor `.cursor/rules/docs-obshee-dashboard-invariants.mdc` — при восстановлении сверяться с ним и с актуальным блоком CSS в `docs-app/src/App.css` (искать комментарий «Разводящая «Общее»»).
+Подробные числа (отступы, сетка 3 колонки, размеры кнопки PDF, запреты на изменения) зафиксированы в Cursor-правилах (раздел «источник: docs-obshee-dashboard-invariants.mdc» в `.cursor/rules/medcontrol-docs-cursor-rules.mdc`) — при восстановлении сверяться с ним и с актуальным блоком CSS в `docs-app/src/App.css` (искать комментарий «Разводящая «Общее»»).
 
 ---
 
@@ -97,7 +97,7 @@
 | PDF в шапке раздела | Одна кнопка «Скачать в PDF» для **пакета статей раздела** (если в meta включён `sectionPdfBundle`). |
 | PDF на карточке | Кнопка у каждой плитки: печать **одной** статьи по пути плитки (`buildArticleMcPdfUrl`). |
 
-Смежное правило UX: `.cursor/rules/docs-dashboard-recent-and-landing.mdc` — на разводящей **нет** блока «недавно открытые» (он только на главной дашборда).
+Смежное правило UX — раздел «docs-dashboard-recent-and-landing» в **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`**: на разводящей **нет** блока «недавно открытые» (он только на главной дашборда).
 
 ---
 
@@ -120,7 +120,7 @@
 3. `docs-app/src/data/obsheeLandingCardPreview.js` и файлы `docs-app/public/content/images/dashboards/Obshee/1.png` … `9.png` + fallback.  
 4. `docs-app/src/components/LandingSectionTile.jsx` — ветки ПАК / FAQ.  
 5. `docs-app/src/components/Article.jsx` — условие `statDashLandingPanel` для obshee.  
-6. CSS в `docs-app/src/App.css` для `.docs-section-landing-root--obshee-stat` и связанных классов; сверка с `docs-obshee-dashboard-invariants.mdc`.  
+6. CSS в `docs-app/src/App.css` для `.docs-section-landing-root--obshee-stat` и связанных классов; сверка с блоком «docs-obshee-dashboard-invariants» в `medcontrol-docs-cursor-rules.mdc`.  
 7. При необходимости — `docs-app/public/content/0_docs/1_obshee/user-guide.md` как текстовое оглавление для читателя (не обязателен для сетки карточек).
 
 ---
