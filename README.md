@@ -49,7 +49,8 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 | **`docs-app/pdf-server/`** | Сервис печати PDF для продакшена и локальной отладки. | [**`pdf-server/README.md`**](docs-app/pdf-server/README.md) |
 | **`design/`** | Референсы **организации платформы** (палитра бренда, согласование UI документации), **без** пользовательских медиа и лого — те лежат в submodule. | [**`design/README.md`**](design/README.md), вход в цвета — [`design/colors/color-palette.md`](design/colors/color-palette.md) |
 | **`archive/migration/`** | Снимки этапа разделения репозиториев (базовая линия проверки ссылок и навигации). | [**`archive/migration/README.md`**](archive/migration/README.md) |
-| **`CONTEXT.md`** | Контекст проекта, план этапов, заметки для Cursor. | После README и `docs-app/README.md`. |
+| **`brief.md`** | Краткий бриф платформы (цели, границы, куда смотреть дальше). | — |
+| **`CONTEXT.md`** | Контекст проекта, план этапов, заметки для Cursor. | После **`brief.md`** и `docs-app/README.md`. |
 | **`.github/workflows/`** | Сборка и публикация (в этом репозитории — GitHub Pages, submodule включается в job). | При другом хостинге достаточно той же **`npm ci`** + **`npm run build`** из `docs-app/` (см. workflow). |
 
 Дополнительно по продукту: [**`docs-app/SECTION_PDF_BUNDLE.md`**](docs-app/SECTION_PDF_BUNDLE.md) (пакетный PDF по разделу), [**`docs-app/OBSHEE-LANDING-SNAPSHOT.md`**](docs-app/OBSHEE-LANDING-SNAPSHOT.md) (архивный снимок разводящей «Общее» в коде).
