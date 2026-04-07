@@ -1,13 +1,8 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import DocsDashboardGrid from '../dashboard/DocsDashboardGrid'
-import SearchInput from './SearchInput'
-import SearchResults from './SearchResults'
-import { useDocSearchIndex } from '../../hooks/useDocSearchIndex'
-import { searchDocuments, suggestArticles, suggestArticlesByTitle } from '../../search/docSearch'
+import GlobalSearchPanel from './GlobalSearchPanel'
+import { useDebouncedDocSearch } from '../../hooks/useDebouncedDocSearch'
 import { getDashboardSectionMeta, normalizeDashboardSectionParam } from '../../data/docsDashboardSections'
-
-const DEBOUNCE_MS = 320
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -15,92 +10,52 @@ export default function SearchPage() {
   const urlQ = searchParams.get('q') || ''
   const sectionPath = normalizeDashboardSectionParam(searchParams.get('section') || '')
   const sectionMeta = sectionPath ? getDashboardSectionMeta(sectionPath) : null
-  const [inputValue, setInputValue] = useState(urlQ)
-  const [searchQ, setSearchQ] = useState(urlQ)
-  const debounceTimer = useRef(null)
-  const internalUrlSyncRef = useRef(false)
-  const { status, docs, error } = useDocSearchIndex()
 
-  useEffect(() => {
-    if (internalUrlSyncRef.current) {
-      internalUrlSyncRef.current = false
-      setSearchQ(urlQ.trim())
-      return
-    }
-    setInputValue(urlQ)
-    setSearchQ(urlQ.trim())
-  }, [urlQ])
-
-  const flushQuery = useCallback(
-    (raw) => {
-      const qRaw = raw
-      const q = qRaw.trim()
-      setSearchQ(q)
-      const next = {}
-      if (qRaw) next.q = qRaw
-      if (sectionPath) next.section = sectionPath
-      internalUrlSyncRef.current = true
-      setSearchParams(next, { replace: true })
-    },
-    [setSearchParams, sectionPath],
-  )
-
-  useEffect(() => {
-    clearTimeout(debounceTimer.current)
-    debounceTimer.current = setTimeout(() => {
-      flushQuery(inputValue)
-    }, DEBOUNCE_MS)
-    return () => clearTimeout(debounceTimer.current)
-  }, [inputValue, flushQuery])
-
-  const onEnter = useCallback(() => {
-    clearTimeout(debounceTimer.current)
-    flushQuery(inputValue)
-  }, [inputValue, flushQuery])
-
-  const suggestions = useMemo(() => {
-    if (!docs) return suggestArticlesByTitle(inputValue, 6, sectionPath)
-    return suggestArticles(docs, inputValue, 6, sectionPath)
-  }, [docs, inputValue, sectionPath])
-
-  const results = useMemo(() => {
-    if (!docs || !searchQ.trim()) return []
-    return searchDocuments(docs, searchQ, sectionPath)
-  }, [docs, searchQ, sectionPath])
+  const {
+    inputValue,
+    setInputValue,
+    onEnter,
+    suggestions,
+    results,
+    searchQ,
+    status,
+    error,
+  } = useDebouncedDocSearch({
+    sectionPath,
+    urlMode: true,
+    urlQ,
+    setSearchParams,
+    open: true,
+  })
 
   const hintId = 'docs-search-page-hint'
   const pageTitle = sectionMeta ? sectionMeta.title : 'Документация'
+  const hintText = sectionPath
+    ? `Поиск только в разделе «${pageTitle}»: по заголовкам и полному тексту статей раздела. Обновление с задержкой или по Enter.`
+    : 'Поиск выполняется по заголовкам и полному тексту статей. Обновление списка с задержкой или по Enter.'
 
   return (
     <div className="docs-dashboard docs-search-page">
       <h1 className="docs-dashboard-page-title">{pageTitle}</h1>
-      <SearchInput
-        id="docs-search-page-input"
-        value={inputValue}
-        onChange={setInputValue}
+      <GlobalSearchPanel
+        inputId="docs-search-page-input"
+        inputValue={inputValue}
+        onInputChange={setInputValue}
         onEnter={onEnter}
         suggestions={suggestions}
         showSuggestionSection={!sectionPath}
-        onSuggestionPick={(path) => {
-          navigate(`/${path}`)
-        }}
-        aria-describedby={hintId}
-      />
-      <p id={hintId} className="docs-sr-only">
-        {sectionPath
-          ? `Поиск только в разделе «${pageTitle}»: по заголовкам и полному тексту статей раздела. Обновление с задержкой или по Enter.`
-          : 'Поиск выполняется по заголовкам и полному тексту статей. Обновление списка с задержкой или по Enter.'}
-      </p>
-      {status === 'loading' && <p className="docs-search-status">Подготовка поиска по текстам…</p>}
-      {status === 'error' && (
-        <p className="docs-search-status docs-search-status--error" role="alert">
-          Не удалось загрузить документы для поиска.{error?.message ? ` ${error.message}` : ''}
-        </p>
-      )}
-      {!searchQ.trim() && !sectionPath ? <DocsDashboardGrid /> : null}
-      {status === 'ready' && searchQ.trim() ? (
-        <SearchResults results={results} query={searchQ} showSectionLabel={!sectionPath} />
-      ) : null}
+        onSuggestionPick={(path) => navigate(`/${path}`)}
+        hintId={hintId}
+        hintText={hintText}
+        placeholder="Поиск"
+        status={status}
+        error={error}
+        searchQ={searchQ}
+        results={results}
+        showSectionLabelInResults={!sectionPath}
+      >
+        {!searchQ.trim() && !sectionPath ? <DocsDashboardGrid /> : null}
+      </GlobalSearchPanel>
     </div>
   )
 }

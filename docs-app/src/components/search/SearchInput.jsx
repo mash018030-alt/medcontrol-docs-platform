@@ -12,6 +12,7 @@ import HighlightedText from './HighlightedText'
  *   placeholder?: string,
  *   showSuggestionSection?: boolean,
  *   'aria-describedby'?: string,
+ *   inputRef?: import('react').RefObject<HTMLInputElement | null>,
  * }} props
  */
 export default function SearchInput({
@@ -24,6 +25,7 @@ export default function SearchInput({
                                     placeholder = 'Поиск',
                                     showSuggestionSection = true,
                                     'aria-describedby': ariaDescribedBy,
+                                    inputRef,
                                   }) {
   const wrapRef = useRef(null)
   const [panelDismissed, setPanelDismissed] = useState(false)
@@ -56,6 +58,7 @@ export default function SearchInput({
       <label className="docs-dashboard-search-label" htmlFor={id}>
         <span className="docs-sr-only">Поиск по документации</span>
         <input
+          ref={inputRef}
           id={id}
           type="search"
           className="docs-dashboard-search-input"

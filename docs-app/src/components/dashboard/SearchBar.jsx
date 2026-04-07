@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import SearchInput from '../search/SearchInput'
-import { suggestArticlesByTitle } from '../../search/docSearch'
+import { suggestArticles, suggestArticlesByTitle } from '../../search/docSearch'
+import { useDocSearchIndex } from '../../hooks/useDocSearchIndex'
 
 /**
  * @param {{ sectionRootPath?: string | null }} props если задан — переход на /search с ?section=… и подсказки только по разделу
@@ -9,11 +10,12 @@ import { suggestArticlesByTitle } from '../../search/docSearch'
 export default function SearchBar({ sectionRootPath = null }) {
   const navigate = useNavigate()
   const [value, setValue] = useState('')
+  const { docs } = useDocSearchIndex()
 
-  const suggestions = useMemo(
-    () => suggestArticlesByTitle(value, 6, sectionRootPath),
-    [value, sectionRootPath],
-  )
+  const suggestions = useMemo(() => {
+    if (!docs) return suggestArticlesByTitle(value, 6, sectionRootPath)
+    return suggestArticles(docs, value, 6, sectionRootPath)
+  }, [docs, value, sectionRootPath])
 
   const searchUrl = (q) => {
     const sp = new URLSearchParams()

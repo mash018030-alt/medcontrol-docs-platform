@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom'
 import { DocsLayoutProvider, useDocsLayout } from '../context/DocsLayoutContext'
+import { DocSearchIndexProvider } from '../context/DocSearchIndexContext'
+import { GlobalSearchOverlayProvider } from '../context/GlobalSearchOverlayContext'
 import { DOCS_HEADING_LINK_COPIED } from '../utils/headingCopyFeedback'
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -94,7 +96,11 @@ function LayoutShell() {
 export default function Layout() {
   return (
     <DocsLayoutProvider>
-      <LayoutShell />
+      <DocSearchIndexProvider>
+        <GlobalSearchOverlayProvider>
+          <LayoutShell />
+        </GlobalSearchOverlayProvider>
+      </DocSearchIndexProvider>
     </DocsLayoutProvider>
   )
 }
