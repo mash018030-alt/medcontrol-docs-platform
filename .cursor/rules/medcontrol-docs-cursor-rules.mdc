@@ -240,7 +240,7 @@ alwaysApply: true
 Ниже по файлу могли оставаться старые инварианты для:
 
 - сетки с превью (`obsheeLandingCardPreview.js`, `adminLandingCardPreview.js`, картинки `public/content/images/dashboards/`);
-- снимка конфигурации: `docs-app/OBSHEE-LANDING-SNAPSHOT.md`.
+- снимка конфигурации: `docs-app/docs/OBSHEE-LANDING-SNAPSHOT.md`.
 
 Использовать только при намеренном восстановлении карточного UI.
 

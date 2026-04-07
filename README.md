@@ -55,7 +55,7 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 | **`CURSOR-AGENT-SETTINGS.md`** | Настройки агента Cursor (Run, Auto-Run, Protection) для этой папки. | Отдельно от **`CONTEXT.md`**. |
 | **`.github/workflows/`** | Сборка и публикация (в этом репозитории — GitHub Pages, submodule включается в job). | При другом хостинге достаточно той же **`npm ci`** + **`npm run build`** из `docs-app/` (см. workflow). |
 
-Дополнительно по продукту: [**`docs-app/SECTION_PDF_BUNDLE.md`**](docs-app/SECTION_PDF_BUNDLE.md) (пакетный PDF по разделу), [**`docs-app/OBSHEE-LANDING-SNAPSHOT.md`**](docs-app/OBSHEE-LANDING-SNAPSHOT.md) (архивный снимок разводящей «Общее» в коде).
+Служебные how-to по коду приложения: **[`docs-app/docs/README.md`](docs-app/docs/README.md)** (в т.ч. пакетный PDF раздела и снимок разводящей «Общее»).
 
 ---
 

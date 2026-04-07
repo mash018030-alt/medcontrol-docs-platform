@@ -1,6 +1,6 @@
 # Снимок разводящей «Общее» (`/0_docs/1_obshee/user-guide`)
 
-**Расположение:** репозиторий движка, файл **`docs-app/OBSHEE-LANDING-SNAPSHOT.md`**. Служебная заметка про интерфейс и код разводящей. **Не путать** с **`docs-app/public/content/references/`** в submodule — там PDF, лого, экспорты руководств и прочий контентный архив.
+**Расположение:** репозиторий движка, **`docs-app/docs/OBSHEE-LANDING-SNAPSHOT.md`** (папка внутренних how-to — см. **`docs/README.md`**). Служебная заметка про интерфейс и код разводящей. **Не путать** с **`docs-app/public/content/references/`** в submodule — там PDF, лого, экспорты руководств и прочий контентный архив.
 
 **Дата фиксации:** 2026-04-06.
 
@@ -120,7 +120,7 @@
 3. `docs-app/src/data/obsheeLandingCardPreview.js` и файлы `docs-app/public/content/images/dashboards/Obshee/1.png` … `9.png` + fallback.  
 4. `docs-app/src/components/LandingSectionTile.jsx` — ветки ПАК / FAQ.  
 5. `docs-app/src/components/Article.jsx` — условие `statDashLandingPanel` для obshee.  
-6. CSS в `docs-app/src/App.css` для `.docs-section-landing-root--obshee-stat` и связанных классов; сверка с блоком «docs-obshee-dashboard-invariants» в `medcontrol-docs-cursor-rules.mdc`.  
+6. CSS в `docs-app/src/App.css` для `.docs-section-landing-root--obshee-stat` и связанных классов; сверка с блоком «docs-obshee-dashboard-invariants» в **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`**.  
 7. При необходимости — `docs-app/public/content/0_docs/1_obshee/user-guide.md` как текстовое оглавление для читателя (не обязателен для сетки карточек).
 
 ---
