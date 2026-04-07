@@ -107,17 +107,16 @@ async function runArticlePdfExportPlaywright(apiUrl, filename, printUrl) {
     body: JSON.stringify({ url }),
   })
   if (!res.ok) {
+    /* Тело ответа читаем один раз: после неудачного json() второй text() часто пустой → в алерте только «Internal Server Error». */
+    const raw = await res.text()
     let detail = res.statusText
-    try {
-      const j = await res.json()
-      const fromBody = j?.error || j?.message
-      if (fromBody) detail = String(fromBody)
-    } catch {
+    if (raw) {
       try {
-        const t = await res.text()
-        if (t) detail = t.slice(0, 800)
+        const j = JSON.parse(raw)
+        const fromBody = j?.error || j?.message
+        detail = fromBody ? String(fromBody) : raw.slice(0, 800)
       } catch {
-        /* ignore */
+        detail = raw.replace(/\s+/g, ' ').slice(0, 800)
       }
     }
     throw new Error(detail || `HTTP ${res.status}`)
