@@ -107,7 +107,7 @@ button.docs-dashboard-card__pdf{cursor:pointer;font-family:inherit}
 button.docs-dashboard-card__pdf:disabled{opacity:.55;cursor:not-allowed}
 .docs-dashboard-card-top--with-pdf{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
 .docs-dashboard-card-main{display:flex;align-items:flex-start;gap:1rem;flex:1;min-width:0}
-/* Текст ссылок хаба: temno_sinii из design/colors/temno_sinii.md — перекрывает .docs-article a */
+/* Текст ссылок хаба: токен --docs-temno-sinii (референс design/colors/dark-blue.md) — перекрывает .docs-article a */
 .docs-article.docs-news-hub a.docs-news-release-row__surface,
 .docs-article.docs-news-hub a.docs-news-banner__card-title-link{color:var(--docs-temno-sinii)}
 .docs-article.docs-news-hub a.docs-news-release-row__surface:hover{color:var(--docs-temno-sinii);text-decoration:none}
