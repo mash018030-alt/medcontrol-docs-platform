@@ -1,6 +1,7 @@
 /** Карточка раздела на главной дашборда документации. */
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import { getDocsNavSearchSuffix } from '../../utils/docsVersionNav'
 import { SectionCardIcon } from './SectionCardIcons'
 import { buildSectionBundlePrintUrl, runPdfFromPrintUrl } from '../../utils/runArticlePdfExport'
 
@@ -39,6 +40,8 @@ export default function SectionCard({
   sectionPath,
   sectionPdfBundle = false,
 }) {
+  const location = useLocation()
+  const navSearchSuffix = getDocsNavSearchSuffix(location.search)
   const [sectionPdfBusy, setSectionPdfBusy] = useState(false)
 
   const handleSectionPdf = () => {
@@ -54,7 +57,7 @@ export default function SectionCard({
     <article className="docs-dashboard-card docs-dashboard-card--nav-row">
       <div className="docs-dashboard-card-top-row">
         <Link
-          to={`/${sectionPath}`}
+          to={`/${sectionPath}${navSearchSuffix}`}
           className="docs-dashboard-card-surface"
           aria-label={`Перейти в раздел: ${title}`}
         >

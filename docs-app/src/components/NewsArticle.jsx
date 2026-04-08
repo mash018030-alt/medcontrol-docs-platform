@@ -2,10 +2,8 @@ import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams, Link, useNavigate, Navigate, useSearchParams } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
 import { runArticlePdfExport } from '../utils/runArticlePdfExport'
-import { rehypeFootnotesSection } from '../rehype-footnotes-section'
-import { rehypePublicAssets } from '../rehype-public-assets'
+import { docsMarkdownRehypePlugins } from '../docsMarkdownRehypePlugins'
 import {
   fetchNewsTree,
   findNewsNode,
@@ -23,6 +21,8 @@ import MarkdownTable from './MarkdownTable'
 import LightboxCloseButton from './LightboxCloseButton'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
+import MarkdownSpan from './MarkdownSpan'
+import MarkdownDiv from './MarkdownDiv'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { fetchMarkdownText } from '../utils/fetchMarkdownText'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
@@ -55,7 +55,9 @@ export default function NewsArticle() {
       table: MarkdownTable,
       details: MarkdownDetails,
       img: MarkdownImg,
-      a: ({ href, className, children, node: _mdNode, ...props }) => {
+      span: MarkdownSpan,
+      div: MarkdownDiv,
+      a: ({ href, className, children, node: _mdNode, ...props } = {}) => {
         const isBackref =
           (typeof className === 'string' && className.includes('data-footnote-backref')) ||
           (href && String(href).startsWith('#user-content-fnref-'))
@@ -302,7 +304,7 @@ export default function NewsArticle() {
           >
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+              rehypePlugins={docsMarkdownRehypePlugins()}
               remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
               components={markdownComponents}
             >

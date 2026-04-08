@@ -5,10 +5,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
 import { runArticlePdfExport } from '../../utils/runArticlePdfExport'
-import { rehypeFootnotesSection } from '../../rehype-footnotes-section'
-import { rehypePublicAssets } from '../../rehype-public-assets'
+import { docsMarkdownRehypePlugins } from '../../docsMarkdownRehypePlugins'
 import { newsArticleMdRelPaths } from '../../data/newsArticlePaths'
 import { fetchMarkdownText } from '../../utils/fetchMarkdownText'
 import { publicAssetUrl } from '../../utils/publicAssetUrl'
@@ -17,6 +15,8 @@ import MarkdownTr from '../MarkdownTr'
 import MarkdownTable from '../MarkdownTable'
 import MarkdownImg from '../MarkdownImg'
 import MarkdownDetails from '../MarkdownDetails'
+import MarkdownSpan from '../MarkdownSpan'
+import MarkdownDiv from '../MarkdownDiv'
 
 const isMcPdf = false
 
@@ -33,7 +33,9 @@ export default function NewsReleaseHubPdfExport({ tree, articlePath, filename, o
       table: MarkdownTable,
       details: MarkdownDetails,
       img: MarkdownImg,
-      a: ({ href, className, children, node: _mdNode, ...props }) => {
+      span: MarkdownSpan,
+      div: MarkdownDiv,
+      a: ({ href, className, children, node: _mdNode, ...props } = {}) => {
         const isBackref =
           (typeof className === 'string' && className.includes('data-footnote-backref')) ||
           (href && String(href).startsWith('#user-content-fnref-'))
@@ -113,7 +115,7 @@ export default function NewsReleaseHubPdfExport({ tree, articlePath, filename, o
       <div ref={rootRef} className="docs-markdown-root" role="presentation">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+          rehypePlugins={docsMarkdownRehypePlugins()}
           remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
           components={markdownComponents}
         >

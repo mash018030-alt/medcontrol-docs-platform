@@ -70,7 +70,6 @@ export default function GlobalSearchDialog({ open, onClose }) {
 
   if (!open) return null
 
-  const titleId = 'docs-global-search-dialog-title'
   const hintId = 'docs-global-search-dialog-hint'
 
   return (
@@ -85,27 +84,19 @@ export default function GlobalSearchDialog({ open, onClose }) {
         className="docs-global-search-dialog"
         role="dialog"
         aria-modal="true"
-        aria-labelledby={titleId}
+        aria-label="Поиск по документации"
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div className="docs-global-search-dialog__head">
-          <div className="docs-global-search-dialog__titles">
-            <h2 id={titleId} className="docs-global-search-dialog__title">
-              Поиск по документации
-            </h2>
-            <p className="docs-global-search-dialog__subtitle">По всем разделам и статьям</p>
-          </div>
-          <button
-            type="button"
-            className="docs-global-search-dialog__close"
-            onClick={onClose}
-            aria-label="Закрыть поиск"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
+        <button
+          type="button"
+          className="docs-global-search-dialog__close"
+          onClick={onClose}
+          aria-label="Закрыть поиск"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+          </svg>
+        </button>
         <div className="docs-global-search-dialog__body">
           <GlobalSearchPanel
             inputId="docs-global-search-input"

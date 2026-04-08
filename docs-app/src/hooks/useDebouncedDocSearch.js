@@ -26,6 +26,11 @@ export function useDebouncedDocSearch({
   const [searchQ, setSearchQ] = useState(urlMode ? urlQ.trim() : '')
   const debounceTimer = useRef(null)
   const internalUrlSyncRef = useRef(false)
+  /** RR7: setSearchParams часто меняет ссылку на функцию → не класть в deps flushQuery (иначе бесконечный цикл и белый экран). */
+  const setSearchParamsRef = useRef(setSearchParams)
+  useEffect(() => {
+    setSearchParamsRef.current = setSearchParams
+  }, [setSearchParams])
 
   useEffect(() => {
     if (!urlMode) return
@@ -51,24 +56,30 @@ export function useDebouncedDocSearch({
       const qRaw = raw
       const q = qRaw.trim()
       setSearchQ(q)
-      if (urlMode && setSearchParams) {
+      const sp = setSearchParamsRef.current
+      if (urlMode && sp) {
         const next = {}
         if (qRaw) next.q = qRaw
         if (sectionPath) next.section = sectionPath
         internalUrlSyncRef.current = true
-        setSearchParams(next, { replace: true })
+        sp(next, { replace: true })
       }
     },
-    [urlMode, setSearchParams, sectionPath],
+    [urlMode, sectionPath],
   )
 
   useEffect(() => {
+    if (!open) {
+      clearTimeout(debounceTimer.current)
+      debounceTimer.current = null
+      return
+    }
     clearTimeout(debounceTimer.current)
     debounceTimer.current = setTimeout(() => {
       flushQuery(inputValue)
     }, DEBOUNCE_MS)
     return () => clearTimeout(debounceTimer.current)
-  }, [inputValue, flushQuery])
+  }, [open, inputValue, flushQuery])
 
   const onEnter = useCallback(() => {
     if (debounceTimer.current) clearTimeout(debounceTimer.current)

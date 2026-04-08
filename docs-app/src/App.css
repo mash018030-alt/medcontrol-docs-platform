@@ -418,6 +418,218 @@ main.docs-content .docs-article section.footnotes h2{
   line-height:1.5;
 }
 .docs-article-body section.footnotes .data-footnote-backref{font-size:.75rem}
+
+/* Инлайн-подсказки: [[термин|текст]] и GFM-сноски (панель сноски — fixed, ширина колонки) */
+.docs-article-body .docs-inline-tip:not(.docs-inline-tip--footnote),
+.docs-pdf-export .docs-inline-tip:not(.docs-inline-tip--footnote){
+  position:relative;
+  display:inline-flex;
+  align-items:baseline;
+  gap:0;
+  vertical-align:baseline;
+  max-width:100%;
+}
+/* Сноска: только компактная метка в потоке; межстрочный интервал не раздуваем */
+.docs-article-body .docs-inline-tip--footnote,
+.docs-pdf-export .docs-inline-tip--footnote{
+  display:inline;
+  vertical-align:baseline;
+  line-height:inherit;
+  max-width:100%;
+  margin-left:.06em;
+}
+.docs-article-body .docs-inline-tip--footnote .docs-inline-tip__term,
+.docs-pdf-export .docs-inline-tip--footnote .docs-inline-tip__term{
+  cursor:pointer;
+  display:inline;
+  font-size:.62em;
+  font-weight:600;
+  line-height:0;
+  vertical-align:super;
+  letter-spacing:-.02em;
+  color:var(--docs-temno-sinii);
+  text-decoration:none;
+  border-bottom:1px dotted rgba(26,51,153,.42);
+  padding:0 .04em;
+  margin:0;
+  position:relative;
+  top:-.03em;
+}
+.docs-article-body .docs-inline-tip--footnote .docs-inline-tip__term:hover,
+.docs-article-body .docs-inline-tip--footnote .docs-inline-tip__term:focus-visible{
+  color:var(--docs-ui-accent-hover);
+  border-bottom-color:var(--docs-ui-accent);
+}
+.docs-inline-tip:not(.docs-inline-tip--footnote) .docs-inline-tip__term{
+  cursor:help;
+  text-decoration:underline;
+  text-decoration-style:dotted;
+  text-underline-offset:.15em;
+  color:inherit;
+  font-weight:inherit;
+}
+.docs-inline-tip:focus{outline:none}
+.docs-inline-tip:focus-visible{
+  outline:2px solid var(--docs-ui-accent);
+  outline-offset:2px;
+  border-radius:2px;
+}
+/* Панель «облачко» — только для [[термин|подсказка]] */
+.docs-article-body .docs-inline-tip:not(.docs-inline-tip--footnote) .docs-inline-tip__panel,
+.docs-pdf-export .docs-inline-tip:not(.docs-inline-tip--footnote) .docs-inline-tip__panel{
+  position:absolute;
+  left:0;
+  top:calc(100% + .35rem);
+  z-index:60;
+  min-width:10rem;
+  max-width:min(22rem,calc(100vw - 2rem));
+  padding:.6rem .75rem;
+  font-size:.8125rem;
+  line-height:1.5;
+  color:#0f172a;
+  background:#fff;
+  border:1px solid #e1e7ef;
+  border-radius:10px;
+  box-shadow:0 8px 28px #0f172a14,0 0 0 1px #0f172a07;
+  text-align:left;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .14s ease,visibility .14s ease;
+  overflow-wrap:break-word;
+  word-break:break-word;
+}
+/* Панель сноски до расчёта JS: скрыта без «занимания» строк (не PDF / не mc_pdf) */
+body:not(:has(.docs-pdf-export)) .docs-layout:not(.docs-layout--mc-pdf) .docs-article-body .docs-inline-tip--footnote .docs-inline-tip__panel--footnote:not(.docs-inline-tip__panel--footnote-float){
+  position:absolute;
+  left:0;
+  top:0;
+  width:1px;
+  height:1px;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  border:none;
+  padding:0;
+}
+.docs-article-body .docs-inline-tip__panel--footnote-float{
+  display:block;
+  height:auto;
+  min-height:0;
+  padding:.9rem 1.05rem;
+  font-size:.875rem;
+  line-height:1.55;
+  max-width:none;
+  color:#0f172a;
+  background:#fafbfc;
+  border:1px solid #dbe1ea;
+  border-radius:12px;
+  box-shadow:0 14px 42px #0f172a18,0 0 0 1px #0f172a06;
+  text-align:left;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  hyphens:auto;
+  word-break:break-word;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .14s ease,visibility .14s ease;
+}
+.docs-inline-tip__panel--footnote-float > *:last-child{
+  margin-bottom:0;
+}
+.docs-inline-tip__panel--footnote .docs-inline-tip__fn-p{
+  display:block;
+  margin:.35em 0 0;
+  font-size:inherit;
+  line-height:inherit;
+}
+.docs-inline-tip__panel--footnote .docs-inline-tip__fn-p:first-child{
+  margin-top:0;
+}
+@media (hover:hover) and (pointer:fine){
+  .docs-inline-tip:not(.docs-inline-tip--footnote):hover .docs-inline-tip__panel,
+  .docs-inline-tip:not(.docs-inline-tip--footnote):focus-within .docs-inline-tip__panel{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+}
+.docs-inline-tip--open .docs-inline-tip__panel{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+/* PDF / печать: текст подсказки всегда виден; простые [[a|b]] — в скобках у термина */
+.docs-layout--mc-pdf .docs-inline-tip,
+.docs-pdf-export .docs-inline-tip{
+  position:static;
+  display:inline;
+  vertical-align:baseline;
+}
+.docs-layout--mc-pdf .docs-inline-tip--footnote,
+.docs-pdf-export .docs-inline-tip--footnote{
+  display:inline;
+  margin:0;
+  padding:0;
+  border:none;
+}
+.docs-layout--mc-pdf .docs-inline-tip__panel,
+.docs-pdf-export .docs-inline-tip__panel{
+  position:static;
+  opacity:1!important;
+  visibility:visible!important;
+  max-height:none;
+  overflow:visible;
+  box-shadow:none;
+  border:none;
+  padding:0;
+  min-width:0;
+  font-size:.8125rem!important;
+  line-height:1.5!important;
+  color:#475569!important;
+  pointer-events:none;
+}
+.docs-layout--mc-pdf .docs-inline-tip__panel:not(.docs-inline-tip__panel--footnote),
+.docs-pdf-export .docs-inline-tip__panel:not(.docs-inline-tip__panel--footnote){
+  display:inline;
+  margin-left:.25em;
+}
+.docs-layout--mc-pdf .docs-inline-tip__panel:not(.docs-inline-tip__panel--footnote)::before,
+.docs-pdf-export .docs-inline-tip__panel:not(.docs-inline-tip__panel--footnote)::before{
+  content:'(';
+}
+.docs-layout--mc-pdf .docs-inline-tip__panel:not(.docs-inline-tip__panel--footnote)::after,
+.docs-pdf-export .docs-inline-tip__panel:not(.docs-inline-tip__panel--footnote)::after{
+  content:')';
+}
+.docs-layout--mc-pdf .docs-inline-tip--footnote .docs-inline-tip__term,
+.docs-pdf-export .docs-inline-tip--footnote .docs-inline-tip__term{
+  display:inline;
+  font-size:.85em!important;
+  font-weight:600;
+  margin-right:.35rem;
+}
+.docs-layout--mc-pdf .docs-inline-tip__panel--footnote,
+.docs-pdf-export .docs-inline-tip__panel--footnote{
+  display:block;
+  position:static!important;
+  left:auto!important;
+  top:auto!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0!important;
+  clip:auto!important;
+  clip-path:none!important;
+  overflow:visible!important;
+  max-height:none!important;
+}
+
 .docs-pdf-export h1,.docs-pdf-export h2,.docs-pdf-export h3,.docs-pdf-export h4,.docs-pdf-export h5,.docs-pdf-export h6{color:#000!important}
 .docs-pdf-export section.footnotes h2{
   margin:0 0 .5rem!important;

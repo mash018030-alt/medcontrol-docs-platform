@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useLocation, useNavigate, Link, useSearchParams, Navigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
-import { rehypeFootnotesSection } from '../rehype-footnotes-section'
-import { rehypePublicAssets } from '../rehype-public-assets'
+import { docsMarkdownRehypePlugins } from '../docsMarkdownRehypePlugins'
 import { flatArticles, navTree } from '../data/nav'
 import { articlePathRedirects } from '../data/articlePathRedirects'
 import { buildSectionBundlePrintUrl, runArticlePdfExport, runPdfFromPrintUrl } from '../utils/runArticlePdfExport'
@@ -17,12 +15,29 @@ import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
 import { publicAssetUrl, routerLinkTo } from '../utils/publicAssetUrl'
+import { appendDocVerToInternalHref, getDocsNavSearchSuffix, docsLocationSearchForVersion } from '../utils/docsVersionNav'
 import { fetchMarkdownText } from '../utils/fetchMarkdownText'
+import {
+  LATEST_DOCS_VERSION_ID,
+  resolveDocsVersionIdFromSearch,
+  getDocsVersionMeta,
+  formatDocsVersionDateRu,
+  shouldShowDocsVersionSwitcherOnLanding,
+} from '../data/docsDocumentationVersions'
+import {
+  articleExistsInDocsVersion,
+  buildArticleMarkdownUrl,
+  getArticleVersionHistory,
+  formatArticleHistoryLine,
+} from '../data/docsArticleVersioning'
+import DocsVersionSwitcher from './DocsVersionSwitcher'
 import { useArticleHashScroll } from '../hooks/useArticleHashScroll'
 import { useFootnoteBackrefClick } from '../hooks/useFootnoteBackrefClick'
 import { useSearchTextScroll } from '../hooks/useSearchTextScroll'
 import { useArticleTocHeadings } from '../hooks/useArticleTocHeadings'
 import MarkdownHeading from './MarkdownHeading'
+import MarkdownSpan from './MarkdownSpan'
+import MarkdownDiv from './MarkdownDiv'
 import LightboxCloseButton from './LightboxCloseButton'
 import { createHeadingSlugAllocator } from '../utils/headingSlug'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
@@ -48,6 +63,8 @@ function safeSectionBundleFilename(title) {
 function ArticleContent({ slug, isMcPdf }) {
   const location = useLocation()
   const navigate = useNavigate()
+  const docVersionId = resolveDocsVersionIdFromSearch(location.search)
+  const navSearchSuffix = getDocsNavSearchSuffix(location.search)
   const landingSection = navTree.find((item) => item.path === slug && item.children?.length)
   const landingDashboardMeta = landingSection ? getDashboardSectionMeta(landingSection.path) : null
   const [md, setMd] = useState('')
@@ -56,14 +73,20 @@ function ArticleContent({ slug, isMcPdf }) {
   const [error, setError] = useState(null)
 
   const articleBodyRef = useRef(null)
+  const missingInVersion = !landingSection && !articleExistsInDocsVersion(slug, docVersionId)
+  const viewingArchiveArticle = !landingSection && docVersionId !== LATEST_DOCS_VERSION_ID && !missingInVersion
+  const articleVersionHistory = !landingSection ? getArticleVersionHistory(slug) : null
 
+  /* Загрузка .md: setState до fetch — обычный паттерн; правило react-hooks/set-state-in-effect здесь шумит. */
+  /* eslint-disable react-hooks/set-state-in-effect -- см. выше */
   useEffect(() => {
+    if (!landingSection && !articleExistsInDocsVersion(slug, docVersionId)) {
+      return
+    }
     setLoading(true)
     setError(null)
     setLastUpdated(null)
-    const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
-    const path = `${base}/content/${slug}.md`.replace(/^\/+/, '/')
-    const url = new URL(path, window.location.origin).href
+    const url = buildArticleMarkdownUrl(slug, docVersionId)
     fetchMarkdownText(url, { notFoundMessage: 'Статья не найдена' })
       .then(({ text, lastModified }) => {
         if (lastModified) setLastUpdated(new Date(lastModified))
@@ -71,7 +94,8 @@ function ArticleContent({ slug, isMcPdf }) {
       })
       .catch((e) => setError(`${e.message || 'Failed to fetch'} (${url})`))
       .finally(() => setLoading(false))
-  }, [slug])
+  }, [slug, docVersionId, landingSection])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!isMcPdf || loading || landingSection) return
@@ -203,12 +227,28 @@ function ArticleContent({ slug, isMcPdf }) {
     md,
   ])
 
+  if (missingInVersion) {
+    const toLatestArticle = `/${slug}${docsLocationSearchForVersion(location.search, LATEST_DOCS_VERSION_ID)}`
+    return (
+      <article className="docs-article">
+        <div className="docs-article-body">
+          <p className="docs-article-version-missing">В этой версии документации статья отсутствует.</p>
+          <p>
+            <Link to={toLatestArticle}>Перейти к актуальной версии</Link>
+          </p>
+        </div>
+      </article>
+    )
+  }
+
   if (loading) return <div className="docs-article docs-loading">Загрузка…</div>
   if (error) {
+    const homeSuffix = docsLocationSearchForVersion(location.search, LATEST_DOCS_VERSION_ID)
+    const toHome = homeSuffix ? `/${homeSuffix}` : '/'
     return (
       <div className="docs-article">
         <p>{error}</p>
-        <Link to="/">На главную</Link>
+        <Link to={toHome}>На главную</Link>
       </div>
     )
   }
@@ -263,13 +303,33 @@ function ArticleContent({ slug, isMcPdf }) {
                   </button>
                 ) : null}
               </div>
+              {!isMcPdf && shouldShowDocsVersionSwitcherOnLanding(slug) ? (
+                <DocsVersionSwitcher className="docs-version-switcher--section-landing" />
+              ) : null}
             </div>
-            <SectionArticleNavList nodes={landingSection.children} />
+            <SectionArticleNavList nodes={landingSection.children} navSearchSuffix={navSearchSuffix} />
           </>
         ) : (
-          <ReactMarkdown
+          <>
+            {viewingArchiveArticle ? (
+              <div className="docs-article-archive-line" role="status">
+                <span className="docs-article-archive-line__text">
+                  Версия: {getDocsVersionMeta(docVersionId)?.label ?? docVersionId} ·{' '}
+                  {formatDocsVersionDateRu(
+                    getDocsVersionMeta(docVersionId)?.releaseDateISO ?? '',
+                  )}
+                </span>
+                <Link
+                  className="docs-article-archive-line__link"
+                  to={`/${slug}${docsLocationSearchForVersion(location.search, LATEST_DOCS_VERSION_ID)}`}
+                >
+                  Перейти к актуальной версии
+                </Link>
+              </div>
+            ) : null}
+            <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+            rehypePlugins={docsMarkdownRehypePlugins()}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,
@@ -278,8 +338,11 @@ function ArticleContent({ slug, isMcPdf }) {
               tr: MarkdownTr,
               table: MarkdownTable,
               img: MarkdownImg,
+              span: MarkdownSpan,
+              div: MarkdownDiv,
               /* passNode в react-markdown: не прокидывать `node` (hast) в Link/DOM */
-              a: ({ href, className, children, node: _mdNode, ...props }) => {
+              a: ({ href, className, children, node: _omitMdNode, ...props } = {}) => {
+                void _omitMdNode
                 const isBackref =
                   (typeof className === 'string' && className.includes('data-footnote-backref')) ||
                   (href && String(href).startsWith('#user-content-fnref-'))
@@ -292,7 +355,7 @@ function ArticleContent({ slug, isMcPdf }) {
                 if (!useNative && isInternalDocsPath(href)) {
                   return (
                     <Link
-                      to={routerLinkTo(href)}
+                      to={routerLinkTo(appendDocVerToInternalHref(href, location.search))}
                       className={className}
                       {...props}
                     >
@@ -320,6 +383,7 @@ function ArticleContent({ slug, isMcPdf }) {
           >
             {md}
           </ReactMarkdown>
+          </>
         )}
 
         {lastUpdated && !landingSection ? (
@@ -330,18 +394,52 @@ function ArticleContent({ slug, isMcPdf }) {
         {!landingSection && (prev || next) ? (
           <footer className="docs-article-footer">
             {prev && (
-              <Link to={`/${prev.path}`} className="docs-nav-prev">
+              <Link to={`/${prev.path}${navSearchSuffix}`} className="docs-nav-prev">
                 ← {prev.title}
               </Link>
             )}
             {next && (
-              <Link to={`/${next.path}`} className="docs-nav-next">
+              <Link to={`/${next.path}${navSearchSuffix}`} className="docs-nav-next">
                 {next.title} →
               </Link>
             )}
           </footer>
         ) : null}
         </div>
+        {!landingSection && articleVersionHistory ? (
+          <MarkdownDetails
+            className="docs-article-version-history-disclosure"
+            aria-label="История версий статьи"
+            {...(isMcPdf ? { open: true } : {})}
+          >
+            <summary>
+              <span className="docs-article-version-history-disclosure__label">История версий</span>
+            </summary>
+            <div className="docs-disclosure-content docs-article-version-history__content">
+              <ul className="docs-article-version-history__list">
+                {articleVersionHistory.map((entry) => {
+                  const { primary, note } = formatArticleHistoryLine(entry)
+                  const suffix = docsLocationSearchForVersion(location.search, entry.versionId)
+                  return (
+                    <li key={entry.versionId} className="docs-article-version-history__item">
+                      <Link
+                        to={`/${slug}${suffix}`}
+                        className={
+                          entry.versionId === docVersionId
+                            ? 'docs-article-version-history__link docs-article-version-history__link--current'
+                            : 'docs-article-version-history__link'
+                        }
+                      >
+                        {primary}
+                      </Link>
+                      {note ? <span className="docs-article-version-history__note">{note}</span> : null}
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </MarkdownDetails>
+        ) : null}
       </div>
       {!landingSection && !isMcPdf && <Toc headings={headings} activeId={activeHeadingId} />}
       {lightbox && lightbox.images && (
@@ -417,7 +515,8 @@ export default function Article() {
   const rawSlug = location.pathname.replace(/^\//, '').replace(/\/$/, '') || '0_docs/4_medadmin/articles/00_main'
   const redirectTarget = articlePathRedirects[rawSlug]
   if (redirectTarget) {
-    return <Navigate to={`/${redirectTarget}`} replace />
+    return <Navigate to={{ pathname: `/${redirectTarget}`, search: location.search }} replace />
   }
-  return <ArticleContent slug={rawSlug} isMcPdf={isMcPdf} />
+  const docVer = resolveDocsVersionIdFromSearch(location.search)
+  return <ArticleContent key={`${rawSlug}|${docVer}`} slug={rawSlug} isMcPdf={isMcPdf} />
 }

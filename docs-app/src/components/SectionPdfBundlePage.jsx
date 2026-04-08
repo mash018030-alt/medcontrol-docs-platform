@@ -2,9 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
-import { rehypeFootnotesSection } from '../rehype-footnotes-section'
-import { rehypePublicAssets } from '../rehype-public-assets'
+import { docsMarkdownRehypePlugins } from '../docsMarkdownRehypePlugins'
 import { orderedPathsForSectionPdfBundle } from '../data/nav'
 import { docsDashboardSections } from '../data/docsDashboardSections'
 import { MarkdownOl, MarkdownUl } from './markdownListComponents'
@@ -12,6 +10,8 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
+import MarkdownSpan from './MarkdownSpan'
+import MarkdownDiv from './MarkdownDiv'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { readFetchedMarkdownBody } from '../utils/fetchMarkdownText'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
@@ -128,7 +128,7 @@ export default function SectionPdfBundlePage() {
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw, rehypeFootnotesSection(), rehypePublicAssets()]}
+            rehypePlugins={docsMarkdownRehypePlugins()}
             remarkRehypeOptions={{ footnoteLabel: 'Сноски' }}
             components={{
               ol: MarkdownOl,
@@ -137,7 +137,9 @@ export default function SectionPdfBundlePage() {
               tr: MarkdownTr,
               table: MarkdownTable,
               img: MarkdownImg,
-              a: ({ href, className, children, node: _mdNode, ...props }) => {
+              span: MarkdownSpan,
+              div: MarkdownDiv,
+              a: ({ href, className, children, node: _mdNode, ...props } = {}) => {
                 const isBackref =
                   (typeof className === 'string' && className.includes('data-footnote-backref')) ||
                   (href && String(href).startsWith('#user-content-fnref-'))

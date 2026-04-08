@@ -1,12 +1,15 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { getDocsBackNav } from '../utils/docsBackNavigation'
+import { getDocsNavSearchSuffix } from '../utils/docsVersionNav'
 
 /** @param {{ slug: string }} props */
 export default function DocsBackLink({ slug }) {
+  const location = useLocation()
   const { to, ariaLabel } = getDocsBackNav(slug)
+  const suffix = getDocsNavSearchSuffix(location.search)
   return (
     <Link
-      to={to}
+      to={`${to}${suffix}`}
       className="docs-back-link docs-back-link--sidebar"
       aria-label={ariaLabel}
       title={ariaLabel}

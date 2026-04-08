@@ -720,12 +720,6 @@ export function searchDocuments(docsMap, query, sectionRootPath = null) {
   return results
 }
 
-function titleFromSlug(path) {
-  const last = path.split('/').pop() || path
-  const pretty = last.replace(/-/g, ' ')
-  return pretty.charAt(0).toUpperCase() + pretty.slice(1)
-}
-
 function isNewsPath(path) {
   const top = (path || '').split('/')[0] || ''
   return top.toLowerCase() === 'news' || top === '1_news'
@@ -739,56 +733,30 @@ function isSectionRootPath(path) {
 }
 
 /**
+ * Индекс для поиска: только статьи из nav (flatArticles). Загрузка через fetch с `/content/…`
+ * — Vite 7+ не позволяет import.meta.glob по `public/`, иначе модуль не собирается (пустой экран).
+ *
  * @returns {Promise<Map<string, { md: string, article: { title: string, path: string } }>>}
  */
 export async function loadAllDocs() {
-  /** @type {Record<string, () => Promise<string>>} */
-  const contentModules = import.meta.glob('../../public/content/**/*.md', {
-    query: '?raw',
-    import: 'default',
-  })
-
-  const fromNav = new Map(flatArticles.map((a) => [a.path, a]))
-  const fromFiles = Object.keys(contentModules)
-    .map((filePath) => {
-      const path = filePath
-        .replace(/^.*\/public\/content\//, '')
-        .replace(/\.md$/, '')
-      return {
-        path,
-        title: fromNav.get(path)?.title || titleFromSlug(path),
-      }
-    })
-    .filter((a) => !isNewsPath(a.path))
-
-  const articleMap = new Map(fromFiles.map((a) => [a.path, a]))
-  for (const a of flatArticles) {
-    if (!articleMap.has(a.path)) articleMap.set(a.path, a)
-  }
+  const articleMap = new Map(flatArticles.map((a) => [a.path, a]))
+  const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
 
   const entries = await Promise.all(
-    Array.from(articleMap.values()).map(async (article) => {
-      const loader = contentModules[`../../public/content/${article.path}.md`]
-      if (loader) {
+    Array.from(articleMap.values())
+      .filter((article) => !isNewsPath(article.path))
+      .map(async (article) => {
+        const path = `${base}/content/${article.path}.md`.replace(/^\/+/, '/')
+        const url = new URL(path, window.location.origin).href
         try {
-          const md = await loader()
-          return [article.path, { md: typeof md === 'string' ? md : '', article }]
+          const r = await fetch(url, { cache: 'no-cache' })
+          if (!r.ok) return [article.path, { md: '', article }]
+          const md = await r.text()
+          return [article.path, { md, article }]
         } catch {
           return [article.path, { md: '', article }]
         }
-      }
-      const base = (import.meta.env.BASE_URL || '').replace(/\/$/, '')
-      const path = `${base}/content/${article.path}.md`.replace(/^\/+/, '/')
-      const url = new URL(path, window.location.origin).href
-      try {
-        const r = await fetch(url, { cache: 'no-cache' })
-        if (!r.ok) return [article.path, { md: '', article }]
-        const md = await r.text()
-        return [article.path, { md, article }]
-      } catch {
-        return [article.path, { md: '', article }]
-      }
-    }),
+      }),
   )
 
   return new Map(entries)

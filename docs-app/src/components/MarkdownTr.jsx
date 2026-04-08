@@ -43,7 +43,7 @@ function isTopicSectionRow(node) {
 /**
  * @param {import('react-markdown').Components['tr']} props
  */
-export default function MarkdownTr({ node, children, ...rest }) {
+export default function MarkdownTr({ node, children, ...rest } = {}) {
   if (node && isTopicSectionRow(node)) {
     const cells = React.Children.toArray(children)
     const firstTd = cells[0]

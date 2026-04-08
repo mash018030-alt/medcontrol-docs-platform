@@ -7,7 +7,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
  * у обёртки не было горизонтального scrollport — иначе ломается `position: sticky` у шапки
  * при прокрутке страницы.
  */
-export default function MarkdownTable({ children, node: _mdNode, ...props }) {
+export default function MarkdownTable({ children, node: _mdNode, ...props } = {}) {
   const wrapRef = useRef(null)
   const [noHScroll, setNoHScroll] = useState(false)
 
