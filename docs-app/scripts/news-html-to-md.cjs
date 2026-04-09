@@ -7,7 +7,7 @@ const path = require('path')
 const { parse } = require('node-html-parser')
 const TurndownService = require('turndown')
 
-const NEWS_DIR = path.join(__dirname, '../public/content/News')
+const NEWS_DIR = path.join(__dirname, '../../content/News')
 
 const RELEASES = [
   {

@@ -8,7 +8,7 @@
  *   node scripts/html-to-md.cjs obshee    — раздел «Общее» (1. Общее. MC Cloud), без титула/содержания/аннотации/рекомендации
  *   node scripts/html-to-md.cjs medkabinet — раздел «Медкабинет» (источник: public/content/references/manuals/medkabinet-extract)
  *
- * Исходники HTML лежат в public/content/references/ (каталог контента в репозитории платформы).
+ * Исходники HTML лежат в content/references/ (корень репозитория).
  */
 
 const fs = require('fs')
@@ -16,7 +16,7 @@ const path = require('path')
 const { parse } = require('node-html-parser')
 const TurndownService = require('turndown')
 
-const CONTENT_ROOT = path.resolve(__dirname, '../public/content')
+const CONTENT_ROOT = path.resolve(__dirname, '../../content')
 const REF_ROOT = path.join(CONTENT_ROOT, 'references')
 const arg = process.argv[2]
 const isAdmin = arg === 'admin'

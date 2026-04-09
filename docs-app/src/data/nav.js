@@ -1,5 +1,5 @@
 // Древовидная структура документации для левого меню
-// path — путь для роута и загрузки файла (без .md), совпадает с public/content/<path>.md
+// path — путь для роута и загрузки файла (без .md), совпадает с content/<path>.md и URL /content/<path>.md
 export const navTree = [
   {
     title: 'Глоссарий',

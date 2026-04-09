@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
-const ADMIN_DIR = path.join(ROOT, 'docs-app/public/content/admin');
+const ADMIN_DIR = path.join(ROOT, 'content/admin');
 
 // Только первая буква заглавная, остальные строчные
 function toTitleCase(str) {

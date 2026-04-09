@@ -1,4 +1,4 @@
-# Проверки движка на PR (и вручную). Контент — каталог `docs-app/public/content/` в этом репозитории.
+# Проверки движка на PR (и вручную). Контент — корневой каталог `content/`; для Vite после npm ci создаётся связь `docs-app/public/content` (см. ensure-content-link.cjs).
 name: CI
 
 on:

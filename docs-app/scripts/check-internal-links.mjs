@@ -16,9 +16,10 @@ const arr = navSrc.slice(bracketStart, bracketEnd + 2)
 const flatArticles = [...arr.matchAll(/path:\s*'([^']+)'/g)].map((m) => m[1])
 const docSet = new Set(flatArticles)
 
-const newsTreePath = fs.existsSync(path.join(root, 'public/content/1_news/news_tree.json'))
-  ? path.join(root, 'public/content/1_news/news_tree.json')
-  : path.join(root, 'public/content/1_news/news-tree.json')
+const contentRoot = path.join(root, '..', 'content')
+const newsTreePath = fs.existsSync(path.join(contentRoot, '1_news/news_tree.json'))
+  ? path.join(contentRoot, '1_news/news_tree.json')
+  : path.join(contentRoot, '1_news/news-tree.json')
 const newsTree = JSON.parse(fs.readFileSync(newsTreePath, 'utf8'))
 
 function walkNews(nodes, out = []) {
@@ -30,7 +31,7 @@ function walkNews(nodes, out = []) {
 }
 const newsPaths = new Set(walkNews(newsTree.tree))
 
-const contentDir = path.join(root, 'public/content')
+const contentDir = contentRoot
 
 function slugify(text) {
   return String(text)

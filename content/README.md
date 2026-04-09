@@ -1,8 +1,8 @@
 # MedControl — контент документации
 
-Каталог со статьями (Markdown), изображениями и служебными файлами для сайта документации MedControl (в репозитории платформы **`medcontrol-docs-platform`**, путь **`docs-app/public/content/`**).
+Каталог со статьями (Markdown), изображениями и служебными файлами для сайта документации MedControl. В репозитории платформы лежит **в корне** как **`content/`**; движок (Vite) подключает его как **`docs-app/public/content/`** (см. **`docs-app/scripts/ensure-content-link.cjs`**).
 
-Целевое дерево контента описано в **[repo_docs/REPO_STRUCTURE.md](repo_docs/REPO_STRUCTURE.md)** (префикс `docs/`, `news/`, словарь имён). Пока перестройка не завершена, корень может ещё совпадать со старым видом `public/content/` в движке.
+Целевое дерево контента описано в **[repo_docs/REPO_STRUCTURE.md](repo_docs/REPO_STRUCTURE.md)** (префикс `docs/`, `news/`, словарь имён). Пока перестройка не завершена, структура может ещё совпадать со старым видом под `public/content/` в движке.
 
 ## О репозитории (`repo_docs/`)
 

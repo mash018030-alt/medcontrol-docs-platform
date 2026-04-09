@@ -12,7 +12,7 @@ const H = 156
 const Y0 = Math.floor(H * 0.12)
 /* Для иллюстрации с большими боковыми полями можно снизить (напр. 0.78); для нового 9.png из макета обычно 0.88 */
 const WHITE_FRAC_THR = 0.88
-const srcPath = path.join(__dirname, '../public/content/images/dashboards/Obshee/9.png')
+const srcPath = path.join(__dirname, '../../content/images/dashboards/Obshee/9.png')
 
 function nearWhiteAt(png, idx) {
   const r = png.data[idx]

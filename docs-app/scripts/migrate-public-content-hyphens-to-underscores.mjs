@@ -1,5 +1,5 @@
 /**
- * Одноразовая миграция: в именах файлов и каталогов под public/content
+ * Одноразовая миграция: в именах файлов и каталогов под content/ (корень репозитория)
  * заменяет дефисы на подчёркивания (кроме пропускаемых имён).
  * Порядок: сначала самые глубокие пути.
  */
@@ -8,7 +8,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const CONTENT_ROOT = path.join(__dirname, '../public/content')
+const CONTENT_ROOT = path.join(__dirname, '../../content')
 
 const SKIP_TOP_LEVEL = new Set(['README.md'])
 

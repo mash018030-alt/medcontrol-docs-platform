@@ -1,6 +1,6 @@
 # Снимок разводящей «Общее» (`/0_docs/1_obshee/articles/00_main`)
 
-**Расположение:** репозиторий движка, **`docs-app/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`** (папка регламентов про движок — см. **[README.md](README.md)** в этой же папке). Служебная заметка про интерфейс и код разводящей. **Не путать** с **`docs-app/public/content/references/`** — там PDF, лого, экспорты руководств и прочий контентный архив.
+**Расположение:** репозиторий движка, **`docs-app/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`** (папка регламентов про движок — см. **[README.md](README.md)** в этой же папке). Служебная заметка про интерфейс и код разводящей. **Не путать** с **`content/references/`** — там PDF, лого, экспорты руководств и прочий контентный архив.
 
 **Дата фиксации:** 2026-04-07 (пути приведены к канону **`nav.js`**: каталог **`articles/`**, подчёркивания в сегментах).
 
@@ -11,7 +11,7 @@
 
 Ниже — **снимок прежнего карточного дашборда** (для восстановления внешнего вида и поведения без устных передач).
 
-Тексты статей и скриншоты внутри статей **не** дублируются здесь — они лежат в **`docs-app/public/content/0_docs/1_obshee/articles/`**. Отдельный **PDF-эталон** для сверки текстов — в `docs-app/public/content/references/` (см. `docs-app/public/content/references/README.md`).
+Тексты статей и скриншоты внутри статей **не** дублируются здесь — они лежат в **`content/0_docs/1_obshee/articles/`**. Отдельный **PDF-эталон** для сверки текстов — в `content/references/` (см. `content/references/README.md`).
 
 ---
 
@@ -21,7 +21,7 @@
 |-----|----------|
 | Путь в URL | `0_docs/1_obshee/articles/00_main` (в dev: `http://localhost:5174/0_docs/1_obshee/articles/00_main` при базовом URL `/`) |
 | Корень раздела в навигации | Тот же путь — узел с `children` в `docs-app/src/data/nav.js` |
-| Markdown-файл корня | `docs-app/public/content/0_docs/1_obshee/articles/00_main.md` — краткое оглавление; **разводящая на сайте** — список из React (`SectionArticleNavList`), не рендер этого `.md` как основного тела |
+| Markdown-файл корня | `content/0_docs/1_obshee/articles/00_main.md` — краткое оглавление; **разводящая на сайте** — список из React (`SectionArticleNavList`), не рендер этого `.md` как основного тела |
 
 ---
 
@@ -58,7 +58,7 @@
 
 **Источник:** `docs-app/src/data/obsheeLandingCardPreview.js`.
 
-Файлы лежат в `docs-app/public/content/images/dashboards/Obshee/`. Нумерация рядов: 1–3, 4–6, 7–9 (слева направо, сверху вниз).
+Файлы лежат в `content/images/dashboards/Obshee/`. Нумерация рядов: 1–3, 4–6, 7–9 (слева направо, сверху вниз).
 
 | № файла | Путь статьи (корневая тема плитки) |
 |--------|-------------------------------------|
@@ -72,7 +72,7 @@
 | `8.png` | `0_docs/1_obshee/articles/20_uvedomleniya` |
 | `9.png` | `0_docs/1_obshee/articles/25_chastye_voprosy` |
 
-**Fallback** при ошибке загрузки изображения: `docs-app/public/content/images/dashboards/Obshee.png` (`OBSHEE_LANDING_CARD_PREVIEW_FALLBACK`).
+**Fallback** при ошибке загрузки изображения: `content/images/dashboards/Obshee.png` (`OBSHEE_LANDING_CARD_PREVIEW_FALLBACK`).
 
 Для путей, которых нет в таблице, в коде есть запасной шаблон: `Obshee/<последний-сегмент-пути>.png` (на случай расширения списка плиток).
 
@@ -120,11 +120,11 @@
 
 1. Узел «Общее» в `docs-app/src/data/nav.js` с тем же `path` **`0_docs/1_obshee/articles/00_main`** и тем же порядком `children` (п. 3).  
 2. Запись в `docs-app/src/data/docsDashboardSections.js` (п. 2).  
-3. `docs-app/src/data/obsheeLandingCardPreview.js` и файлы `docs-app/public/content/images/dashboards/Obshee/1.png` … `9.png` + fallback.  
+3. `docs-app/src/data/obsheeLandingCardPreview.js` и файлы `content/images/dashboards/Obshee/1.png` … `9.png` + fallback.  
 4. Компонент плиток разводщей и ветки ПАК / FAQ в стилях — см. `docs-app/src/components/` и `App.css`.  
 5. `docs-app/src/components/Article.jsx` — условие `statDashLandingPanel` для obshee.  
 6. CSS в `docs-app/src/App.css` для `.docs-section-landing-root--obshee-stat` и связанных классов; сверка с блоком «docs-obshee-dashboard-invariants» в **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`**.  
-7. При необходимости — `docs-app/public/content/0_docs/1_obshee/articles/00_main.md` как текстовое оглавление для читателя (не обязателен для сетки карточек).
+7. При необходимости — `content/0_docs/1_obshee/articles/00_main.md` как текстовое оглавление для читателя (не обязателен для сетки карточек).
 
 ---
 

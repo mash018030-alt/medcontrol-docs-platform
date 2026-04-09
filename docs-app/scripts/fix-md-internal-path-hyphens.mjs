@@ -93,4 +93,4 @@ for (const f of files) {
     changed++
   }
 }
-console.log(`fix-md-internal-path-hyphens: updated ${changed} file(s) under public/content`)
+console.log(`fix-md-internal-path-hyphens: updated ${changed} file(s) under content/`)

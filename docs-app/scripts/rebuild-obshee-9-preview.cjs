@@ -10,7 +10,7 @@ const TARGET_W = 282
 const TARGET_H = 156
 const ALPHA_MIN = 16
 
-const srcPath = path.join(__dirname, '../public/content/images/dashboards/Obshee/9.png')
+const srcPath = path.join(__dirname, '../../content/images/dashboards/Obshee/9.png')
 
 function bboxOpaque(png) {
   let x0 = png.width

@@ -7,7 +7,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const J = path.join(__dirname, '../public/content/1_news/news_tree.json')
+const J = path.join(__dirname, '../../content/1_news/news_tree.json')
 
 function fixSlashes(p) {
   return p

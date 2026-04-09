@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '../..');
-const OBSHEE_DIR = path.join(ROOT, 'docs-app/public/content/obshee');
+const OBSHEE_DIR = path.join(ROOT, 'content/obshee');
 
 function toTitleCase(str) {
   const s = str.trim();

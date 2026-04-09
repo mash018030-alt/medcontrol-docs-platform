@@ -1,5 +1,5 @@
 /**
- * Достаёт PDF из zip-архивов релизов (как в поставке) в каталоги public/content/News.
+ * Достаёт PDF из zip-архивов релизов (как в поставке) в каталоги content/News.
  * Cloud: путь и имя файла как в news-tree.json (pdf).
  * Mobile: MC Mobile/<slug>/MC Mobile x.y.z.pdf (zip = имя релиза + .zip).
  *
@@ -9,7 +9,7 @@ const fs = require('fs')
 const path = require('path')
 const { execSync } = require('child_process')
 
-const CONTENT_ROOT = path.join(__dirname, '../public/content')
+const CONTENT_ROOT = path.join(__dirname, '../../content')
 const NEWS = path.join(CONTENT_ROOT, 'News')
 
 function readNewsTreeJson() {

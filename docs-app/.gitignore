@@ -28,3 +28,6 @@ dist-ssr
 
 # Windows reserved name (accidental empty file)
 nul
+
+# Ссылка на корневой каталог content/ (junction/symlink), создаётся ensure-content-link.cjs
+/public/content

@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "node scripts/ensure-content-link.cjs",
+    "predev": "node scripts/ensure-content-link.cjs",
+    "prebuild": "node scripts/ensure-content-link.cjs",
     "dev": "vite",
     "pdf-server": "npm --prefix pdf-server start",
     "dev:with-pdf": "concurrently -k -n pdf,vite -c green,blue \"npm run pdf-server\" \"npm run dev\"",

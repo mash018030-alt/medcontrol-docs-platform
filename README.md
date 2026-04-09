@@ -1,6 +1,6 @@
 # MedControl Docs Platform
 
-Репозиторий **движка** документации MedControl: приложение на React и Vite в каталоге **`docs-app/`**. Статьи, картинки и служебные материалы лежат в **`docs-app/public/content/`** в этом же репозитории (раньше — отдельный репозиторий [medcontrol-docs-content](https://github.com/mash018030-alt/medcontrol-docs-content)).
+Репозиторий платформы документации MedControl: **два корневых каталога** — **`content/`** (статьи, медиа, `references/`) и **`docs-app/`** (код движка на React и Vite). Для сборки и dev Vite видит контент как **`docs-app/public/content/`**: после **`npm install`** / **`npm ci`** в `docs-app/` скрипт **`scripts/ensure-content-link.cjs`** создаёт связь (junction на Windows, symlink на Linux) на **`../content`**. Раньше контент вели в отдельном репозитории [medcontrol-docs-content](https://github.com/mash018030-alt/medcontrol-docs-content).
 
 ---
 
@@ -18,7 +18,7 @@ git clone <URL-этого-репозитория>
 cd medcontrol-docs-platform
 ```
 
-Установка и dev-сервер:
+Установка и dev-сервер (после **`npm install`** в `docs-app/` автоматически создаётся связь **`public/content`** → **`../content`**):
 
 ```bash
 cd docs-app
@@ -36,11 +36,11 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 
 | Каталог / файл | Назначение | Подробнее |
 |----------------|------------|-----------|
+| **`content/`** | Пользовательский контент: `.md`, изображения, **`references/`**, новости. **Источник правды** для текстов сайта. | [**`content/README.md`**](content/README.md) |
 | **`docs-app/`** | Код **веб-движка** (не пользовательские статьи): навигация, поиск, Markdown, утилиты и скрипты. | [**`docs-app/README.md`**](docs-app/README.md) |
 | **`docs-app/engine-docs/`** | Служебные регламенты **про движок** (PDF, таблицы и т.д.); не путать с пользовательским контентом. | [**`docs-app/engine-docs/README.md`**](docs-app/engine-docs/README.md) |
-| **`docs-app/public/content/`** | Пользовательский контент: `.md`, медиа, **`references/`** для переноса и исходников. | См. **`docs-app/public/content/README.md`**. |
 | **`docs-app/pdf-server/`** | Сервис печати PDF для продакшена и локальной отладки. | [**`pdf-server/README.md`**](docs-app/pdf-server/README.md) |
-| **`docs-brand/`** | Референсы **организации платформы** (палитра бренда, согласование UI документации), **без** пользовательских медиа и лого — те в **`docs-app/public/content/`**. | [**`docs-brand/README.md`**](docs-brand/README.md), вход в цвета — [`docs-brand/colors/color-palette.md`](docs-brand/colors/color-palette.md) |
+| **`docs-brand/`** | Референсы **организации платформы** (палитра бренда, согласование UI документации), **без** пользовательских медиа и лого — те в **`content/`**. | [**`docs-brand/README.md`**](docs-brand/README.md), вход в цвета — [`docs-brand/colors/color-palette.md`](docs-brand/colors/color-palette.md) |
 | **`archive/migration/`** | Снимки этапа разделения репозиториев (базовая линия проверки ссылок и навигации). | [**`archive/migration/README.md`**](archive/migration/README.md) |
 | **`REPO-LAYOUT.md`** | Шпаргалка: движок vs контент vs `engine-docs`; опциональное переименование `docs-app`. | — |
 | **`brief.md`** | Краткий бриф платформы (цели, границы, куда смотреть дальше). | — |
@@ -58,7 +58,7 @@ URL и порт выведет Vite (по умолчанию часто **5174**
 
 На GitHub при PR в **`main`** см. **`.github/workflows/ci.yml`**: обязательна сборка; линт и проверка ссылок — для отчёта (пока без стоп-крана).
 
-**Проверка внутренних ссылок** (`docs-app/scripts/check-internal-links.mjs`) сканирует Markdown в **`docs-app/public/content/`** и сверяет пути с навигацией движка (`flatArticles` в `docs-app/src/data/nav.js` и дерево новостей).
+**Проверка внутренних ссылок** (`docs-app/scripts/check-internal-links.mjs`) сканирует Markdown в **`content/`** и сверяет пути с навигацией движка (`flatArticles` в `docs-app/src/data/nav.js` и дерево новостей).
 
 Локально по умолчанию скрипт завершается с **кодом 1**, если есть ошибки по ссылкам или якорям; только отчёт без ошибки:
 
