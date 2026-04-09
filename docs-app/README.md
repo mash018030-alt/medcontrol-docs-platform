@@ -2,21 +2,11 @@
 
 Локальный прототип на React + Vite. Шапка, левое меню разделов, статья по центру, оглавление справа, навигация «Предыдущая / Следующая».
 
-**Что где лежит:** этот каталог (`docs-app/`) — **код движка** сайта. Тексты статей и медиа для читателя — в **`public/content/`** (submodule). Регламенты про сам движок (PDF, таблицы, CI) — в **`engine-docs/`**; **актуальное поведение и инварианты** после правок кода сводятся в **[`engine-docs/IMPLEMENTATION-REGISTRY.md`](engine-docs/IMPLEMENTATION-REGISTRY.md)**. Обзор по репозиторию: **[`../REPO-LAYOUT.md`](../REPO-LAYOUT.md)**.
+**Что где лежит:** этот каталог (`docs-app/`) — **код движка** сайта. Тексты статей и медиа для читателя — в **`public/content/`** (каталог в корневом репозитории платформы). Регламенты про сам движок (PDF, таблицы, CI) — в **`engine-docs/`**; **актуальное поведение и инварианты** после правок кода сводятся в **[`engine-docs/IMPLEMENTATION-REGISTRY.md`](engine-docs/IMPLEMENTATION-REGISTRY.md)**. Обзор по репозиторию: **[`../REPO-LAYOUT.md`](../REPO-LAYOUT.md)**.
 
-## Контент (git submodule)
+## Контент
 
-Тексты, иллюстрации к статьям, **иконки карточек главной** (`content/images/dashboards/0_main/*.png` и плитки разводящих `Obshee/`, `admin/`) и **логотип шапки** (`content/images/logo/logo_3.png`) живут в репозитории **`medcontrol-docs-content`**, submodule в **`public/content/`**.
-
-После клона движка:
-
-```bash
-git submodule update --init --recursive
-```
-
-Если submodule ещё не создан на GitHub: создайте репозиторий `medcontrol-docs-content`, запушьте туда контент, убедитесь, что URL в **`.gitmodules`** совпадает с ним, затем выполните команды выше.
-
-Локально submodule изначально мог быть привязан через `file://` — после смены URL на HTTPS выполните **`git submodule sync`**.
+Тексты, иллюстрации к статьям, **иконки карточек главной** (`content/images/dashboards/0_main/*.png` и плитки разводящих `Obshee/`, `admin/`) и **логотип шапки** (`content/images/logo/logo_3.png`) лежат в **`public/content/`**. Раньше тот же набор велся в отдельном репозитории [medcontrol-docs-content](https://github.com/mash018030-alt/medcontrol-docs-content); обзор папок контента — **`public/content/README.md`**.
 
 ## Запуск
 
@@ -51,7 +41,7 @@ npm run dev:with-pdf
 
 ## Статьи и меню
 
-Markdown лежит в **`public/content/`** (submodule). Структура левого меню и порядок «Предыдущая / Следующая» задаются в **`src/data/nav.js`** — пути там должны совпадать с путями к `.md` внутри submodule.
+Markdown лежит в **`public/content/`**. Структура левого меню и порядок «Предыдущая / Следующая» задаются в **`src/data/nav.js`** — пути там должны совпадать с путями к `.md` внутри **`public/content/`**.
 
 **Маркированные списки** в контенте оформляй через **дефис** (`- `), не через звёздочку — так проще читать рядом с жирным `**…**` и совпадает с типичным стилем GFM/Prettier.
 

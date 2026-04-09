@@ -1,0 +1,147 @@
+{
+  "tree": [
+    {
+      "title": "Релизы",
+      "path": "news/releases",
+      "children": [
+        {
+          "title": "MC Cloud",
+          "path": "news/mc_cloud",
+          "children": [
+            {
+              "title": "MC Cloud 1.12",
+              "path": "news/mc_cloud_1_12",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1.12/MC Cloud 1.12.pdf"
+            },
+            {
+              "title": "MC Cloud 1.13",
+              "path": "news/mc_cloud_1_13",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1.13/MC Cloud 1.13.pdf"
+            },
+            {
+              "title": "MC Cloud 1.13 Patch",
+              "path": "news/mc_cloud_1_13_patch",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_13_patch/MC Cloud 1.13 Patch.pdf"
+            },
+            {
+              "title": "MC Cloud 1.14",
+              "path": "news/mc_cloud_1_14",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1.14/MC Cloud 1.14.pdf"
+            },
+            {
+              "title": "MC Cloud 1.14 Patch",
+              "path": "news/mc_cloud_1_14_patch_internal",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_14_patch_internal/MC Cloud 1.14 Patch ВНУТРЕННИЙ.pdf"
+            },
+            {
+              "title": "MC Cloud 1.15",
+              "path": "news/mc_cloud_1_15",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_15/MC Cloud 1.15.pdf"
+            },
+            {
+              "title": "MC Cloud 1.15 Patch",
+              "path": "news/mc_cloud_1_15_patch",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_15_patch/MC Cloud 1.15 Patch.pdf"
+            },
+            {
+              "title": "MC Cloud 1.16",
+              "path": "news/mc_cloud_1_16",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_16/MC Cloud 1.16.pdf"
+            },
+            {
+              "title": "MC Cloud 1.16 Patch 1",
+              "path": "news/mc_cloud_1_16_patch",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_16_patch/MC Cloud 1.16 Patch. 1.pdf"
+            },
+            {
+              "title": "MC Cloud 1.17",
+              "path": "news/mc_cloud_1_17",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_17/MC Cloud 1.17.pdf"
+            },
+            {
+              "title": "MC Cloud 1.18",
+              "path": "news/mc_cloud_1_18",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_18/MC Cloud 1.18.pdf"
+            },
+            {
+              "title": "MC Cloud 1.18 Patch 2",
+              "path": "news/mc_cloud_1_18_patch_2",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_18_patch_2/MC Cloud 1.18 Patch 2 (1).pdf"
+            },
+            {
+              "title": "MC Cloud 1.18 Patch (1–2)",
+              "path": "news/mc_cloud_1_18_patch_1_2",
+              "pdf": "archives/0_mc_cloud/mc_cloud_1_18_patch_1_2/MC Cloud 1.18 Patch. 1_2 (1).pdf"
+            }
+          ]
+        },
+        {
+          "title": "MC Mobile",
+          "path": "news/mc_mobile",
+          "children": [
+            {
+              "title": "MC Mobile 1.10.0",
+              "path": "news/mc_mobile_1_10_0"
+            },
+            {
+              "title": "MC Mobile 1.11.0",
+              "path": "news/mc_mobile_1_11_0"
+            },
+            {
+              "title": "MC Mobile 1.12.0",
+              "path": "news/mc_mobile_1_12_0"
+            },
+            {
+              "title": "MC Mobile 1.12.1",
+              "path": "news/mc_mobile_1_12_1"
+            },
+            {
+              "title": "MC Mobile 1.13.0",
+              "path": "news/mc_mobile_1_13_0"
+            },
+            {
+              "title": "MC Mobile 1.14.0",
+              "path": "news/mc_mobile_1_14_0"
+            },
+            {
+              "title": "MC Mobile 1.15.0",
+              "path": "news/mc_mobile_1_15_0"
+            },
+            {
+              "title": "MC Mobile 1.16.0",
+              "path": "news/mc_mobile_1_16_0"
+            },
+            {
+              "title": "MC Mobile 1.17.0",
+              "path": "news/mc_mobile_1_17_0"
+            },
+            {
+              "title": "MC Mobile 1.18.0",
+              "path": "news/mc_mobile_1_18_0"
+            },
+            {
+              "title": "MC Mobile 1.19.0",
+              "path": "news/mc_mobile_1_19_0"
+            },
+            {
+              "title": "MC Mobile 1.20.0",
+              "path": "news/mc_mobile_1_20_0"
+            },
+            {
+              "title": "MC Mobile 1.21.0",
+              "path": "news/mc_mobile_1_21_0"
+            },
+            {
+              "title": "MC Mobile 1.22.0",
+              "path": "news/mc_mobile_1_22_0"
+            },
+            {
+              "title": "MC Mobile 1.23.0",
+              "path": "news/mc_mobile_1_23_0"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

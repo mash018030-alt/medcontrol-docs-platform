@@ -1,5 +1,4 @@
-# Проверки движка на PR (и вручную). Контент — git submodule (второй репозиторий), иначе
-# ссылки и дерево статей не соответствуют тому, что у пользователя в браузере.
+# Проверки движка на PR (и вручную). Контент — каталог `docs-app/public/content/` в этом репозитории.
 name: CI
 
 on:
@@ -18,10 +17,8 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout (с submodules = репозиторий контента)
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - uses: actions/setup-node@v4
         with:
@@ -45,7 +42,7 @@ jobs:
         working-directory: docs-app
         run: npm run lint
 
-      - name: Внутренние ссылки и якоря (submodule + nav)
+      - name: Внутренние ссылки и якоря (контент + nav)
         continue-on-error: true
         working-directory: docs-app
         run: node scripts/check-internal-links.mjs
