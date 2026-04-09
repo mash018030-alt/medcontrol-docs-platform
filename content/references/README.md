@@ -16,7 +16,7 @@
 
 **Путь в репозитории платформы:** **`content/references/`** (корень репо, рядом с **`0_docs/`**, **`1_news/`** и т.д.). На сайте и для Vite тот же каталог доступен как **`/content/references/…`**.
 
-Краткая карта для людей и для ассистента (дополнительно к **`brief.md`**, **`CONTEXT.md`** и при настройке Cursor — **`CURSOR-AGENT-SETTINGS.md`** в репозитории движка).
+Краткая карта для людей и для ассистента (дополнительно к **[`../../engine/repo-docs/brief.md`](../../engine/repo-docs/brief.md)** и соседним файлам в **`engine/repo-docs/`** — индекс **[`../../engine/repo-docs/README.md`](../../engine/repo-docs/README.md)**).
 
 ## Корень `references/`
 

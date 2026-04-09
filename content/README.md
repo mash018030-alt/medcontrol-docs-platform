@@ -23,7 +23,7 @@
 
 ## Базовая линия «до миграции»
 
-Снимок проверки внутренних ссылок и списка путей из `flatArticles` на момент разделения репозиториев лежит в **репозитории движка**: **`archive/migration/baseline-links-before-migration.txt`** (зачем хранится — **`archive/migration/README.md`**). Дубликат в `repo_docs/` не обязателен.
+Снимок проверки внутренних ссылок и списка путей из `flatArticles` на момент разделения репозиториев лежит в **репозитории движка**: **`engine/archive/migration/baseline-links-before-migration.txt`** (зачем хранится — **`engine/archive/migration/README.md`**). Дубликат в `repo_docs/` не обязателен.
 
 ## Локальный Git и GitHub
 

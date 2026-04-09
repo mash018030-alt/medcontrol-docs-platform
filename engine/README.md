@@ -2,7 +2,7 @@
 
 Локальный прототип на React + Vite. Шапка, левое меню разделов, статья по центру, оглавление справа, навигация «Предыдущая / Следующая».
 
-**Что где лежит:** этот каталог (`engine/`) — **код движка** сайта. Тексты статей и медиа для читателя — в корневом каталоге репозитория **`../content/`**. После **`npm install`** создаётся связь **`public/content/`** → **`../content`** (скрипт **`scripts/ensure-content-link.cjs`**); так Vite отдаёт URL **`/content/…`**. Регламенты про сам движок (PDF, таблицы, CI) — в **`engine-docs/`**; **актуальное поведение и инварианты** после правок кода сводятся в **[`engine-docs/IMPLEMENTATION-REGISTRY.md`](engine-docs/IMPLEMENTATION-REGISTRY.md)**. Обзор по репозиторию: **[`../REPO-LAYOUT.md`](../REPO-LAYOUT.md)**.
+**Что где лежит:** этот каталог (`engine/`) — **код движка** сайта. Тексты статей и медиа для читателя — в корневом каталоге репозитория **`../content/`**. После **`npm install`** создаётся связь **`public/content/`** → **`../content`** (скрипт **`scripts/ensure-content-link.cjs`**); так Vite отдаёт URL **`/content/…`**. Регламенты про сам движок (PDF, таблицы, CI) — в **`engine-docs/`**; **актуальное поведение и инварианты** после правок кода сводятся в **[`engine-docs/IMPLEMENTATION-REGISTRY.md`](engine-docs/IMPLEMENTATION-REGISTRY.md)**. Обзор по репозиторию: **[`repo-docs/REPO-LAYOUT.md`](repo-docs/REPO-LAYOUT.md)**.
 
 ## Контент
 

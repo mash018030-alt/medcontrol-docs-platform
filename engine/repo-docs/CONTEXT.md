@@ -2,9 +2,9 @@
 
 Организация репозиториев, этапы и служебные заметки. Настройки агента Cursor (Run, Auto-Run, Protection) вынесены в **[`CURSOR-AGENT-SETTINGS.md`](CURSOR-AGENT-SETTINGS.md)**.
 
-**Для новых чатов:** «используй материалы из **`content/references/`** (**references/README.md**), палитру из **`engine/docs-brand/colors/`**, **`brief.md`** и при необходимости **`CONTEXT.md`**».
+**Для новых чатов:** «используй материалы из **`content/references/`** (**references/README.md**), палитру из **`engine/docs-brand/colors/`**, **`engine/repo-docs/brief.md`** и при необходимости **`engine/repo-docs/CONTEXT.md`**».
 
-**PDF (Playwright, прокси, новости, сборка раздела):** единый регламент — **[`engine/engine-docs/PDF-EXPORT.md`](engine/engine-docs/PDF-EXPORT.md)**; сервис — [`engine/pdf-server/README.md`](engine/pdf-server/README.md).
+**PDF (Playwright, прокси, новости, сборка раздела):** единый регламент — **[`../engine-docs/PDF-EXPORT.md`](../engine-docs/PDF-EXPORT.md)**; сервис — [`../pdf-server/README.md`](../pdf-server/README.md).
 
 ---
 
@@ -31,7 +31,7 @@
 
 | Этап | Содержание |
 |------|------------|
-| **A** | Уточнение (материалы в контент-репо: `references/`, brief.md) |
+| **A** | Уточнение (материалы в контент-репо: `references/`, `engine/repo-docs/brief.md`) |
 | **B** | Прототип: каркас, навигация, Markdown (своя платформа в **engine/**: React + Vite) |
 | **C** | Перенос документов в Markdown |
 | **D** | Интеграция на платформу |
