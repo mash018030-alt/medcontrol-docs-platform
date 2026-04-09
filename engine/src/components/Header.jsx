@@ -1,10 +1,14 @@
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { DOCS_DASHBOARD_PATH, SAFE_MOBILE_PATH } from '../constants/docsRoutes.js'
 import { useDocsLayout } from '../context/DocsLayoutContext'
 import { useGlobalSearchOverlay } from '../context/GlobalSearchOverlayContext'
 import { NEWS_ROOT_SLUG } from '../data/fetchNewsTree'
-import { publicAssetUrl } from '../utils/publicAssetUrl'
+import { resolveDocsHomeAriaLabel } from '../utils/resolveDocsHomeAriaLabel'
+import { resolveDocsLogoUrl } from '../utils/resolveDocsLogoUrl'
 
 export default function Header() {
+  const logoUrl = resolveDocsLogoUrl()
+  const homeAriaLabel = resolveDocsHomeAriaLabel()
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const isMcPdf = searchParams.get('mc_pdf') === '1'
@@ -12,20 +16,32 @@ export default function Header() {
     location.pathname === '/news' || location.pathname.startsWith('/news/')
   const newsPathNorm = location.pathname.replace(/\/+$/, '') || '/'
   const isNewsHub = newsPathNorm === '/news'
+  const pathNorm = location.pathname.replace(/\/+$/, '') || '/'
+  const isPlatformHome = pathNorm === '/'
+  const showProductSwitcher = pathNorm === '/' || pathNorm === SAFE_MOBILE_PATH
+  const safeMobileProductTabActive = pathNorm === SAFE_MOBILE_PATH
   const hasTreeSidebar =
     !isMcPdf &&
     (isNews ? !isNewsHub
-      : location.pathname !== '/' &&
-        location.pathname !== '/search' &&
-        location.pathname !== '/section-pdf-bundle')
+      : pathNorm !== '/' &&
+        pathNorm !== SAFE_MOBILE_PATH &&
+        pathNorm !== DOCS_DASHBOARD_PATH &&
+        pathNorm !== '/search' &&
+        pathNorm !== '/section-pdf-bundle')
 
   const { isMobileLayout, mobileNavOpen, toggleMobileNav } = useDocsLayout()
   const showMobileMenuBtn = isMobileLayout && hasTreeSidebar
 
   const showGlobalSearchTrigger =
-    !isMcPdf && location.pathname !== '/' && location.pathname !== '/search'
+    !isMcPdf &&
+    pathNorm !== '/' &&
+    pathNorm !== SAFE_MOBILE_PATH &&
+    pathNorm !== DOCS_DASHBOARD_PATH &&
+    pathNorm !== '/search'
 
   const { openSearch, open: globalSearchOpen } = useGlobalSearchOverlay()
+
+  const docsTabActive = !isNews && !isPlatformHome
 
   return (
     <header className="docs-header">
@@ -47,29 +63,48 @@ export default function Header() {
             </svg>
           </button>
         ) : null}
-        <Link to="/" className="docs-logo" aria-label="MedControl документация — на главную">
-          <img src={publicAssetUrl('/content/images/logo/logo_3.png')} alt="" decoding="async" />
-        </Link>
-        <nav className="docs-header-tabs" aria-label="Основные разделы">
-          <Link
-            to="/"
-            className={`docs-header-tab${!isNews ? ' docs-header-tab--active' : ''}`}
-            onClick={(e) => {
-              if (!isNews && location.pathname === '/') e.preventDefault()
-            }}
-          >
-            Документация
+        {logoUrl && !isPlatformHome && pathNorm !== SAFE_MOBILE_PATH ? (
+          <Link to={DOCS_DASHBOARD_PATH} className="docs-logo" aria-label={homeAriaLabel}>
+            <img src={logoUrl} alt="" decoding="async" />
           </Link>
-          <Link
-            to={`/${NEWS_ROOT_SLUG}`}
-            className={`docs-header-tab${isNews ? ' docs-header-tab--active' : ''}`}
-            onClick={(e) => {
-              if (location.pathname === `/${NEWS_ROOT_SLUG}`) e.preventDefault()
-            }}
-          >
-            Новости
-          </Link>
-        </nav>
+        ) : null}
+        {showProductSwitcher ? (
+          <nav className="docs-header-tabs docs-header-tabs--product-switch" aria-label="Продукты">
+            <Link
+              to={SAFE_MOBILE_PATH}
+              className={`docs-header-tab${safeMobileProductTabActive ? ' docs-header-tab--active' : ''}`}
+              onClick={(e) => {
+                if (pathNorm === SAFE_MOBILE_PATH) e.preventDefault()
+              }}
+            >
+              Safe Mobile
+            </Link>
+            <Link to={DOCS_DASHBOARD_PATH} className="docs-header-tab">
+              MedControl
+            </Link>
+          </nav>
+        ) : (
+          <nav className="docs-header-tabs" aria-label="Основные разделы">
+            <Link
+              to={DOCS_DASHBOARD_PATH}
+              className={`docs-header-tab${docsTabActive ? ' docs-header-tab--active' : ''}`}
+              onClick={(e) => {
+                if (!isNews && pathNorm === DOCS_DASHBOARD_PATH) e.preventDefault()
+              }}
+            >
+              Документация
+            </Link>
+            <Link
+              to={`/${NEWS_ROOT_SLUG}`}
+              className={`docs-header-tab${isNews ? ' docs-header-tab--active' : ''}`}
+              onClick={(e) => {
+                if (location.pathname === `/${NEWS_ROOT_SLUG}`) e.preventDefault()
+              }}
+            >
+              Новости
+            </Link>
+          </nav>
+        )}
         {showGlobalSearchTrigger ? (
           <div className="docs-header-search-trigger-wrap">
             <button

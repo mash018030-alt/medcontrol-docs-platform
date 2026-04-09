@@ -14,6 +14,7 @@ import MarkdownTr from './MarkdownTr'
 import MarkdownTable from './MarkdownTable'
 import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
+import { DOCS_DASHBOARD_PATH } from '../constants/docsRoutes.js'
 import { publicAssetUrl, routerLinkTo } from '../utils/publicAssetUrl'
 import { appendDocVerToInternalHref, getDocsNavSearchSuffix, docsLocationSearchForVersion } from '../utils/docsVersionNav'
 import { fetchMarkdownText } from '../utils/fetchMarkdownText'
@@ -244,7 +245,7 @@ function ArticleContent({ slug, isMcPdf }) {
   if (loading) return <div className="docs-article docs-loading">Загрузка…</div>
   if (error) {
     const homeSuffix = docsLocationSearchForVersion(location.search, LATEST_DOCS_VERSION_ID)
-    const toHome = homeSuffix ? `/${homeSuffix}` : '/'
+    const toHome = `${DOCS_DASHBOARD_PATH}${homeSuffix}`
     return (
       <div className="docs-article">
         <p>{error}</p>

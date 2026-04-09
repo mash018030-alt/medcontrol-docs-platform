@@ -35,14 +35,13 @@ jobs:
         working-directory: engine
         run: npm run build
 
-      # Ниже — сигналы качества; пока есть накопленный долг, не роняем весь job.
-      # Уберите continue-on-error, когда eslint и ссылки будут в норме.
+      # ESLint: пока есть накопленный долг, не роняем job (см. вывод в логе).
       - name: ESLint
         continue-on-error: true
         working-directory: engine
         run: npm run lint
 
-      - name: Внутренние ссылки и якоря (контент + nav)
-        continue-on-error: true
+      # Обязательный гейт: пути flatArticles ↔ файлы в content/, внутренние ссылки, якоря.
+      - name: Контент ↔ nav и внутренние ссылки
         working-directory: engine
         run: node scripts/check-internal-links.mjs

@@ -12,6 +12,7 @@ import MarkdownImg from './MarkdownImg'
 import MarkdownDetails from './MarkdownDetails'
 import MarkdownSpan from './MarkdownSpan'
 import MarkdownDiv from './MarkdownDiv'
+import { DOCS_DASHBOARD_PATH } from '../constants/docsRoutes.js'
 import { publicAssetUrl } from '../utils/publicAssetUrl'
 import { readFetchedMarkdownBody } from '../utils/fetchMarkdownText'
 import { buildMarkdownHeadingComponents } from '../utils/buildMarkdownHeadingComponents'
@@ -94,7 +95,7 @@ export default function SectionPdfBundlePage() {
     return (
       <div className="docs-article docs-loading">
         <p>Не указан раздел (параметр root).</p>
-        <Link to="/">На главную</Link>
+        <Link to={DOCS_DASHBOARD_PATH}>На главную</Link>
       </div>
     )
   }
@@ -103,7 +104,7 @@ export default function SectionPdfBundlePage() {
     return (
       <div className="docs-article docs-loading">
         <p>Этот раздел пока не поддерживает сборку в один PDF.</p>
-        <Link to="/">На главную</Link>
+        <Link to={DOCS_DASHBOARD_PATH}>На главную</Link>
       </div>
     )
   }
@@ -113,7 +114,7 @@ export default function SectionPdfBundlePage() {
     return (
       <div className="docs-article">
         <p>{error}</p>
-        <Link to="/">На главную</Link>
+        <Link to={DOCS_DASHBOARD_PATH}>На главную</Link>
       </div>
     )
   }

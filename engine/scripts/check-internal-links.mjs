@@ -52,9 +52,21 @@ function extractMdLinks(md) {
   return links
 }
 
+const navPathIssues = []
 const issues = []
 const warnings = []
 const mdFiles = []
+
+for (const ap of docSet) {
+  const mdPath = path.join(contentDir, `${ap}.md`)
+  if (!fs.existsSync(mdPath)) {
+    navPathIssues.push({
+      file: 'engine/src/data/nav.js',
+      url: ap,
+      reason: `flatArticles: отсутствует content/${ap}.md`,
+    })
+  }
+}
 
 function walkDir(d, rel = '') {
   for (const ent of fs.readdirSync(d, { withFileTypes: true })) {
@@ -64,7 +76,11 @@ function walkDir(d, rel = '') {
       /* Служебная документация контент-репо — не статьи сайта */
       if (
         rel === '' &&
-        (ent.name === 'docs' || ent.name === 'references' || ent.name === 'repo_docs' || ent.name === 'repo-docs')
+        (ent.name === 'docs' ||
+          ent.name === 'references' ||
+          ent.name === 'repo_docs' ||
+          ent.name === 'repo-docs' ||
+          ent.name === 'brand')
       )
         continue
       walkDir(p, r)
@@ -114,7 +130,12 @@ for (const f of mdFiles) {
   }
 }
 
-console.log('=== Broken / unknown internal links ===')
+console.log('=== flatArticles → content/<path>.md ===')
+console.log(
+  navPathIssues.length ? navPathIssues.map((i) => JSON.stringify(i)).join('\n') : '(все пути из nav имеют файл)',
+)
+
+console.log('\n=== Broken / unknown internal links ===')
 console.log(issues.length ? issues.map((i) => JSON.stringify(i)).join('\n') : '(none)')
 
 console.log('\n=== md exists but not in nav (flatArticles) ===')
@@ -227,10 +248,10 @@ console.log(
   hashIssues.length ? hashIssues.map((h) => JSON.stringify(h)).join('\n') : '(all hash links resolved)',
 )
 
-const linkProblems = issues.length + hashIssues.length
+const linkProblems = navPathIssues.length + issues.length + hashIssues.length
 if (linkProblems > 0) {
   console.error(
-    `\ncheck-internal-links: ${issues.length} broken/unknown links, ${hashIssues.length} hash issues — exit 1 (только отчёт: LINK_CHECK_STRICT=0)`,
+    `\ncheck-internal-links: ${navPathIssues.length} nav/content, ${issues.length} broken/unknown links, ${hashIssues.length} hash issues — exit 1 (только отчёт: LINK_CHECK_STRICT=0)`,
   )
   if (process.env.LINK_CHECK_STRICT === '0') process.exit(0)
   process.exit(1)

@@ -98,9 +98,9 @@ alwaysApply: true
 
 Корпоративная **розовая** палитра для блока предупреждения об обязательных условиях / ограничениях. Не путать с «Важно» (`.docs-important`) и с нейтральным «Информация» (`.docs-info`).
 
-### CSS-переменные (источник правды — `engine/src/App.css`)
+### CSS-переменные
 
-Задаются на контейнере `.docs-article .docs-attention`:
+Значения по умолчанию для продукта — **`content/brand/theme.css`** (`:root`); нейтральные дефолты платформы — **`engine/src/App.css`** (`:root`). Блок `.docs-article .docs-attention` использует `var(--docs-attention-*)` (наследование с `:root`):
 
 | Токен | Значение | Назначение |
 |--------|----------|------------|
@@ -116,7 +116,7 @@ alwaysApply: true
 - **Заголовок** (`.docs-attention-title`): жирный, цвет `var(--docs-attention-accent)`, размер ~`1rem`.
 - **Текст абзацев** (`.docs-attention p`): цвет **`#000`**, межстрочный ~`1.55`, размер ~`0.9375rem`.
 
-При смене бренда править **только** три переменные `--docs-attention-*` на контейнере (и при необходимости отступы в том же блоке правил).
+При смене бренда править **только** три переменные `--docs-attention-*` в **`content/brand/theme.css`** (и при необходимости отступы в правилах `.docs-attention` в `App.css`).
 
 ### Разметка в markdown (сырой HTML)
 
@@ -149,10 +149,10 @@ alwaysApply: true
 ## Палитра цветов
 
 - Текстовый референс (таблица HEX/RGB, назначение): **`engine/docs-brand/colors/`**, точка входа — **`color-palette.md`**.
-- Реализация в интерфейсе: CSS-переменные в **`engine/src/App.css`**.
-- Папка **`docs-brand`** намеренно **не** внутри `content/`: иначе файлы попадали бы в общий glob статей и поиск.
+- Реализация в интерфейсе: **нейтральные** дефолты платформы — **`engine/src/App.css`** (`:root`); **продукт** (MedControl и др.) — **`content/brand/theme.css`** (подключается после `App.css`, см. `attachContentBrandTheme` в `main.jsx`).
+- Папка **`engine/docs-brand`** — референс для людей, не публикуемые статьи. Папка **`content/brand/`** — тема в контенте; в скриптах проверки ссылок обходится как служебная (не статьи).
 
-При смене цветов правьте **и** markdown в `engine/docs-brand/colors/`, **и** соответствующие переменные в `App.css`.
+При смене цветов MedControl правьте **и** markdown в `engine/docs-brand/colors/` (по желанию), **и** переменные в **`content/brand/theme.css`** (в т.ч. дашборд, поиск, макросы, тинты ховера); при смене дефолтов «голой» платформы — **`App.css`**. Заголовок вкладки, favicon: **`VITE_DOCS_SITE_TITLE`**, **`VITE_DOCS_FAVICON_URL`** / **`VITE_DOCS_FAVICON_TYPE`** в `engine` (`vite.config.js`); подпись лого: **`VITE_DOCS_HOME_ARIA_LABEL`**.
 
 <!-- источник: docs-hash-and-scroll.mdc -->
 ## Hash и скролл документации

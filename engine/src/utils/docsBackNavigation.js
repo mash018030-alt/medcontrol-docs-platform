@@ -1,3 +1,4 @@
+import { DOCS_DASHBOARD_PATH } from '../constants/docsRoutes.js'
 import { navTree, navSubtreeContains } from '../data/nav'
 
 /** Верхнеуровневый узел раздела (например obshee/user-guide), в который входит slug. */
@@ -16,10 +17,10 @@ export function findTopSectionNodeForSlug(slug) {
 export function getDocsBackNav(slug) {
   const section = findTopSectionNodeForSlug(slug)
   if (!section) {
-    return { to: '/', ariaLabel: 'На главную документации' }
+    return { to: DOCS_DASHBOARD_PATH, ariaLabel: 'На главную документации' }
   }
   if (slug === section.path) {
-    return { to: '/', ariaLabel: 'На главную документации' }
+    return { to: DOCS_DASHBOARD_PATH, ariaLabel: 'На главную документации' }
   }
   return {
     to: `/${section.path}`,

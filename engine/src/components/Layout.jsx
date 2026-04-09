@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation, useSearchParams } from 'react-router-dom'
+import { DOCS_DASHBOARD_PATH, SAFE_MOBILE_PATH } from '../constants/docsRoutes.js'
 import { DocsLayoutProvider, useDocsLayout } from '../context/DocsLayoutContext'
 import { DocSearchIndexProvider } from '../context/DocSearchIndexContext'
 import { GlobalSearchOverlayProvider } from '../context/GlobalSearchOverlayContext'
 import { DOCS_HEADING_LINK_COPIED } from '../utils/headingCopyFeedback'
 import Header from './Header'
+import NiiDocsCornerMark from './NiiDocsCornerMark'
 import Sidebar from './Sidebar'
 import NewsSidebar from './NewsSidebar'
 
@@ -46,11 +48,14 @@ function LayoutShell() {
   const newsPathNorm = pathname.replace(/\/+$/, '') || '/'
   const isNewsHub = newsPathNorm === '/news'
   const showNewsSidebar = isNews && !isNewsHub
+  const pathNorm = pathname.replace(/\/+$/, '') || '/'
   const showDocsSidebar =
     !isNews &&
-    pathname !== '/' &&
-    pathname !== '/search' &&
-    pathname !== '/section-pdf-bundle'
+    pathNorm !== '/' &&
+    pathNorm !== SAFE_MOBILE_PATH &&
+    pathNorm !== DOCS_DASHBOARD_PATH &&
+    pathNorm !== '/search' &&
+    pathNorm !== '/section-pdf-bundle'
   const showTreeSidebar = showNewsSidebar || showDocsSidebar
 
   const { isMobileLayout, mobileNavOpen, closeMobileNav } = useDocsLayout()
@@ -67,6 +72,7 @@ function LayoutShell() {
   const layoutClassNames = [
     isMcPdf ? 'docs-layout docs-layout--mc-pdf' : 'docs-layout',
     !isMcPdf && !showTreeSidebar ? 'docs-layout--no-side-nav' : '',
+    !isMcPdf && (pathNorm === '/' || pathNorm === SAFE_MOBILE_PATH) ? 'docs-layout--platform-home' : '',
   ]
     .filter(Boolean)
     .join(' ')
@@ -89,6 +95,7 @@ function LayoutShell() {
           <Outlet />
         </main>
       </div>
+      {!isMcPdf && <NiiDocsCornerMark />}
     </div>
   )
 }

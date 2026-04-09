@@ -3,17 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="google" content="notranslate" />
+    <!-- Иконка вкладки: по умолчанию engine/public/icons/favicon.svg; иначе VITE_DOCS_FAVICON_URL (+ VITE_DOCS_FAVICON_TYPE) в vite.config.js -->
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%icons/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Заголовок подставляет vite.config.js из VITE_DOCS_SITE_TITLE (по умолчанию MedControl — Документация) -->
     <title>MedControl — Документация</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Шрифт Rawline для экспорта в PDF -->
-    <link rel="stylesheet" href="https://fontlibrary.org/face/rawline" type="text/css" />
+    <!-- Шрифты продукта: content/brand/theme.css (подключается из main.jsx после App.css) -->
   </head>
   <body>
     <div id="root"></div>

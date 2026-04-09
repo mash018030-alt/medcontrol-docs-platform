@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { DOCS_DASHBOARD_PATH } from '../constants/docsRoutes.js'
 import { useDocsLayout } from '../context/DocsLayoutContext'
 import { getExpandedNavKeys, navSubtreeContains, navTree } from '../data/nav'
 import DocsBackLink from './DocsBackLink'
 
 function slugFromPathname(pathname) {
   const s = pathname.replace(/^\//, '').replace(/\/$/, '')
-  if (s === 'search') return ''
+  if (s === 'search' || s === 'documentation') return ''
   return s
 }
 
@@ -103,7 +104,7 @@ export default function Sidebar() {
   const navigate = useNavigate()
   const slug = slugFromPathname(location.pathname)
   const pathNorm = location.pathname.replace(/\/$/, '') || '/'
-  const showDocsBack = pathNorm !== '/'
+  const showDocsBack = pathNorm !== '/' && pathNorm !== DOCS_DASHBOARD_PATH
 
   const [expanded, setExpanded] = useState(() => getExpandedNavKeys(navTree, slug))
 
@@ -160,10 +161,10 @@ export default function Sidebar() {
         <div className={`docs-sidebar-top${showDocsBack ? ' docs-sidebar-top--with-back' : ''}`}>
           {showDocsBack ? <DocsBackLink slug={slug} /> : null}
           <Link
-            to="/"
+            to={DOCS_DASHBOARD_PATH}
             className="docs-nav-title docs-nav-title-link"
             onClick={(e) => {
-              if (location.pathname === '/') {
+              if (location.pathname.replace(/\/$/, '') === DOCS_DASHBOARD_PATH) {
                 e.preventDefault()
                 const scrollRoot = document.scrollingElement ?? document.documentElement
                 scrollRoot.scrollTo({ top: 0, behavior: 'smooth' })
