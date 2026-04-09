@@ -8,6 +8,7 @@
 | [**`CONTEXT.md`**](CONTEXT.md) | Контекст проекта, этапы, организация работы |
 | [**`REPO-LAYOUT.md`**](REPO-LAYOUT.md) | Шпаргалка: `content/` vs `engine/`, `engine-docs`, связь `public/content` |
 | [**`CURSOR-AGENT-SETTINGS.md`**](CURSOR-AGENT-SETTINGS.md) | Настройки агента Cursor для этой папки |
+| [**`medcontrol-docs-content-ARCHIVE-README.md`**](medcontrol-docs-content-ARCHIVE-README.md) | Текст для **`README.md`** в архивном репо [medcontrol-docs-content](https://github.com/mash018030-alt/medcontrol-docs-content) (скопировать целиком при архивации) |
 
 Архив снимков миграции: **`../archive/migration/`** (см. [**`../archive/migration/README.md`**](../archive/migration/README.md)).
 
