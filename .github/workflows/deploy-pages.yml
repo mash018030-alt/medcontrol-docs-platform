@@ -1,4 +1,4 @@
-# Публикует docs-app на GitHub Pages (project site).
+# Публикует engine на GitHub Pages (project site).
 # После первого push: Settings → Pages → Source: GitHub Actions.
 name: Deploy GitHub Pages
 
@@ -26,27 +26,27 @@ jobs:
         with:
           node-version: '20'
           cache: npm
-          cache-dependency-path: docs-app/package-lock.json
+          cache-dependency-path: engine/package-lock.json
 
       - name: Install dependencies
-        working-directory: docs-app
+        working-directory: engine
         run: npm ci
 
       # Подкаталог /medcontrol-docs-platform/ на github.io — иначе base '/' даёт 404 на JS/CSS
-      # Текстовый PDF: задеплойте docs-app/pdf-server отдельно, в репозитории Settings → Secrets → Actions
+      # Текстовый PDF: задеплойте engine/pdf-server отдельно, в репозитории Settings → Secrets → Actions
       # добавьте VITE_PDF_SERVICE_URL (например https://your-pdf-api.fly.dev), см. pdf-server/README.md
       - name: Build
-        working-directory: docs-app
+        working-directory: engine
         env:
           VITE_PDF_SERVICE_URL: ${{ secrets.VITE_PDF_SERVICE_URL }}
         run: npm run build:gh-pages
 
       - name: SPA fallback for GitHub Pages
-        run: cp docs-app/dist/index.html docs-app/dist/404.html
+        run: cp engine/dist/index.html engine/dist/404.html
 
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: docs-app/dist
+          path: engine/dist
 
   deploy:
     runs-on: ubuntu-latest

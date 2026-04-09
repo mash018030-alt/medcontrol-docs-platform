@@ -84,7 +84,7 @@ images/            # иллюстрации
 ## Этап 3 — проверка
 
 - Сборка движка с подставленным контентом.
-- `node docs-app/scripts/check-internal-links.mjs`.
+- `node engine/scripts/check-internal-links.mjs`.
 - Ручной проход: каждая статья раздела «Администрирование», картинки, карусели.
 
 ---

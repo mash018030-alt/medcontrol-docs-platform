@@ -4,7 +4,7 @@
 Репозиторий: medcontrol-docs-platform
 ================================================================================
 
---- 1) Вывод: node docs-app/scripts/check-internal-links.mjs ---
+--- 1) Вывод: node engine/scripts/check-internal-links.mjs ---
 
 === Broken / unknown internal links ===
 (none)
@@ -16,9 +16,9 @@
 (all hash links resolved)
 
 
---- 2) Сверка flatArticles (nav.js) ↔ файлы docs-app/public/content/<path>.md ---
+--- 2) Сверка flatArticles (nav.js) ↔ файлы engine/public/content/<path>.md ---
 
-Источник путей: export const flatArticles в docs-app/src/data/nav.js
+Источник путей: export const flatArticles в engine/src/data/nav.js
 Всего статей в flatArticles: 55
 Отсутствующих .md файлов: 0 (все пути имеют соответствующий файл)
 

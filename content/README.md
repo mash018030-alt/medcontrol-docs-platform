@@ -1,6 +1,6 @@
 # MedControl — контент документации
 
-Каталог со статьями (Markdown), изображениями и служебными файлами для сайта документации MedControl. В репозитории платформы лежит **в корне** как **`content/`**; движок (Vite) подключает его как **`docs-app/public/content/`** (см. **`docs-app/scripts/ensure-content-link.cjs`**).
+Каталог со статьями (Markdown), изображениями и служебными файлами для сайта документации MedControl. В репозитории платформы лежит **в корне** как **`content/`**; движок (Vite) подключает его как **`engine/public/content/`** (см. **`engine/scripts/ensure-content-link.cjs`**).
 
 Целевое дерево контента описано в **[repo_docs/REPO_STRUCTURE.md](repo_docs/REPO_STRUCTURE.md)** (префикс `docs/`, `news/`, словарь имён). Пока перестройка не завершена, структура может ещё совпадать со старым видом под `public/content/` в движке.
 
@@ -15,7 +15,7 @@
 | `images/dashboards/0_main/*.png` | Иконки карточек разделов на главном дашборде «Документация» (`admin.png`, `glossary.png`, `main.png`, `medadmin.png`, `medcab.png`); в движке путь вида `/content/images/dashboards/0_main/<файл>.png` (обновить `docsDashboardSections.js` или аналог, если раньше указывали корень `dashboards/`). Превью плиток по разделам — в `images/dashboards/Obshee/`, `images/dashboards/admin/` |
 | `images/logo/logo_3.png` | Логотип платформы; в движке: `/content/images/logo/logo_3.png` |
 
-Редактируйте файлы в этом каталоге; код движка лежит в **`docs-app/src/`** и соседних папках того же репозитория.
+Редактируйте файлы в этом каталоге; код движка лежит в **`engine/src/`** и соседних папках того же репозитория.
 
 ## Связь с движком
 

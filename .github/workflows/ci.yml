@@ -1,4 +1,4 @@
-# Проверки движка на PR (и вручную). Контент — корневой каталог `content/`; для Vite после npm ci создаётся связь `docs-app/public/content` (см. ensure-content-link.cjs).
+# Проверки движка на PR (и вручную). Контент — корневой каталог `content/`; для Vite после npm ci создаётся связь `engine/public/content` (см. ensure-content-link.cjs).
 name: CI
 
 on:
@@ -24,25 +24,25 @@ jobs:
         with:
           node-version: '20'
           cache: npm
-          cache-dependency-path: docs-app/package-lock.json
+          cache-dependency-path: engine/package-lock.json
 
       - name: Install dependencies
-        working-directory: docs-app
+        working-directory: engine
         run: npm ci
 
       # Обязательный гейт: совпадает с прод-сборкой по сути (без base GitHub Pages).
       - name: Production build (Vite)
-        working-directory: docs-app
+        working-directory: engine
         run: npm run build
 
       # Ниже — сигналы качества; пока есть накопленный долг, не роняем весь job.
       # Уберите continue-on-error, когда eslint и ссылки будут в норме.
       - name: ESLint
         continue-on-error: true
-        working-directory: docs-app
+        working-directory: engine
         run: npm run lint
 
       - name: Внутренние ссылки и якоря (контент + nav)
         continue-on-error: true
-        working-directory: docs-app
+        working-directory: engine
         run: node scripts/check-internal-links.mjs

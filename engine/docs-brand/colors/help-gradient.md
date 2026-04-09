@@ -9,4 +9,4 @@
 
 В CSS: `--docs-news-banner-gradient-start` и `--docs-news-banner-gradient-end` в `engine/src/App.css`, фон `.docs-news-banner__bg`: `linear-gradient(125deg, …)`.
 
-См. также `color_palette.md`.
+См. также `color-palette.md`.

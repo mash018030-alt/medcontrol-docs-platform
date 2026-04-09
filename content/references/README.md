@@ -10,7 +10,7 @@
 
 - **Файл:** `1. Общее. MC Cloud. Руководство пользователя.pdf`
 - **Назначение:** эталон для сверки с текстами статей в **`0_docs/1_obshee/`** (в репозитории контента).
-- **Снимок структуры контента и связи с разводящей:** `OBSHEE_CONTENT_SNAPSHOT.md` (пара к снимку UI в репозитории движка: **`docs-app/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`**).
+- **Снимок структуры контента и связи с разводящей:** `OBSHEE_CONTENT_SNAPSHOT.md` (пара к снимку UI в репозитории движка: **`engine/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`**).
 
 ## Где лежит папка
 
@@ -32,11 +32,11 @@
 - **`manuals/admin_extract/`** — экспорт администрирования: `2..MCCloud..html`, **`images/`**.
 - **`manuals/medkabinet_extract/`** — экспорт «Медкабинет»: `3..MCCloud..html`, **`images/`**.
 - **`manuals/4_rukovodstvo/`** — руководство медадминистратора: `4..MCCloud..html`, **`images/`**.
-- **`Colors/`** — палитра и токены цвета (`color_palette.md`, `light.md`, `sinii.md`, `temno_sinii.md`, `help_gradient.md`). В репозитории движка договорённости по цветам могут дублироваться в `docs-brand/colors` (например `accent-blue.md`, `dark-blue.md`) — сверяйте с этим каталогом при переносе.
+- **`Colors/`** — палитра и токены цвета (`color_palette.md`, `light.md`, `sinii.md`, `temno_sinii.md`, `help_gradient.md`). В репозитории движка договорённости по цветам могут дублироваться в `engine/docs-brand/colors` (например `accent-blue.md`, `dark-blue.md`) — сверяйте с этим каталогом при переносе.
 
 ## Скрипт конвертации HTML → Markdown
 
-Из каталога `docs-app` движка:
+Из каталога `engine` движка:
 
 ```bash
 node scripts/html-to-md.cjs

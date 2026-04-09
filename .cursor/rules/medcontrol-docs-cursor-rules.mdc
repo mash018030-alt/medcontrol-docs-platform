@@ -11,18 +11,18 @@ alwaysApply: true
 
 ## Реестр реализации движка — обязательно для агента
 
-После **каждой** успешной доработки или **существенной** правки поведения в `docs-app/` (UI, роутинг, markdown/rehype, версии документации, PDF, таблицы, поиск и т.д.):
+После **каждой** успешной доработки или **существенной** правки поведения в `engine/` (UI, роутинг, markdown/rehype, версии документации, PDF, таблицы, поиск и т.д.):
 
-1. Обновить **`docs-app/engine-docs/IMPLEMENTATION-REGISTRY.md`**: актуальная строка в таблице или новая строка — **файлы, инварианты («не ломать»), дата**.
-2. Если тема уже вынесена в узкий регламент — **синхронно** править соответствующий файл в **`docs-app/engine-docs/*.md`** (например `TABLES-DISPLAY.md`, `PDF-EXPORT.md`).
+1. Обновить **`engine/engine-docs/IMPLEMENTATION-REGISTRY.md`**: актуальная строка в таблице или новая строка — **файлы, инварианты («не ломать»), дата**.
+2. Если тема уже вынесена в узкий регламент — **синхронно** править соответствующий файл в **`engine/engine-docs/*.md`** (например `TABLES-DISPLAY.md`, `PDF-EXPORT.md`).
 3. Пользователю **не** нужно отдельно писать «зафиксируй в правилах»: это часть **завершения задачи**. При **следующей** просьбе поправить то же место — снова обновить реестр/регламент.
 
-Точка входа для людей: **`docs-app/engine-docs/README.md`**.
+Точка входа для людей: **`engine/engine-docs/README.md`**.
 
 <!-- источник: docs-platform-ux-standards.mdc -->
 ## Правила вёрстки и UX платформы
 
-Применять как чек-лист при правках интерфейса, контента и стилей в `docs-app/`.
+Применять как чек-лист при правках интерфейса, контента и стилей в `engine/`.
 
 ### 1) Навигация
 
@@ -51,7 +51,7 @@ alwaysApply: true
 
 - Использовать таблицы для структурированных сравнений и регламентов.
 - Добавлять схемы, если описывается процесс/поток действий.
-- **Реализация в приложении** (липкая шапка, обёртка `docs-table-scroll`, `border-collapse`, ограничения ширины): регламент **`docs-app/engine-docs/TABLES-DISPLAY.md`** — при правках `MarkdownTable.jsx`, таблиц в `App.css` или разметки таблиц в контенте сверяться с ним, чтобы не повторять регрессии.
+- **Реализация в приложении** (липкая шапка, обёртка `docs-table-scroll`, `border-collapse`, ограничения ширины): регламент **`engine/engine-docs/TABLES-DISPLAY.md`** — при правках `MarkdownTable.jsx`, таблиц в `App.css` или разметки таблиц в контенте сверяться с ним, чтобы не повторять регрессии.
 
 ### 6) Макросы (callouts)
 
@@ -71,7 +71,7 @@ alwaysApply: true
 - Документация читается как последовательная инструкция для пользователя.
 - Избегать формального канцелярского стиля «документ ради документа», если это мешает практическому применению.
 
-<!-- источник: docs-app-sidebar-nav.mdc -->
+<!-- источник: engine-sidebar-nav.mdc -->
 ## Боковая навигация (Документация и Новости)
 
 ### Требование: сворачивание по клику на название
@@ -98,7 +98,7 @@ alwaysApply: true
 
 Корпоративная **розовая** палитра для блока предупреждения об обязательных условиях / ограничениях. Не путать с «Важно» (`.docs-important`) и с нейтральным «Информация» (`.docs-info`).
 
-### CSS-переменные (источник правды — `docs-app/src/App.css`)
+### CSS-переменные (источник правды — `engine/src/App.css`)
 
 Задаются на контейнере `.docs-article .docs-attention`:
 
@@ -148,11 +148,11 @@ alwaysApply: true
 <!-- источник: docs-design-colors-location.mdc -->
 ## Палитра цветов
 
-- Текстовый референс (таблица HEX/RGB, назначение): **`docs-brand/colors/`** в корне репозитория, точка входа — **`color-palette.md`**.
-- Реализация в интерфейсе: CSS-переменные в **`docs-app/src/App.css`**.
+- Текстовый референс (таблица HEX/RGB, назначение): **`engine/docs-brand/colors/`**, точка входа — **`color-palette.md`**.
+- Реализация в интерфейсе: CSS-переменные в **`engine/src/App.css`**.
 - Папка **`docs-brand`** намеренно **не** внутри `content/`: иначе файлы попадали бы в общий glob статей и поиск.
 
-При смене цветов правьте **и** markdown в `docs-brand/colors/`, **и** соответствующие переменные в `App.css`.
+При смене цветов правьте **и** markdown в `engine/docs-brand/colors/`, **и** соответствующие переменные в `App.css`.
 
 <!-- источник: docs-hash-and-scroll.mdc -->
 ## Hash и скролл документации
@@ -215,7 +215,7 @@ alwaysApply: true
 
 ### Реализация в приложении
 
-Параметры заданы **CSS-переменными** на `.docs-article-body` в `docs-app/src/App.css`. **Правила списков** вешаются на **`.docs-article-body :is(.docs-markdown-root, div[role='presentation'])`** — класс на обёртке + `role="presentation"` у того же блока в `Article.jsx` / `NewsArticle.jsx`. Так стили сохраняются, если на проде ещё отдаётся старый JS без класса `docs-markdown-root`, но с `role="presentation"`.
+Параметры заданы **CSS-переменными** на `.docs-article-body` в `engine/src/App.css`. **Правила списков** вешаются на **`.docs-article-body :is(.docs-markdown-root, div[role='presentation'])`** — класс на обёртке + `role="presentation"` у того же блока в `Article.jsx` / `NewsArticle.jsx`. Так стили сохраняются, если на проде ещё отдаётся старый JS без класса `docs-markdown-root`, но с `role="presentation"`.
 
 Списки из AST markdown получают классы **`docs-md-ol` / `docs-md-ul`** (`markdownListComponents.jsx`).
 
@@ -251,23 +251,23 @@ alwaysApply: true
 Ниже по файлу могли оставаться старые инварианты для:
 
 - сетки с превью (`obsheeLandingCardPreview.js`, `adminLandingCardPreview.js`, картинки `content/images/dashboards/`);
-- снимка конфигурации: `docs-app/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`.
+- снимка конфигурации: `engine/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`.
 
 Использовать только при намеренном восстановлении карточного UI.
 
 <!-- источник: docs-pdf-playwright.mdc; см. также отдельное правило docs-pdf-playwright.mdc (globs) -->
 ## PDF (Playwright): инварианты для движка
 
-**Регламент целиком:** `docs-app/engine-docs/PDF-EXPORT.md` — прокси Vite, разбор ошибок fetch, новости, сборка раздела (`orderedPathsForSectionPdfBundle`, без `…/00_main`).
+**Регламент целиком:** `engine/engine-docs/PDF-EXPORT.md` — прокси Vite, разбор ошибок fetch, новости, сборка раздела (`orderedPathsForSectionPdfBundle`, без `…/00_main`).
 
 ### Источник правды по тексту в PDF
 
-- **Канон:** headless Chromium печатает страницу с `?mc_pdf=1` (тот же HTML/CSS, что у пользователя). Реализация: `docs-app/pdf-server` (`POST /api/pdf` с телом `{ "url": "<полный URL страницы>" }`).
+- **Канон:** headless Chromium печатает страницу с `?mc_pdf=1` (тот же HTML/CSS, что у пользователя). Реализация: `engine/pdf-server` (`POST /api/pdf` с телом `{ "url": "<полный URL страницы>" }`).
 - **Запасной путь (только если сервис недоступен):** html2pdf/html2canvas в браузере → растровый PDF, текст не выделяется. Не позиционировать как «норму».
 
 ### Локальная разработка (обязательно)
 
-1. Поднять **pdf-server** (порт **3001**) **и** Vite. Удобная команда из `docs-app`: **`npm run dev:with-pdf`**.
+1. Поднять **pdf-server** (порт **3001**) **и** Vite. Удобная команда из `engine`: **`npm run dev:with-pdf`**.
 2. Браузер в DEV должен вызывать **`POST /api/pdf` на том же origin**, что и фронт (прокси в `vite.config.js` → `127.0.0.1:3001`). Реализовано в **`getPdfServiceApiUrl()`** в `runArticlePdfExport.js`.
 3. **Не** направлять браузер в DEV напрямую на `http://127.0.0.1:3001` с страницы `http://localhost:5174` — это другой origin → часто **Failed to fetch** (CORS / Private Network Access). Даже если в `.env.local` указан локальный URL, в DEV код должен предпочитать **`/api/pdf`**.
 

@@ -1,0 +1,51 @@
+{
+  "name": "engine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "postinstall": "node scripts/ensure-content-link.cjs",
+    "predev": "node scripts/ensure-content-link.cjs",
+    "prebuild": "node scripts/ensure-content-link.cjs",
+    "dev": "vite",
+    "pdf-server": "npm --prefix pdf-server start",
+    "dev:with-pdf": "concurrently -k -n pdf,vite -c green,blue \"npm run pdf-server\" \"npm run dev\"",
+    "build": "vite build",
+    "build:gh-pages": "vite build --base /medcontrol-docs-platform/",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "convert:html": "node scripts/html-to-md.cjs",
+    "convert:news": "node scripts/news-html-to-md.cjs",
+    "rebuild:obshee-9-preview": "node scripts/rebuild-obshee-9-preview.cjs",
+    "obshee-9:normalize-width": "node scripts/obshee-9-normalize-width.cjs"
+  },
+  "dependencies": {
+    "hast-util-find-and-replace": "^5.0.1",
+    "hastscript": "^9.0.1",
+    "html-to-pdfmake": "^2.5.33",
+    "html2pdf.js": "^0.14.0",
+    "lucide-react": "^1.7.0",
+    "pdfmake": "^0.3.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.13.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "node-html-parser": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "turndown": "^7.2.2",
+    "vite": "^7.3.1"
+  }
+}

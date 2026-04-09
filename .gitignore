@@ -7,6 +7,8 @@ dist-ssr/
 # Secrets
 .env
 .env.*
+!.env.example
+!**/.env.example
 .env.local
 
 # IDE / local
@@ -24,3 +26,6 @@ npm-debug.log*
 
 # Windows reserved name (accidental empty file)
 nul
+
+# Старый путь движка после переименования в engine/ — не коммитить случайный мусор
+/docs-app/

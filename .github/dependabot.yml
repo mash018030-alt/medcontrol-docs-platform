@@ -2,16 +2,16 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: /docs-app
+    directory: /engine
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
     labels:
       - dependencies
-      - docs-app
+      - engine
 
   - package-ecosystem: npm
-    directory: /docs-app/pdf-server
+    directory: /engine/pdf-server
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
