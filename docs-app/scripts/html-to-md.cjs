@@ -8,7 +8,7 @@
  *   node scripts/html-to-md.cjs obshee    — раздел «Общее» (1. Общее. MC Cloud), без титула/содержания/аннотации/рекомендации
  *   node scripts/html-to-md.cjs medkabinet — раздел «Медкабинет» (источник: public/content/references/manuals/medkabinet-extract)
  *
- * Исходники HTML лежат в репозитории контента: public/content/references/ (submodule).
+ * Исходники HTML лежат в public/content/references/ (каталог контента в репозитории платформы).
  */
 
 const fs = require('fs')
