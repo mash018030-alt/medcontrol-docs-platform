@@ -44,11 +44,11 @@
 - не отражаются в Едином реестре перевозчиков;
 - выделяются метками:
 
-  ![Карточка осмотра с меткой «Сервисное меню» в списке](/content/0_docs/1_obshee/images/04_vidy_osmotrov/01_kartochka_osmotra_s_metkoy_servisnoe_menyu.png)
+![Карточка осмотра с меткой «Сервисное меню» в списке](/content/0_docs/1_obshee/images/04_vidy_osmotrov/01_kartochka_osmotra_s_metkoy_servisnoe_menyu.png)
 
-  ![Карточка осмотра с меткой «Тестовый»](/content/0_docs/1_obshee/images/04_vidy_osmotrov/02_kartochka_osmotra_s_metkoy_testovyy.png)
+![Карточка осмотра с меткой «Тестовый»](/content/0_docs/1_obshee/images/04_vidy_osmotrov/02_kartochka_osmotra_s_metkoy_testovyy.png)
 
-  ![Карточка осмотра с меткой «Эмуляция»](/content/0_docs/1_obshee/images/04_vidy_osmotrov/03_kartochka_osmotra_s_metkoy_emulyatsiya.png)
+![Карточка осмотра с меткой «Эмуляция»](/content/0_docs/1_obshee/images/04_vidy_osmotrov/03_kartochka_osmotra_s_metkoy_emulyatsiya.png)
 
 ### Сервисный осмотр
 

@@ -5,7 +5,7 @@
 | Папка | Назначение |
 |-------|------------|
 | **`content/`** | Статьи, медиа, новости, **`references/`**. [Подробнее →](content/README.md) |
-| **`engine/`** | Код сайта (React + Vite), PDF-сервис, регламенты движка (**`engine/engine-docs/`**). Палитра и бренд в контенте: **`content/brand/`**, **`content/references/docs-brand/`**. [Подробнее →](engine/README.md) |
+| **`engine/`** | Код сайта (React + Vite), PDF-сервис, регламенты движка (**`engine/engine-docs/`**). Палитра и бренд в контенте: **`content/repo_docs/brand/`**, **`content/references/docs-brand/`**. [Подробнее →](engine/README.md) |
 
 **Быстрый старт:** `cd engine && npm install && npm run dev` (Node **20**). После установки создаётся связь **`engine/public/content/`** → **`../content`** (скрипт **`engine/scripts/ensure-content-link.cjs`**).
 

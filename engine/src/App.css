@@ -29,7 +29,7 @@
 /* Скрытый рендер релиза для PDF с хаба (без навигации), если нет pdf-server */
 .docs-news-hub-pdf-offscreen{position:fixed;left:-9999px;top:0;width:672px;max-width:672px;pointer-events:none;opacity:0;overflow:hidden;z-index:-1}
 
-/* Градиент баннера: нейтральный дефолт в :root (начало файла); продукт — content/brand/theme.css */
+/* Градиент баннера: нейтральный дефолт в :root (начало файла); продукт — content/repo_docs/brand/theme.css */
 .docs-news-banner{position:relative;border-radius:16px;overflow:hidden;min-height:168px;margin:0 0 1.25rem;box-shadow:var(--docs-news-banner-shadow)}
 .docs-news-banner__bg{position:absolute;inset:0;background:linear-gradient(125deg,var(--docs-news-banner-gradient-start) 0%,var(--docs-news-banner-gradient-end) 100%);opacity:1}
 .docs-news-banner__bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 80% 50%,#ffffff1f 0%,transparent 55%)}
@@ -955,7 +955,7 @@ main.docs-content .docs-article .docs-manual-footnotes__title{
   margin:1rem 0 0;
 }
 
-/* Макрос «Примечание» — токены :root (нейтрально в App.css, продукт в content/brand/theme.css) */
+/* Макрос «Примечание» — токены :root (нейтрально в App.css, продукт в content/repo_docs/brand/theme.css) */
 .docs-article .docs-note{
   margin:1rem 0;
   padding:1rem 1rem 1rem 3rem;

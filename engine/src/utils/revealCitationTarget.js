@@ -73,63 +73,63 @@ export function resolveArticleSpyOffsetPx(articleRoot) {
   return resolveEffectiveStickyOffsetPx(probe)
 }
 
-/** Пустой inline span (напр. id="ftnt_back*") даёт нулевой rect — берём следующий узел ([3]). */
-function anchorViewportTopForScroll(el) {
-  const r = el.getBoundingClientRect()
-  if (r.width > 0 || r.height > 0) return r.top
-  const next = el.nextElementSibling
-  if (next) {
-    const r2 = next.getBoundingClientRect()
-    if (r2.width > 0 || r2.height > 0) return r2.top
+/**
+ * Цепочка overflow-y между якорем и корнем: без сдвига их scrollTop окно может остаться наверху,
+ * а scrollIntoView прокручивает не тот порт (flex / вложенные колонки).
+ */
+function alignElementInVerticalScrollParents(targetEl, marginPx = 8) {
+  let p = targetEl.parentElement
+  while (p && p !== document.body && p !== document.documentElement) {
+    const st = getComputedStyle(p)
+    const oy = st.overflowY
+    if (
+      (oy === 'auto' || oy === 'scroll' || oy === 'overlay') &&
+      p.scrollHeight > p.clientHeight + 2
+    ) {
+      const er = targetEl.getBoundingClientRect()
+      const pr = p.getBoundingClientRect()
+      if (er.top < pr.top + marginPx) {
+        p.scrollTop -= pr.top + marginPx - er.top
+      } else if (er.bottom > pr.bottom - marginPx) {
+        p.scrollTop += er.bottom - (pr.bottom - marginPx)
+      }
+    }
+    p = p.parentElement
   }
-  return r.top
+}
+
+/** Прокрутка окна документа: явный scrollTop, без scrollIntoView (стабильнее при SPA-навигации). */
+function scrollViewportToElement(el, behavior) {
+  const pad = resolveEffectiveStickyOffsetPx(el)
+  const se = document.scrollingElement ?? document.documentElement
+  const rect = el.getBoundingClientRect()
+  const nextTop = rect.top + se.scrollTop - pad
+  window.scrollTo({
+    left: window.scrollX,
+    top: Math.max(0, nextTop),
+    behavior,
+  })
 }
 
 /**
  * Открывает details, затем прокручивает к якорю.
- * Сначала scrollIntoView (цепочка scroll-container), затем разовая коррекция по scroll-margin,
- * при сильном рассогласовании — запасной window.scrollTo (WebKit/вложенные скроллы).
+ * Сначала вложенные scroll-container, затем window по геометрии (и повтор на следующих кадрах после layout).
  */
 export function scrollToIdAfterReveal(rawId, { behavior = 'smooth' } = {}) {
   const el = resolveAnchorElement(rawId)
   if (!el) return false
   openAncestorDetails(el)
-  const offsetPx = () => resolveEffectiveStickyOffsetPx(el)
-  const finalizePosition = () => {
-    const pad = offsetPx()
-    const topNow = anchorViewportTopForScroll(el)
-    /* Целевая линия: верх якоря у «полосы» под шапкой (как scroll-spy) */
-    if (Math.abs(topNow - pad) > 6) {
-      window.scrollBy({
-        top: topNow - pad,
-        behavior: behavior === 'smooth' ? 'auto' : behavior,
-      })
-    }
-    requestAnimationFrame(() => {
-      const pad2 = offsetPx()
-      const t = anchorViewportTopForScroll(el)
-      if (Math.abs(t - pad2) > 6) {
-        const se = document.scrollingElement ?? document.documentElement
-        const y = se.scrollTop + t - pad2
-        window.scrollTo({ left: window.scrollX, top: Math.max(0, y), behavior: 'auto' })
-      }
-    })
+  const beh = behavior === 'smooth' ? 'smooth' : 'auto'
+
+  const pulse = (b) => {
+    alignElementInVerticalScrollParents(el)
+    scrollViewportToElement(el, b)
   }
 
+  pulse(beh)
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      try {
-        el.scrollIntoView({ behavior, block: 'start', inline: 'nearest' })
-      } catch {
-        const se = document.scrollingElement ?? document.documentElement
-        const y0 = se.scrollTop
-        const pad = offsetPx()
-        const top = anchorViewportTopForScroll(el) + y0 - pad
-        window.scrollTo({ left: window.scrollX, top: Math.max(0, top), behavior: 'auto' })
-        return
-      }
-      finalizePosition()
-    })
+    pulse(beh === 'smooth' ? 'auto' : beh)
+    requestAnimationFrame(() => pulse('auto'))
   })
   return true
 }

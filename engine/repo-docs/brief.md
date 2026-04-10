@@ -4,12 +4,12 @@
 
 ## Зачем это
 
-Нужна собственная веб-платформа: навигация по разделам, поиск по тексту, чтение статей в Markdown, оглавление статьи, переходы «назад / вперёд», экспорт в PDF там, где это предусмотрено. Контент (тексты, скриншоты, лого, PDF-эталоны для сверки) лежит в корневом каталоге **`content/`**; движок подключает его как **`engine/public/content/`** (связь после `npm install`). Оформление MedControl: **`content/brand/theme.css`** и текстовый референс палитры — **`content/references/docs-brand/`**; нейтральные дефолты платформы — **`engine/src/App.css`**.
+Нужна собственная веб-платформа: навигация по разделам, поиск по тексту, чтение статей в Markdown, оглавление статьи, переходы «назад / вперёд», экспорт в PDF там, где это предусмотрено. Контент (тексты, скриншоты, лого, PDF-эталоны для сверки) лежит в корневом каталоге **`content/`**; движок подключает его как **`engine/public/content/`** (связь после `npm install`). Оформление MedControl: **`content/repo_docs/brand/theme.css`** и текстовый референс палитры — **`content/references/docs-brand/`**; нейтральные дефолты платформы — **`engine/src/App.css`**.
 
 ## Границы и приоритеты
 
 - Платформа ориентирована на **читаемость и предсказуемую навигацию**, а не на экспериментальный UI.
-- Детальные текстовые требования к функциям при необходимости дополняются в **`content/references/`**. Порядок репозиториев и этапы — в **`CONTEXT.md`**; настройки агента Cursor для этой папки — в **`CURSOR-AGENT-SETTINGS.md`**.
+- Детальные текстовые требования к функциям при необходимости дополняются в **`content/references/`** (каталог описан в **`content/repo_docs/REFERENCES.md`**). Порядок репозиториев и этапы — в **`CONTEXT.md`**; настройки агента Cursor для этой папки — в **`CURSOR-AGENT-SETTINGS.md`**.
 
 ## Куда смотреть дальше
 
@@ -18,6 +18,6 @@
 | Запуск, меню, сборка | [**`README.md`**](README.md), [**`engine/README.md`**](engine/README.md) |
 | Контекст репо и план | [**`CONTEXT.md`**](CONTEXT.md) |
 | Cursor: агент и разрешения | [**`CURSOR-AGENT-SETTINGS.md`**](CURSOR-AGENT-SETTINGS.md) |
-| Цвета и визуальные референсы (контент) | [**`../../content/references/docs-brand/README.md`](../../content/references/docs-brand/README.md)**, тема — [**`../../content/brand/README.md`](../../content/brand/README.md)** |
+| Цвета и визуальные референсы (контент) | [**`../../content/references/docs-brand/README.md`](../../content/references/docs-brand/README.md)**, тема — [**`../../content/repo_docs/brand/README.md`](../../content/repo_docs/brand/README.md)** |
 
-*Файл намеренно короткий: при смене целей платформы обновляйте этот бриф и при необходимости расширяйте требования в контентном `references/`.*
+*Файл намеренно короткий: при смене целей платформы обновляйте этот бриф и при необходимости расширяйте требования в **`content/references/`** (см. **`content/repo_docs/REFERENCES.md`**).*

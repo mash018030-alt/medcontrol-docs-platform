@@ -8,12 +8,12 @@
 | **`engine/`** | Веб-приложение (React + Vite): UI, роутинг, поиск, сборка. Это **движок**, не папка со статьями для читателя. |
 | **`engine/public/content/`** | Связь (junction/symlink) на **`../content`**, создаётся **`npm install`** / **`ensure-content-link.cjs`**. Нужна Vite для URL `/content/…`. В git не хранится (см. **`engine/.gitignore`**). |
 | **`engine/engine-docs/`** | Служебные **markdown-заметки только про движок** (PDF, таблицы, деплой). **Не** попадают на сайт и **не** в поиск по статьям. Имя папки намеренно не `docs`, чтобы не смешивать с материалами в **`content/`**. |
-| **`content/brand/`** | Подключаемая **тема** (`theme.css`): продуктовые цвета и шрифты MedControl; не статьи сайта. |
+| **`content/repo_docs/`** | Служебная документация репозитория контента (описания, REFERENCES, снимки); подпапка **`brand/`** — **`theme.css`** (продуктовые цвета и шрифты MedControl). Не статьи сайта. |
 | **`content/references/docs-brand/`** | Текстовый **референс палитры** (Markdown в **`colors/`**): согласование с дизайном; ветка **`references/`** не сканируется как статьи. |
 
 Индекс файлов в `engine-docs/`: **[`../engine-docs/README.md`](../engine-docs/README.md)**.
 
-**Канон:** на верхнем уровне репозитория — **`content/`** и **`engine/`**; **нейтральная** оболочка — код и **`App.css`** в **`engine/`**; **бренд MedControl** — **`content/brand/`** + **`content/references/docs-brand/`**.
+**Канон:** на верхнем уровне репозитория — **`content/`** и **`engine/`**; **нейтральная** оболочка — код и **`App.css`** в **`engine/`**; **бренд MedControl** — **`content/repo_docs/brand/`** + **`content/references/docs-brand/`**.
 
 ---
 
@@ -22,9 +22,9 @@
 | Имя | Почему может сбивать | Переименовывать? |
 |-----|----------------------|------------------|
 | **`content/0_docs/`** | Слово **docs** рядом с «документацией про движок»; префикс **`0_`** выглядит как служебная нумерация. По смыслу это **дерево разделов пользовательской документации MedControl** (URL, `nav.js`). | **Почти никогда:** смена затронет все пути статей, меню, редиректы, внешние закладки. Имеет смысл только как большая миграция с ТЗ. |
-| **`content/references/`** | «References» ассоциируется со списком литературы; здесь **эталоны, PDF, экспорты руководств** для сверки. | Переименование = массовая правка путей в контенте. Проще опираться на **`references/README.md`**. |
+| **`content/references/`** | «References» ассоциируется со списком литературы; здесь **эталоны, PDF, экспорты руководств** для сверки. | Переименование = массовая правка путей в контенте. Описание содержимого — **`content/repo_docs/REFERENCES.md`**; в **`references/README.md`** — короткий указатель. |
 | **`content/references/docs-brand/`** | Палитра и пояснения для UI доков (Markdown), не статьи для читателя. | См. **[`../../content/references/docs-brand/README.md`](../../content/references/docs-brand/README.md)**. |
-| **`content/brand/`** | CSS-тема для браузера. | См. **[`../../content/brand/README.md`](../../content/brand/README.md)**. |
+| **`content/repo_docs/brand/`** | CSS-тема для браузера. | См. **[`../../content/repo_docs/brand/README.md`](../../content/repo_docs/brand/README.md)**. |
 | **`engine/public/`** (стандарт Vite) | Статика движка: иконки, архив **`previous_versions/`**, связь **`content/`** (см. выше). | Не трогать без нужды: конвенция фреймворка. |
 | **`engine/archive/`** | **История миграций**, не актуальный код (снимки этапа разделения репозиториев). | См. **`engine/archive/migration/README.md`**. |
 | **`engine/repo-docs/`** (`brief.md`, `CONTEXT.md`, …) | Метадокументация репозитория и настройки агента; не путать с пользовательским контентом. | Индекс: **[`README.md`](README.md)** в этой папке; корневой **[`../../README.md`](../../README.md)** — точка входа в репо. |

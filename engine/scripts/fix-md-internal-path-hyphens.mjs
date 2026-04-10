@@ -74,7 +74,7 @@ function walkMdFiles(dir, out = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, ent.name)
     if (ent.isDirectory()) {
-      if (ent.name === 'repo_docs' || ent.name === 'repo-docs' || ent.name === 'brand') continue
+      if (ent.name === 'repo_docs' || ent.name === 'repo-docs') continue
       walkMdFiles(p, out)
     } else if (ent.name.endsWith('.md')) out.push(p)
   }

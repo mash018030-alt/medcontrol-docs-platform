@@ -12,4 +12,6 @@
 
 Архив снимков миграции: **`../archive/migration/`** (см. [**`../archive/migration/README.md`**](../archive/migration/README.md)).
 
+Служебные материалы **о контенте** (структура `content/`, каталог `references/`, снимок «Общее»): **[`../../content/repo_docs/REPO_STRUCTURE.md`](../../content/repo_docs/REPO_STRUCTURE.md)**, **[`../../content/repo_docs/REFERENCES.md`](../../content/repo_docs/REFERENCES.md)**.
+
 Точка входа в репозиторий: **[`../../README.md`](../../README.md)**.

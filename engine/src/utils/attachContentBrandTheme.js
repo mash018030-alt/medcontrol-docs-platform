@@ -1,5 +1,5 @@
 /**
- * Подключает theme.css из репозитория контента (content/brand/theme.css → /content/brand/theme.css).
+ * Подключает theme.css из репозитория контента (content/repo_docs/brand/theme.css → /content/repo_docs/brand/theme.css).
  * Вызывать после импорта App.css, чтобы переменные перекрывали нейтральные дефолты движка.
  *
  * Отключить (только нейтральные токены из App.css): в `engine/.env.local` задать
@@ -14,7 +14,7 @@ export function attachContentBrandTheme() {
 
   const base = import.meta.env.BASE_URL || '/'
   const prefix = base.endsWith('/') ? base : `${base}/`
-  const href = `${prefix}content/brand/theme.css`
+  const href = `${prefix}content/repo_docs/brand/theme.css`
 
   const link = document.createElement('link')
   link.id = id

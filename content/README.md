@@ -6,12 +6,15 @@
 
 ## О репозитории (`repo_docs/`)
 
-Папка **`repo_docs/`** — не пользовательская документация MedControl (она в **`0_docs/`** и т.д.), а заметки **про устройство этого Git-репозитория** и порядок миграции структуры.
+Папка **`repo_docs/`** — не пользовательская документация MedControl (она в **`0_docs/`** и т.д.), а заметки **про устройство этого Git-репозитория**, миграцию структуры и **порядок работы с контентом** (пути, скрины в статьях).
 
 | Файл | Назначение |
 |------|------------|
 | [repo_docs/REPO_STRUCTURE.md](repo_docs/REPO_STRUCTURE.md) | **Словарь имён, этапы 1–3, с чего начать** (каркас `docs/`/`news/`, затем раздел «Администрирование» и остальные по шаблону) |
-| [references/README.md](references/README.md) | Референсы и вспомогательные материалы (не страницы сайта) |
+| [repo_docs/izobrazheniya_v_statyah.md](repo_docs/izobrazheniya_v_statyah.md) | **Скриншоты в статьях:** пути `/content/…`, имена файлов, ширина на странице, списки в markdown, PDF |
+| [repo_docs/REFERENCES.md](repo_docs/REFERENCES.md) | **Каталог `references/`:** PDF, экспорты руководств, палитра в `docs-brand/`, скрипт HTML→MD (не страницы сайта) |
+| [repo_docs/OBSHEE_CONTENT_SNAPSHOT.md](repo_docs/OBSHEE_CONTENT_SNAPSHOT.md) | Снимок структуры контента раздела «Общее» и связь с разводящей в движке |
+| [references/README.md](references/README.md) | Краткий указатель: куда смотреть описание папки `references/` |
 | `images/dashboards/0_main/*.png` | Иконки карточек разделов на главном дашборде «Документация» (`admin.png`, `glossary.png`, `main.png`, `medadmin.png`, `medcab.png`); в движке путь вида `/content/images/dashboards/0_main/<файл>.png`. Папки превью разводящих **`Obshee/`** и **`admin/`** удалены — старый карточный UI не используется (см. `engine/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`). |
 | `images/logo/logo_3.png` | Логотип платформы; в движке: `/content/images/logo/logo_3.png` |
 

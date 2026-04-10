@@ -6,23 +6,23 @@
 
 В разделе есть:
 
-- <span class="docs-li-underline">Поле для ручного ввода данных:</span>
+- Поле для ручного ввода данных
 
 ![01_pole_dlya_ruchnogo_vvoda_dannyh.png](/content/0_docs/1_obshee/images/03_poisk_osmotrov/01_pole_dlya_ruchnogo_vvoda_dannyh.png)
 
-- <span class="docs-li-underline">Переключатель для группировки попыток осмотров на серии</span>
+- Переключатель для группировки попыток осмотров на серии
 
 ![02_pereklyuchatel_dlya_gruppirovki_popytok_os.png](/content/0_docs/1_obshee/images/03_poisk_osmotrov/02_pereklyuchatel_dlya_gruppirovki_popytok_os.png)
 
-- <span class="docs-li-underline">Поиск осмотра по его ID номеру:</span>
+- Поиск осмотра по его ID номеру
 
 ![03_poisk_osmotra_po_ego_id_nomeru.png](/content/0_docs/1_obshee/images/03_poisk_osmotrov/03_poisk_osmotra_po_ego_id_nomeru.png)
 
-- <span class="docs-li-underline">Поиск тестовых осмотров:</span>
+- Поиск тестовых осмотров
 
 ![04_poisk_testovyh_osmotrov.png](/content/0_docs/1_obshee/images/03_poisk_osmotrov/04_poisk_testovyh_osmotrov.png)
 
-- <span class="docs-li-underline">Временной диапазон</span> – поиск осмотров по периоду времени, в течение которого они были проведены:
+- Временной диапазон – поиск осмотров по периоду времени, в течение которого они были проведены:
 
 ![05_vremennoy_diapazon_poisk_osmotrov_po_perio.png](/content/0_docs/1_obshee/images/03_poisk_osmotrov/05_vremennoy_diapazon_poisk_osmotrov_po_perio.png)
 
@@ -41,7 +41,7 @@
 </div>
 </details>
 
-<p><span class="docs-li-underline">Расширенный фильтр:</span></p>
+- Расширенный фильтр
 
 ![07_poisk_osmotrov.png](/content/0_docs/1_obshee/images/03_poisk_osmotrov/07_poisk_osmotrov.png)
 
@@ -53,7 +53,7 @@
 2.  Медорганизация, обработавшая осмотр.
 3.  Работник, прошедший осмотр.
 4.  Вид осмотра.
-5.  Поиск [сервисных осмотров](/0_docs/1_obshee/articles/04_vidy_osmotrov#сервисный-осмотр).
+5.  Поиск [сервисных осмотров](/0_docs/1_obshee/articles/04_vidy_osmotrov#servisnye-i-testovye-osmotry-p3000).
 6.  Переключатель для включения в поиск дочерних организаций.
 7.  ПАК, с которого был пройден осмотр.
 8.  Медработник, вынесший заключение по осмотру.

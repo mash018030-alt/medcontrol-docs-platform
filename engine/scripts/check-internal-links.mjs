@@ -79,8 +79,7 @@ function walkDir(d, rel = '') {
         (ent.name === 'docs' ||
           ent.name === 'references' ||
           ent.name === 'repo_docs' ||
-          ent.name === 'repo-docs' ||
-          ent.name === 'brand')
+          ent.name === 'repo-docs')
       )
         continue
       walkDir(p, r)

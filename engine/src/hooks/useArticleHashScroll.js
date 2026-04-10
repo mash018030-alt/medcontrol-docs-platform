@@ -6,7 +6,7 @@ import {
   decodeHashFragment,
   resolveAnchorElement,
 } from '../utils/revealCitationTarget'
-import { consumeTocHashNavigationLock } from '../utils/hashNavigationLock'
+import { consumeTocHashNavigationLock, tocHashNavigationLock } from '../utils/hashNavigationLock'
 import { scheduleHeadingHashFlash } from '../utils/headingHashFlash'
 
 /** Не давать spy «перетягивать» подсветку TOC во время плавной прокрутки к якорю (TOC / сноска). */
@@ -58,6 +58,13 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
   const locationRef = useRef(location)
   locationRef.current = location
 
+  /* Если lock остался true (размонтирование до consume), следующая статья с # молча пропускает скролл. */
+  const pathForLockRef = useRef(location.pathname)
+  if (pathForLockRef.current !== location.pathname) {
+    pathForLockRef.current = location.pathname
+    tocHashNavigationLock.current = false
+  }
+
   const [activeHeadingId, setActiveHeadingId] = useState(null)
 
   useEffect(() => {
@@ -83,9 +90,9 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
       if (cancelled) return
       const el = resolveAnchorElement(targetId)
       if (el) {
-        const behavior = attempts === 0 ? 'smooth' : 'auto'
+        /* Только auto: второй smooth подряд (RR / scrollIntoView) в Chromium часто отменяет движение. */
         quietHashSpy()
-        scrollToIdAfterReveal(targetId, { behavior })
+        scrollToIdAfterReveal(targetId, { behavior: 'auto' })
         cancelFlash = scheduleHeadingHashFlash(targetId)
         return
       }
@@ -97,7 +104,7 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
 
     if (resolveAnchorElement(targetId)) {
       quietHashSpy()
-      scrollToIdAfterReveal(targetId, { behavior: 'smooth' })
+      scrollToIdAfterReveal(targetId, { behavior: 'auto' })
       cancelFlash = scheduleHeadingHashFlash(targetId)
     } else {
       rafId = requestAnimationFrame(tick)
@@ -108,6 +115,35 @@ export function useArticleHashScroll(articleBodyRef, { loading, slug, md, enable
       if (rafId) cancelAnimationFrame(rafId)
     }
   }, [enabled, loading, location.hash, md, slug])
+
+  /* После commit навигации RR может сбросить scroll уже после layout: повторяем якорь на следующем кадре (как в Toc). */
+  useEffect(() => {
+    if (!enabled || loading || !location.hash) return
+    const raw = location.hash.slice(1)
+    if (!raw || isTextFragmentHash(raw)) return
+    const targetId = decodeHashFragment(raw)
+    if (!targetId) return
+
+    let cancelled = false
+    const run = () => {
+      if (cancelled) return
+      if (!resolveAnchorElement(targetId)) return
+      quietHashSpy()
+      scrollToIdAfterReveal(targetId, { behavior: 'auto' })
+    }
+    let outer = 0
+    outer = requestAnimationFrame(() => {
+      requestAnimationFrame(run)
+    })
+    const tLate = window.setTimeout(run, 120)
+    const tLater = window.setTimeout(run, 400)
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(outer)
+      window.clearTimeout(tLate)
+      window.clearTimeout(tLater)
+    }
+  }, [enabled, loading, location.hash, location.pathname, md, slug])
 
   const runSpyRef = useRef(() => {})
 

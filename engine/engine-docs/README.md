@@ -12,5 +12,6 @@
 | [**`TABLES-DISPLAY.md`**](TABLES-DISPLAY.md) | **Таблицы в статьях:** markdown vs HTML, обёртка `MarkdownTable`, липкая шапка, `border-collapse`, горизонтальный скролл, чек-лист перед правками. |
 | [**`SECTION_PDF_BUNDLE.md`**](SECTION_PDF_BUNDLE.md) | Пакетный PDF целого раздела с главного дашборда (иконка «Скачать в PDF» на карточке). |
 | [**`OBSHEE-LANDING-SNAPSHOT.md`**](OBSHEE-LANDING-SNAPSHOT.md) | Архив: разводящая «Общее» — навигация, превью, PDF, чек-лист восстановления карточного UI. |
+| [**`OBSHEE_CONTENT_SNAPSHOT.md`** (контент)](../../content/repo_docs/OBSHEE_CONTENT_SNAPSHOT.md) | Снимок **контента** раздела «Общее» (файлы статей, оглавление, PDF-эталон) в **`content/repo_docs/`**. |
 
 Подробнее о запуске и контенте — [**`../README.md`**](../README.md). PDF-сервер — [**`../pdf-server/README.md`**](../pdf-server/README.md).

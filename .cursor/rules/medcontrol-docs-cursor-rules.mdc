@@ -100,7 +100,7 @@ alwaysApply: true
 
 ### CSS-переменные
 
-Значения по умолчанию для продукта — **`content/brand/theme.css`** (`:root`); нейтральные дефолты платформы — **`engine/src/App.css`** (`:root`). Блок `.docs-article .docs-attention` использует `var(--docs-attention-*)` (наследование с `:root`):
+Значения по умолчанию для продукта — **`content/repo_docs/brand/theme.css`** (`:root`); нейтральные дефолты платформы — **`engine/src/App.css`** (`:root`). Блок `.docs-article .docs-attention` использует `var(--docs-attention-*)` (наследование с `:root`):
 
 | Токен | Значение | Назначение |
 |--------|----------|------------|
@@ -116,7 +116,7 @@ alwaysApply: true
 - **Заголовок** (`.docs-attention-title`): жирный, цвет `var(--docs-attention-accent)`, размер ~`1rem`.
 - **Текст абзацев** (`.docs-attention p`): цвет **`#000`**, межстрочный ~`1.55`, размер ~`0.9375rem`.
 
-При смене бренда править **только** три переменные `--docs-attention-*` в **`content/brand/theme.css`** (и при необходимости отступы в правилах `.docs-attention` в `App.css`).
+При смене бренда править **только** три переменные `--docs-attention-*` в **`content/repo_docs/brand/theme.css`** (и при необходимости отступы в правилах `.docs-attention` в `App.css`).
 
 ### Разметка в markdown (сырой HTML)
 
@@ -149,10 +149,10 @@ alwaysApply: true
 ## Палитра цветов
 
 - Текстовый референс палитры MedControl (таблица HEX/RGB, назначение): **`content/references/docs-brand/colors/`**, точка входа — **`color-palette.md`**.
-- Реализация в интерфейсе: **нейтральные** дефолты платформы — **`engine/src/App.css`** (`:root`); **продукт** (MedControl и др.) — **`content/brand/theme.css`** (подключается после `App.css`, см. `attachContentBrandTheme` в `main.jsx`).
-- Папка **`content/references/docs-brand/`** — референс для людей, не публикуемые статьи (ветка **`references/`** не сканируется как статьи). Папка **`content/brand/`** — тема в контенте; в скриптах проверки ссылок **`brand/`** обходится как служебная.
+- Реализация в интерфейсе: **нейтральные** дефолты платформы — **`engine/src/App.css`** (`:root`); **продукт** (MedControl и др.) — **`content/repo_docs/brand/theme.css`** (подключается после `App.css`, см. `attachContentBrandTheme` в `main.jsx`).
+- Папка **`content/references/docs-brand/`** — референс для людей, не публикуемые статьи (ветка **`references/`** не сканируется как статьи). Тема **`content/repo_docs/brand/`** лежит внутри **`content/repo_docs/`**; вся ветка **`repo_docs/`** не обходится как дерево статей в `check-internal-links.mjs` и `fix-md-internal-path-hyphens.mjs`.
 
-При смене цветов MedControl правьте **и** markdown в **`content/references/docs-brand/colors/`**, **и** переменные в **`content/brand/theme.css`** (в т.ч. дашборд, поиск, макросы, тинты ховера). Дефолты «голой» платформы без контент-темы — **`engine/src/App.css`**. Заголовок вкладки, favicon: **`VITE_DOCS_SITE_TITLE`**, **`VITE_DOCS_FAVICON_URL`** / **`VITE_DOCS_FAVICON_TYPE`** в `engine` (`vite.config.js`); подпись лого: **`VITE_DOCS_HOME_ARIA_LABEL`**.
+При смене цветов MedControl правьте **и** markdown в **`content/references/docs-brand/colors/`**, **и** переменные в **`content/repo_docs/brand/theme.css`** (в т.ч. дашборд, поиск, макросы, тинты ховера). Дефолты «голой» платформы без контент-темы — **`engine/src/App.css`**. Заголовок вкладки, favicon: **`VITE_DOCS_SITE_TITLE`**, **`VITE_DOCS_FAVICON_URL`** / **`VITE_DOCS_FAVICON_TYPE`** в `engine` (`vite.config.js`); подпись лого: **`VITE_DOCS_HOME_ARIA_LABEL`**.
 
 <!-- источник: docs-hash-and-scroll.mdc -->
 ## Hash и скролл документации

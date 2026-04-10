@@ -354,9 +354,12 @@ function ArticleContent({ slug, isMcPdf }) {
                   props.download != null ||
                   props.target === '_blank'
                 if (!useNative && isInternalDocsPath(href)) {
+                  const destHasHash = typeof href === 'string' && href.includes('#')
                   return (
                     <Link
                       to={routerLinkTo(appendDocVerToInternalHref(href, location.search))}
+                      /* RR7 иначе после перехода может сбросить scroll в (0,0) и перебить прокрутку к якорю (см. Toc.jsx). */
+                      preventScrollReset={destHasHash}
                       className={className}
                       {...props}
                     >
