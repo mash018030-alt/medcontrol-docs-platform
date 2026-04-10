@@ -28,13 +28,11 @@
 
 ## Подпапки
 
-- **`docs-brand/`** — **канонический** текстовый референс палитры UI доков MedControl: **`docs-brand/colors/color-palette.md`** и соседние `.md`. Подключаемые в браузер переменные — в **`../brand/theme.css`**. См. **[`docs-brand/README.md`](docs-brand/README.md)**.
+- **`docs-brand/`** — **канон палитры** UI доков MedControl: **`docs-brand/colors/color-palette.md`**, поясняющие `.md`, PDF/PNG от дизайна **в той же папке `colors/`**. Подключаемые в браузер переменные — в **`../brand/theme.css`**. См. **[`docs-brand/README.md`](docs-brand/README.md)**. (Старая папка **`Colors/`** с дублирующими markdown удалена; бинарники перенесены в **`docs-brand/colors/`**.)
 - **`manuals/1_obshee_extract/`** — экспорт «1. Общее»: HTML `1..MCCloud..html`, каталог **`images/`**.
 - **`manuals/admin_extract/`** — экспорт администрирования: `2..MCCloud..html`, **`images/`**.
 - **`manuals/medkabinet_extract/`** — экспорт «Медкабинет»: `3..MCCloud..html`, **`images/`**.
 - **`manuals/4_rukovodstvo/`** — руководство медадминистратора: `4..MCCloud..html`, **`images/`**.
-- **`Colors/`** — старые материалы от дизайна (PDF/PNG и черновые `.md`). Не дублируйте смысл **`docs-brand/colors/`**: при расхождении правьте **`docs-brand/`** и **`../brand/theme.css`**, здесь оставляйте вложения для архива.
-
 ## Скрипт конвертации HTML → Markdown
 
 Из каталога `engine` движка:

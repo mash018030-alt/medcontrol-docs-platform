@@ -1,6 +1,6 @@
 # Синий (акцент интерфейса)
 
-Образец-скрин (если добавите): **`accent-blue.png`** в этой папке `content/references/docs-brand/colors/`.
+Образец от дизайна в репозитории: **`sinii.png`** (то же значение, что у канонического имени **`accent-blue.png`**). Папка — **`content/references/docs-brand/colors/`**.
 
 HEX: **`#4A69FF`** · RGB: `74, 105, 255`
 
