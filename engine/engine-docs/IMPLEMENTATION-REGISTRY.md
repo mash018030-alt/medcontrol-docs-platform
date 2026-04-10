@@ -44,3 +44,4 @@
 - **2026-04-09:** корень **`/`** — главная платформы (`PlatformHomePage`); дашборд MedControl — **`/documentation`** (`DOCS_DASHBOARD_PATH`); навигация и «назад из раздела» синхронизированы с константой.
 - **2026-04-09:** с **`PlatformHomePage`** убраны CTA-кнопки «документация / новости»; вход — через переключатель продуктов в шапке.
 - **2026-04-09:** **`NiiDocsCornerMark`** — метка **НИИ_Docs** в правом нижнем углу, ссылка на **`/`**; не в PDF-режиме и не при печати.
+- **2026-04-09:** текстовый референс палитры перенесён из **`engine/docs-brand/`** в **`content/references/docs-brand/`** (нейтральная платформа — только **`App.css`** в движке; MedControl — **`content/brand/theme.css`** + markdown в контенте); обновлены **`.cursor/rules`**, **`REPO-LAYOUT.md`**, **`brief`**, **`CONTEXT`**, **`TABLES-DISPLAY.md`**, корневой **`README.md`**, **`references/README.md`**.

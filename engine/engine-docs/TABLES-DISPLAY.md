@@ -37,7 +37,7 @@
 ### 3) Классы таблиц в контенте
 
 - **`docs-table`** — базовая стилизация; при необходимости модификаторы (`docs-table-reglament`, `docs-table-pak`, `docs-table-lists` и т.д.) — см. существующие статьи и блоки в `App.css`.
-- Цвет фона шапки и объединённых ячеек завязан на дизайн-токены — см. **`engine/docs-brand/colors/`**, **`content/brand/theme.css`** (продукт) и **`App.css`** (дефолты).
+- Цвет фона шапки и объединённых ячеек завязан на дизайн-токены — см. **`content/references/docs-brand/colors/`**, **`content/brand/theme.css`** (продукт) и **`App.css`** (дефолты платформы).
 
 ---
 
@@ -70,6 +70,6 @@
 | `src/components/MarkdownTable.jsx` | Обёртка, `ResizeObserver`, класс `--no-h-scroll` |
 | `src/App.css` | `.docs-table-scroll`, `thead`/`th`, `border-collapse`, медиа и PDF |
 | `src/components/MarkdownTr.jsx` | Особые строки таблиц (например FAQ-рубрика) |
-| `engine/docs-brand/colors/color-palette.md`, `content/brand/theme.css` | Согласованность цветов ячеек/шапки |
+| `content/references/docs-brand/colors/color-palette.md`, `content/brand/theme.css` | Согласованность цветов ячеек/шапки |
 
 Обновляйте этот документ, если меняете контракт обёртки или правила sticky.

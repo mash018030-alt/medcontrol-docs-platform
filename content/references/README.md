@@ -16,7 +16,7 @@
 
 **Путь в репозитории платформы:** **`content/references/`** (корень репо, рядом с **`0_docs/`**, **`1_news/`** и т.д.). На сайте и для Vite тот же каталог доступен как **`/content/references/…`**.
 
-Краткая карта для людей и для ассистента (дополнительно к **[`../../engine/repo-docs/brief.md`](../../engine/repo-docs/brief.md)** и соседним файлам в **`engine/repo-docs/`** — индекс **[`../../engine/repo-docs/README.md`](../../engine/repo-docs/README.md)**).
+Краткая карта для людей и для ассистента (дополнительно к **[`../../engine/repo-docs/brief.md`](../../engine/repo-docs/brief.md)** и соседним файлам в **`engine/repo-docs/`** — индекс **[`../../engine/repo-docs/README.md`](../../engine/repo-docs/README.md)**). Регламент скриншотов и путей к картинкам в статьях — в **[`../repo_docs/izobrazheniya_v_statyah.md`](../repo_docs/izobrazheniya_v_statyah.md)**.
 
 ## Корень `references/`
 
@@ -28,11 +28,12 @@
 
 ## Подпапки
 
+- **`docs-brand/`** — **канонический** текстовый референс палитры UI доков MedControl: **`docs-brand/colors/color-palette.md`** и соседние `.md`. Подключаемые в браузер переменные — в **`../brand/theme.css`**. См. **[`docs-brand/README.md`](docs-brand/README.md)**.
 - **`manuals/1_obshee_extract/`** — экспорт «1. Общее»: HTML `1..MCCloud..html`, каталог **`images/`**.
 - **`manuals/admin_extract/`** — экспорт администрирования: `2..MCCloud..html`, **`images/`**.
 - **`manuals/medkabinet_extract/`** — экспорт «Медкабинет»: `3..MCCloud..html`, **`images/`**.
 - **`manuals/4_rukovodstvo/`** — руководство медадминистратора: `4..MCCloud..html`, **`images/`**.
-- **`Colors/`** — палитра и токены цвета (`color_palette.md`, `light.md`, `sinii.md`, `temno_sinii.md`, `help_gradient.md`). В репозитории движка договорённости по цветам могут дублироваться в `engine/docs-brand/colors` (например `accent-blue.md`, `dark-blue.md`) — сверяйте с этим каталогом при переносе.
+- **`Colors/`** — старые материалы от дизайна (PDF/PNG и черновые `.md`). Не дублируйте смысл **`docs-brand/colors/`**: при расхождении правьте **`docs-brand/`** и **`../brand/theme.css`**, здесь оставляйте вложения для архива.
 
 ## Скрипт конвертации HTML → Markdown
 

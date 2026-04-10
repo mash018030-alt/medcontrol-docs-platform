@@ -148,11 +148,11 @@ alwaysApply: true
 <!-- источник: docs-design-colors-location.mdc -->
 ## Палитра цветов
 
-- Текстовый референс (таблица HEX/RGB, назначение): **`engine/docs-brand/colors/`**, точка входа — **`color-palette.md`**.
+- Текстовый референс палитры MedControl (таблица HEX/RGB, назначение): **`content/references/docs-brand/colors/`**, точка входа — **`color-palette.md`**.
 - Реализация в интерфейсе: **нейтральные** дефолты платформы — **`engine/src/App.css`** (`:root`); **продукт** (MedControl и др.) — **`content/brand/theme.css`** (подключается после `App.css`, см. `attachContentBrandTheme` в `main.jsx`).
-- Папка **`engine/docs-brand`** — референс для людей, не публикуемые статьи. Папка **`content/brand/`** — тема в контенте; в скриптах проверки ссылок обходится как служебная (не статьи).
+- Папка **`content/references/docs-brand/`** — референс для людей, не публикуемые статьи (ветка **`references/`** не сканируется как статьи). Папка **`content/brand/`** — тема в контенте; в скриптах проверки ссылок **`brand/`** обходится как служебная.
 
-При смене цветов MedControl правьте **и** markdown в `engine/docs-brand/colors/` (по желанию), **и** переменные в **`content/brand/theme.css`** (в т.ч. дашборд, поиск, макросы, тинты ховера); при смене дефолтов «голой» платформы — **`App.css`**. Заголовок вкладки, favicon: **`VITE_DOCS_SITE_TITLE`**, **`VITE_DOCS_FAVICON_URL`** / **`VITE_DOCS_FAVICON_TYPE`** в `engine` (`vite.config.js`); подпись лого: **`VITE_DOCS_HOME_ARIA_LABEL`**.
+При смене цветов MedControl правьте **и** markdown в **`content/references/docs-brand/colors/`**, **и** переменные в **`content/brand/theme.css`** (в т.ч. дашборд, поиск, макросы, тинты ховера). Дефолты «голой» платформы без контент-темы — **`engine/src/App.css`**. Заголовок вкладки, favicon: **`VITE_DOCS_SITE_TITLE`**, **`VITE_DOCS_FAVICON_URL`** / **`VITE_DOCS_FAVICON_TYPE`** в `engine` (`vite.config.js`); подпись лого: **`VITE_DOCS_HOME_ARIA_LABEL`**.
 
 <!-- источник: docs-hash-and-scroll.mdc -->
 ## Hash и скролл документации
