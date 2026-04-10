@@ -250,7 +250,7 @@ alwaysApply: true
 
 Ниже по файлу могли оставаться старые инварианты для:
 
-- сетки с превью (`obsheeLandingCardPreview.js`, `adminLandingCardPreview.js`, картинки `content/images/dashboards/`);
+- сетки с превью (модули и `content/images/dashboards/Obshee|admin/` удалены из репо; восстановление — из истории git + `OBSHEE-LANDING-SNAPSHOT.md`);
 - снимка конфигурации: `engine/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`.
 
 Использовать только при намеренном восстановлении карточного UI.

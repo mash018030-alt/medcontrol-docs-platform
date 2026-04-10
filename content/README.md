@@ -12,7 +12,7 @@
 |------|------------|
 | [repo_docs/REPO_STRUCTURE.md](repo_docs/REPO_STRUCTURE.md) | **Словарь имён, этапы 1–3, с чего начать** (каркас `docs/`/`news/`, затем раздел «Администрирование» и остальные по шаблону) |
 | [references/README.md](references/README.md) | Референсы и вспомогательные материалы (не страницы сайта) |
-| `images/dashboards/0_main/*.png` | Иконки карточек разделов на главном дашборде «Документация» (`admin.png`, `glossary.png`, `main.png`, `medadmin.png`, `medcab.png`); в движке путь вида `/content/images/dashboards/0_main/<файл>.png` (обновить `docsDashboardSections.js` или аналог, если раньше указывали корень `dashboards/`). Превью плиток по разделам — в `images/dashboards/Obshee/`, `images/dashboards/admin/` |
+| `images/dashboards/0_main/*.png` | Иконки карточек разделов на главном дашборде «Документация» (`admin.png`, `glossary.png`, `main.png`, `medadmin.png`, `medcab.png`); в движке путь вида `/content/images/dashboards/0_main/<файл>.png`. Папки превью разводящих **`Obshee/`** и **`admin/`** удалены — старый карточный UI не используется (см. `engine/engine-docs/OBSHEE-LANDING-SNAPSHOT.md`). |
 | `images/logo/logo_3.png` | Логотип платформы; в движке: `/content/images/logo/logo_3.png` |
 
 Редактируйте файлы в этом каталоге; код движка лежит в **`engine/src/`** и соседних папках того же репозитория.

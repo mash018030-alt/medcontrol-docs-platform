@@ -15,9 +15,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "convert:html": "node scripts/html-to-md.cjs",
-    "convert:news": "node scripts/news-html-to-md.cjs",
-    "rebuild:obshee-9-preview": "node scripts/rebuild-obshee-9-preview.cjs",
-    "obshee-9:normalize-width": "node scripts/obshee-9-normalize-width.cjs"
+    "convert:news": "node scripts/news-html-to-md.cjs"
   },
   "dependencies": {
     "hast-util-find-and-replace": "^5.0.1",

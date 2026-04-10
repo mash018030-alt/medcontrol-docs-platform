@@ -11,6 +11,8 @@
 
 Ниже — **снимок прежнего карточного дашборда** (для восстановления внешнего вида и поведения без устных передач).
 
+**Обновление 2026-04-09:** превью **`content/images/dashboards/Obshee/`** и **`…/admin/`** удалены из репозитория; разводящие — **список ссылок** без плиток. Удалены неиспользуемые модули **`obsheeLandingCardPreview.js`**, **`adminLandingCardPreview.js`** и скрипты **`obshee-9-normalize-width.cjs`**, **`rebuild-obshee-9-preview.cjs`**. Разделы §3–§8 ниже — **историческая справка**; при восстановлении карточек файлы превью можно взять из **истории git**.
+
 Тексты статей и скриншоты внутри статей **не** дублируются здесь — они лежат в **`content/0_docs/1_obshee/articles/`**. Отдельный **PDF-эталон** для сверки текстов — в `content/references/` (см. `content/references/README.md`).
 
 ---
@@ -31,7 +33,7 @@
 
 - **Заголовок:** Общее  
 - **Описание:** «Общее руководство по работе в АРМ: осмотры, организации, пользователи, документы, отчёты, ПАК и уведомления»  
-- **Иконка:** `/content/icons/dashboard/main.png`  
+- **Иконка:** `/content/images/dashboards/0_main/main.png` (см. `docsDashboardSections.js`)  
 - **Сборка PDF всего раздела:** `sectionPdfBundle: true` (кнопка в шапке разводящей вызывает печать/экспорт по маршруту с `mc_pdf`, см. `engine/src/components/Article.jsx` и `engine/src/utils/runArticlePdfExport`).
 
 ---
@@ -54,11 +56,9 @@
 
 ---
 
-## 4. Превью-картинки на карточках (сетка 3×3)
+## 4. Превью-картинки на карточках (сетка 3×3) *[история; файлы и модуль удалены из репо]*
 
-**Источник:** `engine/src/data/obsheeLandingCardPreview.js`.
-
-Файлы лежат в `content/images/dashboards/Obshee/`. Нумерация рядов: 1–3, 4–6, 7–9 (слева направо, сверху вниз).
+**Было:** `engine/src/data/obsheeLandingCardPreview.js` (удалён) и PNG в `content/images/dashboards/Obshee/` (удалены). Нумерация рядов: 1–3, 4–6, 7–9 (слева направо, сверху вниз).
 
 | № файла | Путь статьи (корневая тема плитки) |
 |--------|-------------------------------------|
@@ -76,7 +76,7 @@
 
 Для путей, которых нет в таблице, в коде есть запасной шаблон: `Obshee/<последний-сегмент-пути>.png` (на случай расширения списка плиток).
 
-**Вспомогательные скрипты** (подготовка/нормализация превью): `engine/scripts/obshee-9-normalize-width.cjs`, `engine/scripts/rebuild-obshee-9-preview.cjs`, `engine/scripts/split-obshee-guide.cjs`.
+**Вспомогательные скрипты** (исторически): `obshee-9-normalize-width.cjs` и `rebuild-obshee-9-preview.cjs` **удалены**; остаётся при необходимости `split-obshee-guide.cjs`.
 
 ---
 
@@ -104,9 +104,9 @@
 
 ---
 
-## 7. Включение «стат-дашборда» в коде
+## 7. Включение «стат-дашборда» в коде *[история]*
 
-Разводящая с превью и стилями «obshee-stat» включается, когда:
+**Сейчас** этот режим в UI **отключён**. Раньше разводящая с превью и стилями «obshee-stat» включалась, когда:
 
 - текущий slug — узел nav с детьми **и**
 - путь **`0_docs/1_obshee/articles/00_main`** или **`0_docs/2_admin/articles/00_main`** **и**
@@ -120,7 +120,7 @@
 
 1. Узел «Общее» в `engine/src/data/nav.js` с тем же `path` **`0_docs/1_obshee/articles/00_main`** и тем же порядком `children` (п. 3).  
 2. Запись в `engine/src/data/docsDashboardSections.js` (п. 2).  
-3. `engine/src/data/obsheeLandingCardPreview.js` и файлы `content/images/dashboards/Obshee/1.png` … `9.png` + fallback.  
+3. Восстановить из истории git: резолвер превью (бывший `obsheeLandingCardPreview.js`) и файлы `content/images/dashboards/Obshee/1.png` … `9.png` + fallback; для «Администрирования» — аналогично `admin/` и бывший `adminLandingCardPreview.js`.  
 4. Компонент плиток разводщей и ветки ПАК / FAQ в стилях — см. `engine/src/components/` и `App.css`.  
 5. `engine/src/components/Article.jsx` — условие `statDashLandingPanel` для obshee.  
 6. CSS в `engine/src/App.css` для `.docs-section-landing-root--obshee-stat` и связанных классов; сверка с блоком «docs-obshee-dashboard-invariants» в **`.cursor/rules/medcontrol-docs-cursor-rules.mdc`**.  

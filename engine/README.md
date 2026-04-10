@@ -6,7 +6,7 @@
 
 ## Контент
 
-Тексты, иллюстрации к статьям, **иконки карточек главной** (`content/images/dashboards/0_main/*.png` и плитки разводящих `Obshee/`, `admin/`) и **логотип шапки** (`content/images/logo/logo_3.png`) лежат в **`../content/`**. Внутри `engine` смотрите на них через **`public/content/`** (ссылка). Раньше тот же набор велся в [medcontrol-docs-content](https://github.com/mash018030-alt/medcontrol-docs-content); обзор папок — **`../content/README.md`**.
+Тексты, иллюстрации к статьям, **иконки карточек главной** (`content/images/dashboards/0_main/*.png`; превью разводящих `Obshee/` и `admin/` удалены вместе с карточным UI) и **логотип шапки** (`content/images/logo/logo_3.png`) лежат в **`../content/`**. Внутри `engine` смотрите на них через **`public/content/`** (ссылка). Раньше тот же набор велся в [medcontrol-docs-content](https://github.com/mash018030-alt/medcontrol-docs-content); обзор папок — **`../content/README.md`**.
 
 ## Запуск
 
